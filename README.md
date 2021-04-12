@@ -14,8 +14,8 @@ This fork is modified to work with accept-reject style banners, and also those w
 NPM
 
 ```bash
-//TODO: ADD NPM REPO
-npm install
+//TODO: ADD NPM REPO AND PROPER VERSIONING
+npm install github:hmcts/fact-cookie-manager#master
 ```
 
 ## Usage
