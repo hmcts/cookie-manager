@@ -1,6 +1,6 @@
 {
-  "name": "@hmcts/fact-cookie-manager",
-  "version": "1.0.0",
+  "name": "@hmcts/cookie-manager",
+  "version": "0.0.2",
   "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
   "main": "cookie-manager.js",
   "scripts": {
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hmcts/fact-cookie-manager.git"
+    "url": "git+https://github.com/hmcts/cookie-manager.git"
   },
   "author": "HM Courts and Tribunals",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hmcts/fact-cookie-manager/issues"
+    "url": "https://github.com/hmcts/cookie-manager/issues"
   },
-  "homepage": "https://github.com/hmcts/fact-cookie-manager#readme",
+  "homepage": "https://github.com/hmcts/cookie-manager#readme",
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",

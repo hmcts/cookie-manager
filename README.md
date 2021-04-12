@@ -1,4 +1,4 @@
-# FaCT Cookie Manager
+# Cookie Manager
 
 Cookie Manager is a Javascript library for dealing with cookie compliance.
 
@@ -15,7 +15,7 @@ NPM
 
 ```bash
 //TODO: ADD NPM REPO AND PROPER VERSIONING
-npm install github:hmcts/fact-cookie-manager#master
+npm install github:hmcts/cookie-manager#master
 ```
 
 ## Usage
