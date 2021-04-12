@@ -38,29 +38,27 @@ To disable this functionality, set the configuration value of `cookie-banner-id`
 
 If you want functionality to display a cookie banner when user preferences have not been set (or expired)
 then build your cookie banner markup, and give the wrapping element an ID and match it with the configuration value
-`cookie-banner-id`, and a class which makes it hidden and match that to the configuration value
-`cookie-banner-visibility-class`; the library will remove the hidden class if it cannot find a user preference cookie
-(or if the content of the cookie is invalid).
+`cookie-banner-id`. 
 
 This library will automatically bind to the accept and reject buttons nested within the banner element. 
-For matching these buttons to their respective action,  both options must be a `button` element with type `submit`, 
-with the accept button having the value `accept` and the reject button the value `reject`. 
-This will opt-in or opt-out respectively of any optional cookie categories defined in the configuraion. 
+For matching these buttons to their respective action, both options must be a `button` element with the 
+data attribute `data-cm-action` set to `accept` or `reject`. 
+This will opt-in or opt-out respectively of any optional cookie categories defined in the configuration. 
 Furthermore, a call will be made to the respective callback (`cookie-banner-accept-callback` 
 or `cookie-banner-reject-callback`) if also set in the config.
 
 
 ```html
-<header id="cookie_banner" class="hidden">
+<header id="cookie_banner" hidden>
     <h2>Tell us whether you accept cookies</h2>
     <p>We use cookies to collect information about how you use GOV.UK.</p>
     <p>We use this information to make the website work as well as possible and improve government services.</p>
     <div class="govuk-button-group">
-        <button value="accept" type="submit">Accept analytics cookies</button>
-        <button value="reject" type="submit">Reject analytics cookies</button>
+        <button data-cm-action="accept">Accept analytics cookies</button>
+        <button data-cm-action="reject">Reject analytics cookies</button>
         <a class="govuk-link" href="/">View cookies</a>
     </div>
-    <button value="hide" type="button">Hide this message</button>
+    <button data-cm-action="hide">Hide this message</button>
 </header>
 ```
 
@@ -68,7 +66,7 @@ If the `cookie-banner-auto-hide` option is set to `true`, upon clicking either o
 If set to `false` the banner will stay visible, i.e. allowing for a confirmation message that cookie preference has been acknowledged.
 
 The library can also be binded to a hide/dismiss button for hiding the banner from the user. This button must be a
-nested element of `button` within the banner, having both type `button` and the value `hide`.
+nested element of `button` within the banner, with the data attribute `data-cm-action` set to `hide`.
 
 ### Feature: User Preferences Saving
 
@@ -130,7 +128,6 @@ cm.init(
   "user-preference-cookie-expiry-days": 365,
   "user-preference-configuration-form-id": "cookie-manager-form",
   "cookie-banner-id": "cm_cookie_notification",
-  "cookie-banner-visibility-class": "hidden",
   "cookie-banner-visible-on-page-with-preference-form": false,
   "cookie-banner-saved-callback": false, //accept a function
   "cookie-banner-accept-callback": false, //accept a function

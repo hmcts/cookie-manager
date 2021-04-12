@@ -23,7 +23,6 @@
         "user-preference-configuration-form-id": false,
         "user-preference-saved-callback": false,
         "cookie-banner-id": false,
-        "cookie-banner-visibility-class": "hidden",
         "cookie-banner-visible-on-page-with-preference-form": true,
         "cookie-banner-auto-hide": true,
         "cookie-manifest": []
@@ -298,162 +297,121 @@
 
         savePreferences(categories);
 
-        if (options['user-preference-saved-callback'] !== false && typeof options['user-preference-saved-callback'] === 'function') {
-            options['user-preference-saved-callback']();
+        const savedCallback = options['user-preference-saved-callback'];
+        if (savedCallback !== false && typeof savedCallback === 'function') {
+            savedCallback(getUserPreferences());
         }
-
     };
 
-    const savePreferencesFromCookieBannerAcceptAll = function (event) {
-        event.preventDefault();
-
-        console.debug('Saving user cookie preferences from Cookie Banner (accept optional)...');
+    const savePreferencesFromCookieBanner = function (decision) {
+        console.debug(`Saving user cookie preferences from Cookie Banner (${decision} optional)...`);
 
         const categories = {};
 
         for (var i = 0; i < options['cookie-manifest'].length; i++) {
             const category = options['cookie-manifest'][i];
             if (category['optional']) {
-                categories[category['category-name']] = 'on';
+                categories[category['category-name']] = decision === 'accept' ? 'on' : 'off';
             }
         }
 
         savePreferences(categories);
 
-        if (options['cookie-banner-accept-callback'] !== false && typeof options['cookie-banner-accept-callback'] === 'function') {
-            options['cookie-banner-accept-callback']();
+        const savedCallback = options['cookie-banner-saved-callback'];
+        let decisionCallback;
+
+        if (decision === 'accept') {
+            decisionCallback = options['cookie-banner-accept-callback'];
+        } else if (decision === 'reject') {
+            decisionCallback = options['cookie-banner-reject-callback'];
         }
 
-        if (options['cookie-banner-saved-callback'] !== false && typeof options['cookie-banner-saved-callback'] === 'function') {
-            options['cookie-banner-saved-callback']();
-        }
-    };
-
-    const savePreferencesFromCookieBannerRejectAll = function (event) {
-        event.preventDefault();
-
-        console.debug('Saving user cookie preferences from Cookie Banner (reject optional)...');
-
-        const categories = {};
-
-        for (var i = 0; i < options['cookie-manifest'].length; i++) {
-            const category = options['cookie-manifest'][i];
-            if (category['optional']) {
-                categories[category['category-name']] = 'off';
-            }
+        if (decisionCallback !== false && typeof decisionCallback === 'function') {
+            decisionCallback();
         }
 
-        savePreferences(categories);
-
-        if (options['cookie-banner-reject-callback'] !== false && typeof options['cookie-banner-reject-callback'] === 'function') {
-            options['cookie-banner-reject-callback']();
+        if (savedCallback !== false && typeof savedCallback === 'function') {
+            savedCallback(getUserPreferences());
         }
+    }
 
-        if (options['cookie-banner-saved-callback'] !== false && typeof options['cookie-banner-saved-callback'] === 'function') {
-            options['cookie-banner-saved-callback']();
-        }
-    };
-
-    const savePreferences = function(user_cookie_preferences) {
+    const savePreferences = function (user_cookie_preferences) {
         setCookie(JSON.stringify(user_cookie_preferences));
         console.debug('Saved user cookie preferences to cookie', getCookie(options['user-preference-cookie-name']));
     };
 
-    const addAcceptAllListener = function (acceptAllButton) {
-        if (acceptAllButton !== null) {
-            acceptAllButton.addEventListener('click', function (e) {
-                savePreferencesFromCookieBannerAcceptAll(e);
-                manageCookies();
+    const addBannerButtonListeners = function () {
+        const cookieBanner = document.getElementById(options['cookie-banner-id']);
+        const buttons = cookieBanner.querySelectorAll('button');
 
-                if (options['cookie-banner-auto-hide'] === true) {
-                    checkShouldCookieBannerBeVisible()
-                }
-            });
-        }
-    };
+        buttons.forEach(button => {
+            if (button.hasAttribute('data-cm-action')) {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
 
-    const addRejectAllListener = function (rejectAllButton) {
-        if (rejectAllButton !== null) {
-            rejectAllButton.addEventListener('click', function (e) {
-                savePreferencesFromCookieBannerRejectAll(e);
-                manageCookies();
+                    const type = button.getAttribute('data-cm-action');
 
-                if (options['cookie-banner-auto-hide'] === true) {
-                    checkShouldCookieBannerBeVisible()
-                }
-            });
-        }
-    };
+                    switch (type) {
+                        case 'accept':
+                            savePreferencesFromCookieBanner(type)
+                            break;
+                        case 'reject':
+                            savePreferencesFromCookieBanner(type)
+                            break;
+                        case 'hide':
+                            cookieBanner.hidden = true;
+                            break;
+                    }
 
-    const addHideListener = function (hideBannerButton) {
-        if (hideBannerButton !== null) {
-            hideBannerButton.addEventListener('click', function (e) {
-                const theBanner = document.getElementById(options['cookie-banner-id']);
-                const bannerVisibilityClass = options['cookie-banner-visibility-class'];
-                theBanner.classList.add(bannerVisibilityClass);
-            });
-        }
+                    if (options['cookie-banner-auto-hide'] === true) {
+                        cookieBanner.hidden = true;
+                    }
+                })
+            }
+        })
     }
 
     const findAndBindCookieBanner = function () {
-        if (!configOptionIsString('cookie-banner-id')
-            && !configOptionIsString('cookie-banner-visibility-class')
-        ) {
-            console.debug('Skipping binding to cookie banner as both cookie-banner-id and cookie-banner-visibility-class are not defined');
+        if (!configOptionIsString('cookie-banner-id')) {
+            console.debug('Skipping binding to cookie banner as cookie-banner-id is not defined');
             return;
         }
 
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 findAndBindCookieBanner();
             });
             console.debug('DOM is not ready; adding event to bind to cookie banner when ready.');
             return;
         }
 
-        const theBanner = document.getElementById(options['cookie-banner-id']);
-        if (theBanner !== null) {
-            const acceptAllButton = theBanner.querySelector('button[type="submit"][value="accept"]');
-            const rejectAllButton = theBanner.querySelector('button[type="submit"][value="reject"]');
-            const hideBannerButton = theBanner.querySelector('button[type="button"][value="hide"]');
+        const cookieBanner = document.getElementById(options['cookie-banner-id']);
 
-            addAcceptAllListener(acceptAllButton);
-            addRejectAllListener(rejectAllButton);
-            addHideListener(hideBannerButton);
-            console.debug(`Found and bound to cookie banner with ID "${options['cookie-banner-id']}".`);
+        if (cookieBanner !== null) {
             checkShouldCookieBannerBeVisible();
+            addBannerButtonListeners();
+            console.debug(`Found and bound to cookie banner with ID "${options['cookie-banner-id']}".`);
         }
     };
 
-    const checkShouldCookieBannerBeVisible = function() {
-
-        const theBanner = document.getElementById(options['cookie-banner-id']);
-        const bannerVisibilityClass = options['cookie-banner-visibility-class'];
-        if (theBanner === null || bannerVisibilityClass === null) {
-            console.error('Cannot work with cookie banner unless cookie-banner-id and cookie-banner-visibility-class are configured.');
+    const checkShouldCookieBannerBeVisible = function () {
+        const cookieBanner = document.getElementById(options['cookie-banner-id']);
+        if (cookieBanner === null) {
+            console.debug('Cannot work with cookie banner unless cookie-banner-id is configured.');
             return;
         }
 
-        const user_preference_form = document.getElementById(options['user-preference-configuration-form-id']);
-        const visible_on_preference_page = options['cookie-banner-visible-on-page-with-preference-form'];
+        const userPreferenceForm = document.getElementById(options['user-preference-configuration-form-id']);
+        const visibleOnPreferencePage = options['cookie-banner-visible-on-page-with-preference-form'];
+        const cmCookie = options['user-preference-cookie-name'];
 
-        const cm_cookie = options['user-preference-cookie-name'];
-        if (getUserPreferences(cm_cookie)) {
-            // User has preferences set, no need to show cookie banner.
-            if (!theBanner.classList.contains(bannerVisibilityClass)) {
-                theBanner.classList.add(bannerVisibilityClass);
-                console.debug('Cookie banner was set to visible.')
-            }
+        if (getUserPreferences(cmCookie)) {
+            cookieBanner.hidden = true;
+        } else if (userPreferenceForm !== null && visibleOnPreferencePage === false) {
+            cookieBanner.hidden = true;
         } else {
-            if (user_preference_form !== null && visible_on_preference_page === false) {
-                theBanner.classList.add(bannerVisibilityClass);
-            } else {
-                theBanner.classList.remove(bannerVisibilityClass);
-                console.debug('Cookie banner was set to visible.');
-            }
+            cookieBanner.hidden = false;
         }
-
-
     };
 
     const scriptError = function (message) {

@@ -17,19 +17,16 @@ describe('Cookie Manager', () => {
         cookieBanner.setAttribute('id', 'cm_cookie_notification');
         cookieBanner.setAttribute('class', 'hidden');
 
-        const acceptAllButton = document.createElement('button');
-        acceptAllButton.setAttribute('type', 'submit');
-        acceptAllButton.setAttribute('value', 'accept');
-        cookieBanner.appendChild(acceptAllButton);
+        const acceptButton = document.createElement('button');
+        acceptButton.setAttribute('data-cm-action', 'accept');
+        cookieBanner.appendChild(acceptButton);
 
-        const rejectAllButton = document.createElement('button');
-        rejectAllButton.setAttribute('type', 'submit');
-        rejectAllButton.setAttribute('value', 'reject');
-        cookieBanner.appendChild(rejectAllButton);
+        const rejectButton = document.createElement('button');
+        rejectButton.setAttribute('data-cm-action', 'reject');
+        cookieBanner.appendChild(rejectButton);
 
         const hideBannerButton = document.createElement('button');
-        hideBannerButton.setAttribute('type', 'button');
-        hideBannerButton.setAttribute('value', 'hide');
+        hideBannerButton.setAttribute('data-cm-action', 'hide');
         cookieBanner.appendChild(hideBannerButton);
 
         document.body.appendChild(cookieBanner);
@@ -136,7 +133,6 @@ describe('Cookie Manager', () => {
             "user-preference-cookie-expiry-days": 365,
             "user-preference-configuration-form-id": "cm_user_preference_form",
             "cookie-banner-id": "cm_cookie_notification",
-            "cookie-banner-visibility-class": "hidden",
             "cookie-banner-visible-on-page-with-preference-form": true,
             "cookie-banner-auto-hide": true,
             "cookie-banner-accept-callback": chai.spy(),
@@ -196,7 +192,7 @@ describe('Cookie Manager', () => {
             it('Exists in the DOM', () => {
                 const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
                 expect(cookie_banner_element, 'Cookie Banner container does not exist').to.exist;
-                expect(cookie_banner_element.querySelector('button[type="submit"]'), 'Cookie Banner Accept button does not exist').to.exist;
+                expect(cookie_banner_element.querySelector('button[data-cm-action="accept"]'), 'Cookie Banner Accept button does not exist').to.exist;
             });
 
             describe('Cookie Banner is configured', () => {
@@ -204,7 +200,7 @@ describe('Cookie Manager', () => {
                 it('Is Visible', () => {
                     cookieManager.init(cm_config);
                     const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(false);
+                    expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(false);
                 });
 
                 describe('Clicking Accept button will set preference and hide Cookie Banner', () => {
@@ -212,7 +208,7 @@ describe('Cookie Manager', () => {
                     beforeEach(() => {
                         cookieManager.init(cm_config);
 
-                        const cookie_banner_accept_all_button = document.querySelector('div#cm_cookie_notification button[type="submit"][value="accept"]');
+                        const cookie_banner_accept_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="accept"]');
                         cookie_banner_accept_all_button.click();
                     });
 
@@ -222,7 +218,7 @@ describe('Cookie Manager', () => {
 
                     it('Clicking Accept hides the Cookie Banner', () => {
                         const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be hidden').eql(true);
                     });
 
                     it('Clicking Accept calls cookie-banner-accept-callback', () => {
@@ -235,7 +231,7 @@ describe('Cookie Manager', () => {
                     beforeEach(() => {
                         cookieManager.init(cm_config);
 
-                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[type="submit"][value="reject"]');
+                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="reject"]');
                         cookie_banner_reject_all_button.click();
                     });
 
@@ -245,7 +241,7 @@ describe('Cookie Manager', () => {
 
                     it('Clicking Reject hides the Cookie Banner', () => {
                         const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be hidden').eql(true);
                     });
 
                     it('Clicking Reject calls cookie-banner-reject-callback', () => {
@@ -258,13 +254,13 @@ describe('Cookie Manager', () => {
                     beforeEach(() => {
                         cookieManager.init(cm_config);
 
-                        const cookie_banner_hide_button = document.querySelector('div#cm_cookie_notification button[type="button"][value="hide"]');
+                        const cookie_banner_hide_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="hide"]');
                         cookie_banner_hide_button.click();
                     });
 
                     it('Clicking Hide Banner hides the Cookie Banner', () => {
                         const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to not be visible').eql(true);
                     });
                 })
 
@@ -277,7 +273,7 @@ describe('Cookie Manager', () => {
                     it('Is NOT Visible', () => {
                         cookieManager.init((cm_config));
                         const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be hidden').eql(true);
                     });
                 });
             });
@@ -287,7 +283,7 @@ describe('Cookie Manager', () => {
                 it('Is Visible', () => {
                     cookieManager.init(cm_config);
                     const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(false);
+                    expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(false);
                 });
 
                 describe('Clicking Accept button will set preference', () => {
@@ -296,7 +292,7 @@ describe('Cookie Manager', () => {
                         cm_config['cookie-banner-auto-hide'] = false;
                         cookieManager.init(cm_config);
 
-                        const cookie_banner_accept_all_button = document.querySelector('div#cm_cookie_notification button[type="submit"][value="accept"]');
+                        const cookie_banner_accept_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="accept"]');
                         cookie_banner_accept_all_button.click();
                     });
 
@@ -306,7 +302,7 @@ describe('Cookie Manager', () => {
 
                     it('Clicking Accept does not hide the Cookie Banner', () => {
                         const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(!cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                        expect(!cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(true);
                     });
 
                     it('Clicking Accept calls cookie-banner-accept-callback', () => {
@@ -320,7 +316,7 @@ describe('Cookie Manager', () => {
                         cm_config['cookie-banner-auto-hide'] = false;
                         cookieManager.init(cm_config);
 
-                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[type="submit"][value="reject"]');
+                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="reject"]');
                         cookie_banner_reject_all_button.click();
                     });
 
@@ -330,7 +326,7 @@ describe('Cookie Manager', () => {
 
                     it('Clicking Reject does not hide the Cookie Banner', () => {
                         const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(!cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be visible').eql(true);
+                        expect(!cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(true);
                     });
 
                     it('Clicking Reject calls cookie-banner-reject-callback', () => {
@@ -398,7 +394,7 @@ describe('Cookie Manager', () => {
             it('Exists in the DOM', () => {
                 const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
                 expect(cookie_banner_element, 'Cookie Banner container does not exist').to.exist;
-                expect(cookie_banner_element.querySelector('button[type="submit"]'), 'Cookie Banner Accept button does not exist').to.exist;
+                expect(cookie_banner_element.querySelector('button[data-cm-action="accept"]'), 'Cookie Banner Accept button does not exist').to.exist;
             });
 
             describe('Cookie Banner is configured', () => {
