@@ -6,7 +6,7 @@ It can handle removing cookies which the user does not consent to or those that 
 It can also handle the storing of user preferences when it comes to cookies, and includes the functionality to display a banner when no
 preferences have been set.
 
-This repo is based on the fantastic work of the DVSA team and their Cookie Manager, [found here](https://github.com/dvsa/cookie-manager).
+This repo is originally based on the fantastic work of the DVSA team and their Cookie Manager, [found here](https://github.com/dvsa/cookie-manager).
 This fork is modified to work with accept-reject style banners, and also those which have hide/dismiss functionality. Preferably to be used in conjuction with the [GDS Cookie Banner component](https://design-system.service.gov.uk/components/cookie-banner/).
 
 ## Installation
@@ -14,8 +14,7 @@ This fork is modified to work with accept-reject style banners, and also those w
 NPM
 
 ```bash
-//TODO: ADD NPM REPO AND PROPER VERSIONING
-npm install github:hmcts/cookie-manager#master
+npm install github:hmcts/cookie-manager#0.0.3
 ```
 
 ## Usage
