@@ -198,7 +198,7 @@ cm.init(
 
 #### Cookie Manifest Settings
 | Option | Description |
-| --- | --- | --- |
+| --- | --- |
 | category-name | Name of the cookie category, i.e analytics |
 | optional | Is cookie category non-essential to site function and can be opted out from |
 | cookies | Array of cookie names included in category |
