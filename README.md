@@ -124,17 +124,17 @@ cm.init(
   "delete-undefined-cookies": true,
   "user-preference-cookie-name": "cm-user-preferences",
   "user-preference-cookie-secure": false,
-  "user-preference-saved-callback": false, // accept a function
+  "user-preference-saved-callback": false,
   "user-preference-cookie-expiry-days": 365,
   "preference-form-id": "cm-preference-form",
-  "preference-form-saved-callback" : false, //accept a function
+  "preference-form-saved-callback" : false,
+  "set-checkboxes-in-preference-form": true,
   "cookie-banner-id": "cm-cookie-banner",
   "cookie-banner-visible-on-page-with-preference-form": false,
-  "cookie-banner-saved-callback": false, //accept a function
-  "cookie-banner-accept-callback": false, //accept a function
-  "cookie-banner-reject-callback": false, //accept a function
+  "cookie-banner-saved-callback": false,
+  "cookie-banner-accept-callback": false,
+  "cookie-banner-reject-callback": false,
   "cookie-banner-auto-hide": true,
-  "set-checkboxes-in-preference-form": true,
   "cookie-manifest": [
     {
       "category-name": "essential",
@@ -142,8 +142,6 @@ cm.init(
       "cookies": [
         "essential-cookie",
         "another-essential-cookie",
-        "some-imperva-cookie",
-        "some-other-imperva-cookie"
       ]
     },
     {
@@ -155,16 +153,53 @@ cm.init(
       ]
     },
     {
-      "category-name": "feedback",
+      "category-name": "apm",
       "optional": true,
       "cookies": [
-        "_hotjar",
-        "_surveything"
+        "dtCookie",
+        "dtLatC",
+        "dtPC",
+        "dtSa",
+        "rxVisitor",
+        "rxvt"
       ]
     }
   ]
 }
 ```
+
+#### User Preference Settings
+| Option | Description | Default Value |
+| --- | --- | --- |
+| delete-undefined-cookies | Removes any cookies for site that are not defined in the cookie manifest | true |
+| user-preference-cookie-name | Name of cookie which stores cookie preferences | 'cm-user-preferences' |
+| user-preference-cookie-secure | Sets cookie to include ;secure | false |
+| user-preference-saved-callback | Callback function called when user preferences are saved. Calls with object containing consent status. | false (no callback function set) |
+| user-preference-cookie-expiry-days | Expiry time of cookie manager preference cookie (in days) | 365 |
+
+#### Preference Form Settings
+| Option | Description | Default |
+| --- | --- | --- |
+| preference-form-id | ID attribute on preference form element | false |
+| preference-form-saved-callback | Callback function called when user preference form is saved | false (no callback function set) |
+| set-checkboxes-in-preference-form | Sets radio buttons in form to be checked based on cookie consent | true |
+
+#### Cookie Banner Settings
+| Option | Description | Default |
+| --- | --- | --- |
+| cookie-banner-id | ID attribute on cookie banner wrapper element | false |
+| cookie-banner-visible-on-page-with-preference-form | Should cookie banner also display on page containing preference form | true |
+| cookie-banner-saved-callback | Callback function called when cookie banner is saved | false (no callback function set) |
+| cookie-banner-accept-callback | Callback function called when cookie banner accept is clicked | false (no callback function set) |
+| cookie-banner-reject-callback | Callback function called when cookie banner reject is clicked | false (no callback function set) |
+| cookie-banner-auto-hide | Should banner auto-hide after accept or reject is clicked. Disable to allow decision/confirm style banners | true |
+
+#### Cookie Manifest Settings
+| Option | Description |
+| --- | --- | --- |
+| category-name | Name of the cookie category, i.e analytics |
+| optional | Is cookie category non-essential to site function and can be opted out from |
+| cookies | Array of cookie names included in category |
 
 ## Development
 ### Unit tests
