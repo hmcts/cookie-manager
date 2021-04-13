@@ -80,7 +80,7 @@ value of all radio buttons with the `checked` state. The name of the radio butto
 reflect the category name for cookies defined in your manifest. The values for the radio buttons must be `on` and `off`.
 
 ```html
-<form id="cm_user_preference_form">
+<form id="cm-preference-form">
     <fieldset>
         <legend>Analytics:</legend>
         <input type="radio" name="analytics" value="on" /> On <br/>
@@ -88,9 +88,9 @@ reflect the category name for cookies defined in your manifest. The values for t
     </fieldset>
 
     <fieldset>
-        <legend>Feedback:</legend>
-        <input type="radio" name="feedback" value="on" /> On <br/>
-        <input type="radio" name="feedback" value="off" checked /> Off <br/>
+        <legend>Application Performance Monitoring:</legend>
+        <input type="radio" name="apm" value="on" /> On <br/>
+        <input type="radio" name="apm" value="off" checked /> Off <br/>
     </fieldset>
 
     <input type="submit" value="Save Preferences"/>
