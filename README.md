@@ -32,6 +32,8 @@ Invoke the Cookie Manager by calling init() with a config:
 cookieManager.init(configuration_object);
 ```
 
+##### See index.html for more info on configuration
+
 ### Feature: Cookie Banner
 
 To disable this functionality, set the configuration value of `cookie-banner-id` to `false` or remove the definition.
