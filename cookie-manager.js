@@ -20,8 +20,7 @@
         "user-preference-cookie-name": "cm-user-preferences",
         "user-preference-cookie-secure": false,
         "user-preference-cookie-expiry-days": 365,
-        "user-preference-configuration-form-id": false,
-        "user-preference-saved-callback": false,
+        "preference-form-id": false,
         "cookie-banner-id": false,
         "cookie-banner-visible-on-page-with-preference-form": true,
         "cookie-banner-auto-hide": true,
@@ -224,7 +223,7 @@
 
     const findAndBindPreferencesForm = function() {
 
-        if (!configOptionIsString('user-preference-configuration-form-id')
+        if (!configOptionIsString('preference-form-id')
         ) {
             console.debug("Skipping binding to user cookie preference form.");
             return;
@@ -247,12 +246,12 @@
             manageCookies();
             checkShouldCookieBannerBeVisible();
         });
-        console.debug(`Found and bound to cookie preference form with ID "${options['user-preference-configuration-form-id']}".`);
+        console.debug(`Found and bound to cookie preference form with ID "${options['preference-form-id']}".`);
         setPreferencesInForm();
     };
 
     const getForm = function () {
-        return document.getElementById(options["user-preference-configuration-form-id"]);
+        return document.getElementById(options["preference-form-id"]);
     };
 
     const setPreferencesInForm = function () {
@@ -282,7 +281,7 @@
 
         console.debug('Saving user cookie preferences from Form...');
 
-        const theForm = document.getElementById(options["user-preference-configuration-form-id"]);
+        const theForm = document.getElementById(options["preference-form-id"]);
         const radioInputs = theForm.querySelectorAll('input[type="radio"]:checked');
 
         const categories = {};
@@ -297,7 +296,7 @@
 
         savePreferences(categories);
 
-        const savedCallback = options['user-preference-saved-callback'];
+        const savedCallback = options['preference-form-saved-callback'];
         if (savedCallback !== false && typeof savedCallback === 'function') {
             savedCallback(getUserPreferences());
         }
@@ -338,6 +337,11 @@
     const savePreferences = function (user_cookie_preferences) {
         setCookie(JSON.stringify(user_cookie_preferences));
         console.debug('Saved user cookie preferences to cookie', getCookie(options['user-preference-cookie-name']));
+
+        const preferenceSavedCallback = options['user-preference-saved-callback'];
+        if (preferenceSavedCallback !== false && typeof preferenceSavedCallback === 'function') {
+            preferenceSavedCallback(getUserPreferences());
+        }
     };
 
     const addBannerButtonListeners = function () {
@@ -401,7 +405,7 @@
             return;
         }
 
-        const userPreferenceForm = document.getElementById(options['user-preference-configuration-form-id']);
+        const userPreferenceForm = document.getElementById(options['preference-form-id']);
         const visibleOnPreferencePage = options['cookie-banner-visible-on-page-with-preference-form'];
         const cmCookie = options['user-preference-cookie-name'];
 

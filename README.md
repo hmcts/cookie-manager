@@ -70,10 +70,10 @@ nested element of `button` within the banner, with the data attribute `data-cm-a
 
 ### Feature: User Preferences Saving
 
-To disable this functionality, set the configuration value of `user-preference-configuration-form-id` to `false` or remove the definition.
+To disable this functionality, set the configuration value of `preference-form-id` to `false` or remove the definition.
 
 If you want functionality to setup a user preference cookie, then you need to define a HTML form with an ID and match
-that to the configuration value `user-preference-configuration-form-id`. Upon initialisation, the library will look
+that to the configuration value `preference-form-id`. Upon initialisation, the library will look
 for the form when the DOM is ready, and bind to the `submit` event. When submitted, the library will collect the
 value of all radio buttons with the `checked` state. The name of the radio buttons **must**
 reflect the category name for cookies defined in your manifest. The values for the radio buttons must be `on` and `off`.
@@ -124,10 +124,11 @@ cm.init(
   "delete-undefined-cookies": true,
   "user-preference-cookie-name": "cm-user-preferences",
   "user-preference-cookie-secure": false,
-  "user-preference-saved-callback" : false, //accept a function
+  "user-preference-saved-callback": false, // accept a function
   "user-preference-cookie-expiry-days": 365,
-  "user-preference-configuration-form-id": "cookie-manager-form",
-  "cookie-banner-id": "cm_cookie_notification",
+  "preference-form-id": "cm-preference-form",
+  "preference-form-saved-callback" : false, //accept a function
+  "cookie-banner-id": "cm-cookie-banner",
   "cookie-banner-visible-on-page-with-preference-form": false,
   "cookie-banner-saved-callback": false, //accept a function
   "cookie-banner-accept-callback": false, //accept a function
