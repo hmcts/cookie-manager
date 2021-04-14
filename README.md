@@ -1,4 +1,7 @@
 # Cookie Manager
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/hmcts/cookie-manager.png?branch=master)](https://travis-ci.org/hmcts/cookie-manager)
+[![Known Vulnerabilities](https://snyk.io/test/github/hmcts/cookie-manager/badge.svg)](https://snyk.io/test/github/hmcts/cookie-manager)
 
 Cookie Manager is a Javascript library for dealing with cookie compliance.
 
@@ -31,7 +34,10 @@ Invoke the Cookie Manager by calling init() with a config:
 cookieManager.init(configuration_object);
 ```
 
-##### See index.html for more info on configuration
+
+See `index.html` for more info on configuration
+
+**Any consent requiring services should be set to 'explicit-consent' mode for use with this project.**
 
 ### Feature: Cookie Banner
 
