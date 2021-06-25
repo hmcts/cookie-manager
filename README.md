@@ -1,6 +1,6 @@
 # Cookie Manager
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.org/hmcts/cookie-manager.png?branch=master)](https://travis-ci.org/hmcts/cookie-manager)
+[![Build Status](https://github.com/hmcts/cookie-manager/actions/workflows/test.yml/badge.svg)](https://www.github.com/hmcts/cookie-manager)
 [![Known Vulnerabilities](https://snyk.io/test/github/hmcts/cookie-manager/badge.svg)](https://snyk.io/test/github/hmcts/cookie-manager)
 
 Cookie Manager is a Javascript library for dealing with cookie compliance.
@@ -17,7 +17,7 @@ This fork is modified to work with accept-reject style banners, and also those w
 NPM
 
 ```bash
-npm install github:hmcts/cookie-manager#0.0.3
+npm install --save @hmcts/cookie-manager
 ```
 
 ## Usage
