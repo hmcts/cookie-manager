@@ -1,619 +1,902 @@
-const chai = require('chai');
-const spies = require('chai-spies');
-const expect = chai.expect;
-chai.use(spies);
+const {
+    CookieManager,
+    Cookie,
+    CookieHandler,
+    ManifestCategory,
+    ManifestHandler,
+    Config, UserPreferences,
+} = require('../index');
+const { when } = require('jest-when');
 
-const cookieManager = require('../cookie-manager');
-const {JSDOM} = require("jsdom");
+// Silence debug output
+console.debug = function () {};
+console.error = function () {};
 
-describe('Cookie Manager', () => {
+// TEST FUNCTIONS
+const getmMockedCookieJar = () => ({
+    get: jest.spyOn(document, 'cookie', 'get'),
+    set: jest.spyOn(document, 'cookie', 'set')
+});
 
-    'use strict';
+function deleteAllCookies() {
+    const cookies = document.cookie.split(";");
 
-    let cm_config = {};
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
 
-    const createBanner = () => {
-        const cookieBanner = document.createElement('div');
-        cookieBanner.setAttribute('id', 'cm_cookie_notification');
-        cookieBanner.setAttribute('class', 'hidden');
-
-        const acceptButton = document.createElement('button');
-        acceptButton.setAttribute('data-cm-action', 'accept');
-        cookieBanner.appendChild(acceptButton);
-
-        const rejectButton = document.createElement('button');
-        rejectButton.setAttribute('data-cm-action', 'reject');
-        cookieBanner.appendChild(rejectButton);
-
-        const hideBannerButton = document.createElement('button');
-        hideBannerButton.setAttribute('data-cm-action', 'hide');
-        cookieBanner.appendChild(hideBannerButton);
-
-        document.body.appendChild(cookieBanner);
-    };
-
-    const createPreferencesForm = () => {
-        const userPreferenceForm = document.createElement('form');
-        userPreferenceForm.setAttribute('id', 'cm_user_preference_form');
-
-        const createCategoryRadioButtons = (category) => {
-            const categoryRadioButtonOn = document.createElement('input');
-            const categoryRadioButtonOff = document.createElement('input');
-
-            categoryRadioButtonOn.setAttribute('name', category);
-            categoryRadioButtonOn.setAttribute('id', category + '_on');
-            categoryRadioButtonOn.setAttribute('type', 'radio');
-            categoryRadioButtonOn.setAttribute('value', 'on');
-            categoryRadioButtonOff.setAttribute('name', category);
-            categoryRadioButtonOff.setAttribute('id', category + '_off');
-            categoryRadioButtonOff.setAttribute('type', 'radio');
-            categoryRadioButtonOff.setAttribute('value', 'off');
-
-            return {
-                'on': categoryRadioButtonOn,
-                'off': categoryRadioButtonOff
+// TESTS
+describe('CookieManager', () => {
+    const config = {
+        'user-preference-cookie-name': 'preference-cookie',
+        'cookie-manifest': [
+            {
+                "category-name": "essential",
+                "optional": false,
+                "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+            },
+            {
+                "category-name": "non-essential",
+                "optional": true,
+                "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+            },
+            {
+                "category-name": "another-non-essential",
+                "optional": true,
+                "cookies": [ "third-non-essential-cookie" ]
             }
-        };
+        ]
+    }
 
-        const radioButtonsAnalytics = createCategoryRadioButtons('analytics');
-        const radioButtonsFeedback = createCategoryRadioButtons('feedback');
 
-        const submitButton = document.createElement('input');
-        submitButton.setAttribute('type', 'submit');
+    test('init', () => {
+        const cookieManager = new CookieManager(config);
 
-        userPreferenceForm.appendChild(radioButtonsAnalytics['on']);
-        userPreferenceForm.appendChild(radioButtonsAnalytics['off']);
-        userPreferenceForm.appendChild(radioButtonsFeedback['on']);
-        userPreferenceForm.appendChild(radioButtonsFeedback['off']);
-        userPreferenceForm.appendChild(submitButton);
+        cookieManager.processCookies = jest.fn();
 
-        document.body.appendChild(userPreferenceForm);
-    };
+        cookieManager.init();
+        expect(cookieManager.processCookies).toBeCalled();
+    });
 
-    const cookieExists = (name) => {
-        const cookie_search = name + "=";
-        return (document.cookie.indexOf(cookie_search) >= 0);
-    };
+    describe('Process cookies', () => {
+        const cookieOne = 'first-essential-cookie=cookie-value';
+        const cookieTwo = 'second-non-essential-cookie=cookie-value';
+        const cookieThree = 'third-non-essential-cookie=cookie-value';
+        const cookieFour = 'first-non-essential-cookie=cookie-value';
 
-    const cookieGet = (name) => {
-        const cname = name + "=";
-        const decodedCookie = decodeURIComponent(document.cookie);
-        const ca = decodedCookie.split(';');
-        for(var i = 0; i <ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
+        beforeEach(() => {
+            deleteAllCookies();
+        })
+
+        test('Process cookies with default consent set to false', () => {
+            const customConfig = {...config, 'default-consent-value': false }
+            const cookieManager = new CookieManager(customConfig);
+            document.cookie = cookieOne;
+            document.cookie = cookieTwo;
+            document.cookie = cookieThree;
+
+            expect(document.cookie).toBe(`${cookieOne}; ${cookieTwo}; ${cookieThree}`);
+
+            cookieManager.init();
+
+            expect(document.cookie).toBe(`${cookieOne}`);
+        });
+
+        test('Process cookies with default consent set to true', () => {
+            const customConfig = {...config, 'default-consent-value': true }
+            const cookieManager = new CookieManager(customConfig);
+            document.cookie = cookieOne;
+            document.cookie = cookieTwo;
+            document.cookie = cookieThree;
+
+            expect(document.cookie).toBe(`${cookieOne}; ${cookieTwo}; ${cookieThree}`);
+
+            cookieManager.init();
+            cookieManager.processCookies();
+
+            expect(document.cookie).toBe(`${cookieOne}; ${cookieTwo}; ${cookieThree}`);
+        });
+
+        test('Process cookies with user preferences set', () => {
+            const customConfig = {...config, 'default-consent-value': false }
+            const cookieManager = new CookieManager(customConfig);
+            const preferenceCookie = `preference-cookie=${JSON.stringify({ 'non-essential': 'off', 'another-non-essential': 'on' })}`;
+            document.cookie = cookieOne;
+            document.cookie = cookieTwo;
+            document.cookie = cookieThree;
+            document.cookie = cookieFour;
+            document.cookie = preferenceCookie;
+
+            expect(document.cookie).toBe(`${cookieOne}; ${cookieTwo}; ${cookieThree}; ${cookieFour}; ${preferenceCookie}`);
+
+            cookieManager.init();
+
+            expect(document.cookie).toBe(`${cookieOne}; ${cookieThree}; ${preferenceCookie}`);
+        });
+
+        describe('Process cookies which are uncategorized', () => {
+
+            beforeEach(() => {
+                deleteAllCookies();
+            })
+
+            test('Processed uncategorized cookies should be deleted', () => {
+                const customConfig = {...config, 'delete-undefined-cookies': true }
+                const cookieManager = new CookieManager(customConfig);
+                const preferenceCookie = `preference-cookie=${JSON.stringify({ 'non-essential': 'off', 'another-non-essential': 'on' })}`;
+
+                document.cookie = cookieOne;
+                document.cookie = 'uncategorized-cookie=cookie-value'
+                document.cookie = preferenceCookie;
+
+                expect(document.cookie).toBe(`${cookieOne}; uncategorized-cookie=cookie-value; ${preferenceCookie}`);
+
+                cookieManager.init();
+
+                expect(document.cookie).toBe(`${cookieOne}; ${preferenceCookie}`);
+            });
+
+            test('Processed uncategorized cookies should be kept', () => {
+                const customConfig = {...config, 'delete-undefined-cookies': false }
+                const cookieManager = new CookieManager(customConfig);
+                const preferenceCookie = `preference-cookie=${JSON.stringify({ 'non-essential': 'off', 'another-non-essential': 'on'})}`;
+
+                document.cookie = cookieOne;
+                document.cookie = 'uncategorized-cookie=cookie-value'
+                document.cookie = preferenceCookie;
+
+                expect(document.cookie).toBe(`${cookieOne}; uncategorized-cookie=cookie-value; ${preferenceCookie}`);
+
+                cookieManager.init();
+
+                expect(document.cookie).toBe(`${cookieOne}; uncategorized-cookie=cookie-value; ${preferenceCookie}`);
+            })
+        });
+    })
+});
+
+describe('Config', () => {
+
+    test('Get preference cookie name', () => {
+        const cookieName = 'preference-cookie';
+        const configOpts = { 'user-preference-cookie-name': cookieName };
+
+        const config = new Config(configOpts);
+
+        expect(config.getPreferenceCookieName()).toBe(cookieName);
+    });
+
+    test('Get cookie manifest', () => {
+        const cookieManifest = [
+            {
+                "category-name": "essential",
+                "optional": false,
+                "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+            },
+            {
+                "category-name": "non-essential",
+                "optional": true,
+                "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+            },
+            {
+                "category-name": "another-non-essential",
+                "optional": true,
+                "cookies": [ "third-non-essential-cookie" ]
             }
-            if (c.indexOf(cname) === 0) {
-                return c.substring(cname.length, c.length);
-            }
+        ];
+        const configOpts = { 'cookie-manifest': cookieManifest };
+
+        const config = new Config(configOpts);
+
+        expect(config.getCookieManifest()).toBe(cookieManifest);
+    });
+
+    test('Get default consent', () => {
+        const defaultConsent = false;
+        const configOpts = { 'default-consent-value': defaultConsent };
+
+        const config = new Config(configOpts);
+
+        expect(config.getDefaultConsent()).toBe(defaultConsent);
+    });
+
+    test('Should delete uncategorized', () => {
+        let shouldDelete = false;
+        let configOpts = { 'delete-undefined-cookies': shouldDelete };
+        let config = new Config(configOpts);
+
+        expect(config.shouldDeleteUncategorized()).toBe(shouldDelete);
+
+        shouldDelete = true;
+        configOpts = { 'delete-undefined-cookies': shouldDelete };
+        config = new Config(configOpts);
+
+        expect(config.shouldDeleteUncategorized()).toBe(shouldDelete);
+    });
+});
+
+describe('Cookie', () => {
+    const mockCookieJar = getmMockedCookieJar();
+
+    const cookieName = 'test-cookie';
+    const cookieValue = 'test-value';
+    const cookieJSONValue = {
+        'test-json-key-1': 'test-json-value-1',
+        'test-json-key-2': 'test-json-value-2'
+    }
+    const cookiePath = 'path=/';
+    const categoryValue = 'test-category';
+    const noCategoryValue = 'un-categorized';
+
+    beforeEach(() => {
+        mockCookieJar.get.mockClear();
+        mockCookieJar.set.mockClear();
+        deleteAllCookies();
+    })
+
+    test('Get cookie name', () => {
+        const cookie = new Cookie(cookieName, cookieValue);
+        expect(cookie.getName()).toBe(cookieName);
+    });
+
+    test('Get cookie value', () => {
+        const cookie = new Cookie(cookieName, cookieValue);
+        expect(cookie.getValue()).toBe(cookieValue);
+    });
+
+    describe('Get cookie category', () => {
+        test('Get cookie category with defined category', () => {
+            const cookie = new Cookie(cookieName, cookieValue, categoryValue);
+            expect(cookie.getCategory()).toBe(categoryValue);
+        });
+
+        test('Get cookie category with no defined category', () => {
+            const cookie = new Cookie(cookieName, cookieValue);
+            expect(cookie.getCategory()).toBe(noCategoryValue);
+        });
+    });
+
+    describe('Disable cookie', () => {
+        const cookieClearDate = new Date(1000).toUTCString();
+
+        test('When cookie exists in browser, disabling cookie deletes the cookie', () => {
+            document.cookie = `${cookieName}=${cookieValue};${cookiePath}`;
+            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
+
+            mockCookieJar.set.mockClear();
+
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.disable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=;expires=${cookieClearDate};${cookiePath}`);
+            expect(document.cookie).toBe('')
+        });
+
+        test('When cookie does not exist in browser, disabling cookie does nothing', () => {
+            expect(document.cookie).toBe(``);
+
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.disable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=;expires=${cookieClearDate};${cookiePath}`);
+            expect(document.cookie).toBe('')
+        });
+    });
+
+    describe('Enable cookie', () => {
+
+        test('When cookie does not exist in browser, enabling cookie creates cookie', () => {
+            expect(document.cookie).toBe(``);
+
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.enable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};${cookiePath}`);
+            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
+        });
+
+        test('When cookie already exists in browser, overwrite existing cookie', () => {
+            document.cookie = `${cookieName}=${cookieValue};${cookiePath}`;
+            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`);
+            const newCookieValue = 'new-test-value';
+
+            const cookie = new Cookie(cookieName, newCookieValue);
+            cookie.enable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${newCookieValue};${cookiePath}`);
+            expect(document.cookie).toBe(`${cookieName}=${newCookieValue}`)
+        });
+
+        test('Cookie with primitive for value is created correctly', () => {
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.enable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};${cookiePath}`);
+            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
+        })
+
+        test('Cookie with JSON object for value is created correctly', () => {
+            const expectedCookieValue = JSON.stringify(cookieJSONValue);
+
+            const cookie = new Cookie(cookieName, cookieJSONValue);
+            cookie.enable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${expectedCookieValue};${cookiePath}`);
+            expect(document.cookie).toBe(`${cookieName}=${expectedCookieValue}`)
+        })
+
+        test('Cookie with expiry parameter is created correctly', () => {
+            const expiryMilliseconds = 7 * 24 * 60 * 60 * 1000;
+            const expiryDate = new Date(Date.now() + expiryMilliseconds).toUTCString();
+
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.enable(expiryMilliseconds); // 7 days
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};expires=${expiryDate};${cookiePath}`);
+            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
+        })
+    });
+});
+
+describe('ManifestCategory', () => {
+    const manifestName = 'test-cookie';
+
+    test('Get category name', () => {
+        const manifestCategory = new ManifestCategory(manifestName, true);
+        expect(manifestCategory.getName()).toBe(manifestName);
+    });
+
+    describe('Get category optional status', () => {
+        test('Get category is optional', () => {
+            const manifestCategory = new ManifestCategory(manifestName, true);
+            expect(manifestCategory.isOptional()).toBe(true);
+        })
+
+        test('Get category is essential', () => {
+            const manifestCategory = new ManifestCategory(manifestName, false);
+            expect(manifestCategory.isOptional()).toBe(false);
+        })
+
+        test('Get category is optional by default', () => {
+            const manifestCategory = new ManifestCategory(manifestName);
+            expect(manifestCategory.isOptional()).toBe(true);
+        })
+    })
+})
+
+describe('ManifestHandler', () => {
+    const preferenceCookieName = 'preference-cookie';
+    const cookieManifest = [
+        {
+            "category-name": "essential",
+            "optional": false,
+            "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+        },
+        {
+            "category-name": "non-essential",
+            "optional": true,
+            "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+        },
+        {
+            "category-name": "another-non-essential",
+            "optional": true,
+            "cookies": [ "third-non-essential-cookie" ]
         }
-        return false;
-    };
+    ];
+    const config = { getPreferenceCookieName: jest.fn(), getCookieManifest: jest.fn() }
+    when(config.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName);
 
-    const cookieAdd = (name, value, days) => {
-        let expires = "";
-        if (days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days*24*60*60*1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-    };
+    beforeEach(() => {
+        config.getCookieManifest.mockClear();
+    });
 
-    const createUserPreferenceCookie = (preferences) => {
-        cookieAdd('cm_user_preferences', JSON.stringify(preferences), 1);
-    };
+    describe('Get categories', () => {
 
-    const clearBody = () => {
-        let node = document.body.lastElementChild;
-        while(node) {
-            document.body.removeChild(node);
-            node = document.body.lastElementChild;
-        }
-    };
-
-    const clearCookies = () => {
-        const cookies = document.cookie.split(";");
-
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i];
-            const eqPos = cookie.indexOf("=");
-            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        }
-    };
-
-    const resetConfig = () => {
-        cm_config = {
-            "delete-undefined-cookies": true,
-            "user-preference-cookie-name": "cm_user_preferences",
-            "user-preference-cookie-secure": false,
-            "preference-form-saved-callback" : false,
-            "user-preference-cookie-expiry-days": 365,
-            "preference-form-id": "cm_user_preference_form",
-            "cookie-banner-id": "cm_cookie_notification",
-            "cookie-banner-visible-on-page-with-preference-form": true,
-            "cookie-banner-auto-hide": true,
-            "cookie-banner-accept-callback": chai.spy(),
-            "cookie-banner-reject-callback": chai.spy(),
-            "cookie-manifest": [
+        test('Get categories with single essential', () => {
+            const cookieManifest = [
                 {
                     "category-name": "essential",
                     "optional": false,
-                    "cookies": [
-                        "essential-cookie",
-                        "essential-cookie-with-suffix",
-                        "another-essential-cookie"
-                    ]
-                },
-                {
-                    "category-name": "analytics",
-                    "optional": true,
-                    "cookies": [
-                        "analytics-cookie",
-                        "analytics-cookie-with-suffix",
-                        "another-analytics-cookie"
-                    ]
-                },
-                {
-                    "category-name": "feedback",
-                    "optional": true,
-                    "cookies": [
-                        "feedback-cookie",
-                        "feedback-cookie-with-suffix",
-                        "another-feedback-cookie"
-                    ]
+                    "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
                 }
+            ];
+            const expectedCategories = [ new ManifestCategory('essential', false) ];
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategories()).toEqual(expectedCategories);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+
+        test('Get categories with multiple essential', () => {
+            const cookieManifest = [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+                },
+                {
+                    "category-name": "another-essential",
+                    "optional": false,
+                    "cookies": [ "third-essential-cookie", "fourth-essential-cookie" ]
+                },
+                {
+                    "category-name": "non-essential",
+                    "optional": true,
+                    "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+                }
+            ];
+            const expectedCategories = [
+                new ManifestCategory('essential', false),
+                new ManifestCategory('another-essential', false),
+                new ManifestCategory('non-essential', true),
             ]
-        };
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategories()).toEqual(expectedCategories);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+
+        test('Get categories with single optional', () => {
+            const cookieManifest = [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+                },
+                {
+                    "category-name": "non-essential",
+                    "optional": true,
+                    "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+                }
+            ];
+            const expectedCategories = [
+                new ManifestCategory('essential', false),
+                new ManifestCategory('non-essential', true),
+            ];
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategories()).toEqual(expectedCategories);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+
+        test('Get categories with multiple optional', () => {
+            const expectedCategories = [
+                new ManifestCategory('essential', false),
+                new ManifestCategory('non-essential', true),
+                new ManifestCategory('another-non-essential', true),
+            ];
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategories()).toEqual(expectedCategories);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+
+        test('Get categories with multiple essential and optional', () => {
+            const cookieManifest = [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+                },
+                {
+                    "category-name": "another-essential",
+                    "optional": false,
+                    "cookies": [ "third-essential-cookie", "fourth-essential-cookie" ]
+                },
+                {
+                    "category-name": "non-essential",
+                    "optional": true,
+                    "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+                },
+                {
+                    "category-name": "another-non-essential",
+                    "optional": true,
+                    "cookies": [ "third-non-essential-cookie" ]
+                }
+            ];
+            const expectedCategories = [
+                new ManifestCategory('essential', false),
+                new ManifestCategory('another-essential', false),
+                new ManifestCategory('non-essential', true),
+                new ManifestCategory('another-non-essential', true)
+            ]
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategories()).toEqual(expectedCategories);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+
+        test('Ignore categories when category is malformed', () => {
+            const cookieManifest = [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": 'broken'
+                },
+                {
+                    "category-name": "another-essential",
+                    "optional": false,
+                    "cookies": ['essential-cookie']
+                },
+                {
+                    "cookies": [ "third-essential-cookie", "fourth-essential-cookie" ]
+                },
+            ];
+            const expectedCategories = [
+                new ManifestCategory('another-essential', false)
+            ]
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategories()).toEqual(expectedCategories);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+    })
+
+    describe('Get category by cookie name', () => {
+
+        test(`Get 'internal' category when using preference cookie`, () => {
+            const expectedCategory = new ManifestCategory('internal', false);
+            const manifestHandler = new ManifestHandler(config);
+
+            expect(manifestHandler.getCategoryByCookieName(preferenceCookieName)).toEqual(expectedCategory)
+            expect(config.getCookieManifest).toHaveBeenCalledTimes(0);
+        })
+
+        test(`Get 'un-categorized' category when cookie does not exist in manifest`, () => {
+            const expectedCategory = new ManifestCategory('un-categorized');
+            const nonManifestCookie = 'non-manifest-cookie';
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategoryByCookieName(nonManifestCookie)).toEqual(expectedCategory)
+            expect(config.getCookieManifest).toHaveBeenCalled();
+
+        })
+
+        test(`Get category for essential cookie`, () => {
+            const expectedCategory = new ManifestCategory('essential', false);
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategoryByCookieName('first-essential-cookie')).toEqual(expectedCategory);
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+
+        test(`Get category for optional cookie`, () => {
+            const expectedCategory = new ManifestCategory('non-essential', true);
+            const manifestHandler = new ManifestHandler(config);
+
+            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+
+            expect(manifestHandler.getCategoryByCookieName('first-non-essential-cookie')).toEqual(expectedCategory)
+            expect(config.getCookieManifest).toHaveBeenCalled();
+        })
+    })
+})
+
+describe('CookieHandler', () => {
+    const manifestHandler = {
+        getCategoryByCookieName: jest.fn(),
+        getCategories: jest.fn()
     };
 
     beforeEach(() => {
-        clearBody();
-        clearCookies();
-        createBanner();
-        createPreferencesForm();
+        deleteAllCookies();
+    })
+
+    test('Get cookie', () => {
+        const cookieName = 'first-non-essential-cookie';
+        const cookieValue = 'test-value';
+        const cookiePath = 'path=/';
+        const cookieCategory = new ManifestCategory('non-essential', true)
+
+        document.cookie = `${cookieName}=${cookieValue};${cookiePath}`;
+        expect(document.cookie).toBe(`${cookieName}=${cookieValue}`);
+
+        const expectedCookie = new Cookie(cookieName, cookieValue, cookieCategory);
+        when(manifestHandler.getCategoryByCookieName).calledWith(cookieName).mockReturnValue(cookieCategory);
+
+        const cookieHandler = new CookieHandler(manifestHandler);
+        jest.spyOn(cookieHandler, 'getAllCookies');
+
+        expect(cookieHandler.getCookie(cookieName)).toStrictEqual(expectedCookie);
+        expect(cookieHandler.getAllCookies).toHaveBeenCalled();
     });
 
-    afterEach(() => {
-        resetConfig();
+    describe('Get all cookies', () => {
+
+        test('Get single cookie', () => {
+            const cookieName = 'first-non-essential-cookie';
+            const cookieCategory = new ManifestCategory('non-essential', true);
+            const expectedCookies = [ new Cookie(cookieName, 'test-value', cookieCategory) ];
+            const cookieHandler = new CookieHandler(manifestHandler);
+
+            document.cookie = `${cookieName}=test-value;path=/`;
+            expect(document.cookie).toBe('first-non-essential-cookie=test-value');
+
+            when(manifestHandler.getCategoryByCookieName).calledWith(cookieName).mockReturnValue(cookieCategory);
+
+            expect(cookieHandler.getAllCookies()).toStrictEqual(expectedCookies);
+            expect(manifestHandler.getCategoryByCookieName).toHaveBeenCalledWith(cookieName);
+        })
+
+        test('Get multiple cookies', () => {
+            const cookieOneName = 'first-non-essential-cookie';
+            const cookieOneCategory = new ManifestCategory('non-essential', true);
+            const cookieTwoName = 'first-essential-cookie';
+            const cookieTwoCategory = new ManifestCategory('essential', true);
+            const expectedCookies = [
+                new Cookie(cookieOneName, 'test-value', cookieOneCategory),
+                new Cookie(cookieTwoName, 'test-value', cookieTwoCategory)
+            ];
+            const cookieHandler = new CookieHandler(manifestHandler);
+
+            document.cookie = 'first-non-essential-cookie=test-value;path=/';
+            document.cookie = 'first-essential-cookie=test-value;path=/';
+            expect(document.cookie).toBe('first-non-essential-cookie=test-value; first-essential-cookie=test-value');
+
+            when(manifestHandler.getCategoryByCookieName).calledWith(cookieOneName).mockReturnValue(cookieOneCategory);
+            when(manifestHandler.getCategoryByCookieName).calledWith(cookieTwoName).mockReturnValue(cookieTwoCategory);
+
+            expect(cookieHandler.getAllCookies()).toStrictEqual(expectedCookies);
+            expect(manifestHandler.getCategoryByCookieName).toHaveBeenCalledWith(cookieOneName);
+            expect(manifestHandler.getCategoryByCookieName).toHaveBeenCalledWith(cookieTwoName);
+        })
+    })
+})
+
+describe('UserPreferences', () => {
+    const manifestHandler = {
+        getCategoryByCookieName: jest.fn(),
+        getCategories: jest.fn()
+    };
+    const config = {
+        getPreferenceCookieName: jest.fn(),
+        getCookieManifest: jest.fn(),
+        getDefaultConsent: jest.fn()
+    };
+    const cookieHandler = {
+        getAllCookies: jest.fn(),
+        getCookie: jest.fn()
+    };
+    const mockCookieJar = getmMockedCookieJar();
+
+    const preferenceCookieName = 'preference-cookie';
+    const expiryMilliseconds = 365 * 24 * 60 * 60 * 1000;
+
+    beforeEach(() => {
+        deleteAllCookies();
     });
 
-    describe('User has no cookie preferences set', () => {
+    describe('Process preferences', () => {
 
-        it ('User preference cookie is not defined', () => {
-            cookieManager.init(cm_config);
-            expect(cookieExists('cm_user_preferences')).false;
+        test('Should load preferences from cookie when preference cookie is present', () => {
+            const preferenceCookie = new Cookie(preferenceCookieName, { 'non-essential': true }, 'internal');
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+
+            userPreferences.getPreferenceCookie = jest.fn();
+            userPreferences.loadPreferencesFromCookie = jest.fn();
+            userPreferences.setPreferences = jest.fn();
+
+            when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferenceCookie);
+
+            userPreferences.processPreferences()
+            expect(userPreferences.getPreferenceCookie).toHaveBeenCalled();
+            expect(userPreferences.loadPreferencesFromCookie).toHaveBeenCalledWith(preferenceCookie);
+            expect(userPreferences.setPreferences).toHaveBeenCalled();
         });
 
-        describe('Cookie Banner', () => {
+        test('Should load preferences from defaults when preference cookie is not present', () => {
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-            it('Exists in the DOM', () => {
-                const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                expect(cookie_banner_element, 'Cookie Banner container does not exist').to.exist;
-                expect(cookie_banner_element.querySelector('button[data-cm-action="accept"]'), 'Cookie Banner Accept button does not exist').to.exist;
-            });
+            userPreferences.getPreferenceCookie = jest.fn();
+            userPreferences.loadPreferenceDefaults = jest.fn();
+            userPreferences.setPreferences = jest.fn();
 
-            describe('Cookie Banner is configured', () => {
+            when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(undefined);
 
-                it('Is Visible', () => {
-                    cookieManager.init(cm_config);
-                    const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(false);
-                });
+            userPreferences.processPreferences()
+            expect(userPreferences.getPreferenceCookie).toHaveBeenCalled();
+            expect(userPreferences.loadPreferenceDefaults).toHaveBeenCalled();
+            expect(userPreferences.setPreferences).toHaveBeenCalled();
+        });
+    })
 
-                describe('Clicking Accept button will set preference and hide Cookie Banner', () => {
+    describe('Get preferences', () => {
 
-                    beforeEach(() => {
-                        cookieManager.init(cm_config);
+        test('Get preferences which have been set', () => {
+            const preferences = { essential: true };
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-                        const cookie_banner_accept_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="accept"]');
-                        cookie_banner_accept_all_button.click();
-                    });
-
-                    it('Clicking Accept creates User Preference Cookie', () => {
-                        expect(cookieExists('cm_user_preferences')).true;
-                    });
-
-                    it('Clicking Accept hides the Cookie Banner', () => {
-                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be hidden').eql(true);
-                    });
-
-                    it('Clicking Accept calls cookie-banner-accept-callback', () => {
-                        expect(cm_config['cookie-banner-accept-callback']).have.been.called.exactly(1);
-                    });
-                });
-
-                describe('Clicking Reject button will set preference and hide Cookie Banner', () => {
-
-                    beforeEach(() => {
-                        cookieManager.init(cm_config);
-
-                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="reject"]');
-                        cookie_banner_reject_all_button.click();
-                    });
-
-                    it('Clicking Reject creates User Preference Cookie', () => {
-                        expect(cookieExists('cm_user_preferences')).true;
-                    });
-
-                    it('Clicking Reject hides the Cookie Banner', () => {
-                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be hidden').eql(true);
-                    });
-
-                    it('Clicking Reject calls cookie-banner-reject-callback', () => {
-                        expect(cm_config['cookie-banner-reject-callback']).have.been.called.exactly(1);
-                    });
-
-                });
-
-                describe('Clicking Hide Banner button will hide Cookie Banner', () => {
-                    beforeEach(() => {
-                        cookieManager.init(cm_config);
-
-                        const cookie_banner_hide_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="hide"]');
-                        cookie_banner_hide_button.click();
-                    });
-
-                    it('Clicking Hide Banner hides the Cookie Banner', () => {
-                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to not be visible').eql(true);
-                    });
-                })
-
-                describe('Cookie Banner is configured to NOT be displayed on same page as form', () => {
-
-                    beforeEach(() => {
-                        cm_config['cookie-banner-visible-on-page-with-preference-form'] = false;
-                    });
-
-                    it('Is NOT Visible', () => {
-                        cookieManager.init((cm_config));
-                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be hidden').eql(true);
-                    });
-                });
-            });
-
-            describe('Cookie Banner is configured and auto-hide is disabled', () => {
-
-                it('Is Visible', () => {
-                    cookieManager.init(cm_config);
-                    const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(false);
-                });
-
-                describe('Clicking Accept button will set preference', () => {
-
-                    beforeEach(() => {
-                        cm_config['cookie-banner-auto-hide'] = false;
-                        cookieManager.init(cm_config);
-
-                        const cookie_banner_accept_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="accept"]');
-                        cookie_banner_accept_all_button.click();
-                    });
-
-                    it('Clicking Accept creates User Preference Cookie', () => {
-                        expect(cookieExists('cm_user_preferences')).true;
-                    });
-
-                    it('Clicking Accept does not hide the Cookie Banner', () => {
-                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(!cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(true);
-                    });
-
-                    it('Clicking Accept calls cookie-banner-accept-callback', () => {
-                        expect(cm_config['cookie-banner-accept-callback']).have.been.called.exactly(1);
-                    });
-                });
-
-                describe('Clicking Reject button will set preference', () => {
-
-                    beforeEach(() => {
-                        cm_config['cookie-banner-auto-hide'] = false;
-                        cookieManager.init(cm_config);
-
-                        const cookie_banner_reject_all_button = document.querySelector('div#cm_cookie_notification button[data-cm-action="reject"]');
-                        cookie_banner_reject_all_button.click();
-                    });
-
-                    it('Clicking Reject creates User Preference Cookie', () => {
-                        expect(cookieExists('cm_user_preferences')).true;
-                    });
-
-                    it('Clicking Reject does not hide the Cookie Banner', () => {
-                        const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                        expect(!cookie_banner_element.hidden, 'Expected Cookie Banner to be visible').eql(true);
-                    });
-
-                    it('Clicking Reject calls cookie-banner-reject-callback', () => {
-                        expect(cm_config['cookie-banner-reject-callback']).have.been.called.exactly(1);
-                    });
-
-                });
-            });
-
-            describe('Cookie Banner is NOT configured', () => {
-
-                beforeEach(() => {
-                    cm_config['cookie-banner-id'] = false;
-                    cookieManager.init(cm_config);
-                });
-
-                it ('Is Ignored', () => {
-                    cookieManager.init((cm_config));
-                    const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be NOT visible').eql(true);
-                });
-            });
+            userPreferences.setPreferences(preferences);
+            expect(userPreferences.getPreferences()).toStrictEqual(preferences);
         });
 
-        describe('All optional cookies are removed', () => {
+        test('Get empty preferences when preferences havent been set', () => {
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-            beforeEach(() => {
-                cookieAdd('essential-cookie', '', 1);
-                cookieAdd('essential-cookie-with-suffix', '', 1);
-                cookieAdd('another-essential-cookie', '', 1);
-                cookieAdd('analytics-cookie', '', 1);
-                cookieAdd('analytics-cookie-with-suffix', '', 1);
-                cookieAdd('another-analytics-cookie', '', 1);
-                cookieAdd('feedback-cookie-with-suffix', '', 1);
-                cookieAdd('feedback-cookie', '', 1);
-                cookieAdd('another-feedback-cookie', '', 1);
-                cookieManager.init(cm_config);
-            });
-
-            it('Essential cookies only remain', () => {
-                expect(cookieExists('essential-cookie')).true;
-                expect(cookieExists('essential-cookie-with-suffix')).true;
-                expect(cookieExists('another-essential-cookie')).true;
-                expect(cookieExists('analytics-cookie')).false;
-                expect(cookieExists('analytics-cookie-with-suffix')).false;
-                expect(cookieExists('another-analytics-cookie')).false;
-                expect(cookieExists('feedback-cookie')).false;
-                expect(cookieExists('feedback-cookie-with-suffix')).false;
-                expect(cookieExists('another-feedback-cookie')).false;
-            });
+            expect(userPreferences.getPreferences()).toStrictEqual({});
         });
+    })
+
+    test('Set preferences', () => {
+        const preferences = { essential: true };
+        const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+
+        expect(userPreferences.getPreferences()).toStrictEqual({});
+        userPreferences.setPreferences(preferences);
+        expect(userPreferences.getPreferences()).toStrictEqual(preferences);
     });
 
-    describe('User has cookie preferences set', () => {
+    test('Get preference cookie', () => {
+        const preferences = { essential: true };
+        const expectedPreferenceCookie = new Cookie(preferenceCookieName, preferences, 'internal');
+        const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-        beforeEach(() => {
-            createUserPreferenceCookie({
-                'analytics': 'on',
-                'feedback': 'off'
-            });
-        });
+        when(config.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName)
+        when(cookieHandler.getCookie).calledWith(preferenceCookieName).mockReturnValue(expectedPreferenceCookie)
 
-        describe('Cookie Banner', () => {
-
-            it('Exists in the DOM', () => {
-                const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                expect(cookie_banner_element, 'Cookie Banner container does not exist').to.exist;
-                expect(cookie_banner_element.querySelector('button[data-cm-action="accept"]'), 'Cookie Banner Accept button does not exist').to.exist;
-            });
-
-            describe('Cookie Banner is configured', () => {
-
-                it('Is Not Visible', () => {
-                    cookieManager.init(cm_config);
-                    const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be NOT visible').eql(true);
-                });
-
-            });
-
-            describe('Cookie Banner is NOT configured', () => {
-
-                beforeEach(() => {
-                    cm_config['cookie-banner-id'] = false;
-                    cookieManager.init(cm_config);
-                });
-
-                it ('Is Ignored', () => {
-                    cookieManager.init((cm_config));
-                    const cookie_banner_element = document.querySelector('div#cm_cookie_notification');
-                    expect(cookie_banner_element.classList.contains('hidden'), 'Expected Cookie Banner to be NOT visible').eql(true);
-                });
-            });
-        });
-
-        describe('Any non-optional cookies are not removed', () => {
-
-            beforeEach(() => {
-                cookieAdd('essential-cookie', '', 1);
-                cookieAdd('essential-cookie-with-suffix', '', 1);
-                cookieAdd('another-essential-cookie', '', 1);
-                cookieManager.init(cm_config);
-            });
-
-            it ('Non-Optional cookies remain', () => {
-                expect(cookieExists('essential-cookie')).true;
-                expect(cookieExists('essential-cookie-with-suffix')).true;
-                expect(cookieExists('another-essential-cookie')).true;
-            });
-
-        });
-
-        describe('Only cookies in categories with consent are not removed', () => {
-
-            beforeEach(() => {
-                cookieAdd('analytics-cookie', '', 1);
-                cookieAdd('analytics-cookie-with-suffix', '', 1);
-                cookieAdd('another-analytics-cookie', '', 1);
-                cookieAdd('feedback-cookie-with-suffix', '', 1);
-                cookieAdd('feedback-cookie', '', 1);
-                cookieAdd('another-feedback-cookie', '', 1);
-                cookieManager.init(cm_config);
-            });
-
-            it ('Only analytics cookies remain', () => {
-                expect(cookieExists('analytics-cookie')).true;
-                expect(cookieExists('analytics-cookie-with-suffix')).true;
-                expect(cookieExists('another-analytics-cookie')).true;
-                expect(cookieExists('feedback-cookie')).false;
-                expect(cookieExists('feedback-cookie-with-suffix')).false;
-                expect(cookieExists('another-feedback-cookie')).false;
-            });
-
-            describe('Even when consent uses string booleans instead of on/off', () => {
-
-                beforeEach(() => {
-                    createUserPreferenceCookie({
-                        'analytics': 'true',
-                        'feedback': 'false'
-                    });
-                });
-
-                it ('Only analytics cookies remain', () => {
-                    expect(cookieExists('analytics-cookie')).true;
-                    expect(cookieExists('analytics-cookie-with-suffix')).true;
-                    expect(cookieExists('another-analytics-cookie')).true;
-                    expect(cookieExists('feedback-cookie')).false;
-                    expect(cookieExists('feedback-cookie-with-suffix')).false;
-                    expect(cookieExists('another-feedback-cookie')).false;
-                });
-
-            });
-        });
-
-        describe('Cookies beginning with prefix defined in manifest are removed', () => {
-            beforeEach(() => {
-                cookieAdd('feedback-cookie', '', 1);
-                cookieAdd('feedback-cookie-with-suffix', '', 1);
-                cookieAdd('feedback-cookie-with-more-suffix', '', 1);
-                cookieAdd('feedback-cookie-with-even-more-suffix', '', 1);
-                cookieManager.init(cm_config);
-            });
-
-            it ('Cookies are removed', () => {
-                expect(cookieExists('feedback-cookie')).false;
-                expect(cookieExists('feedback-cookie-with-suffix')).false;
-                expect(cookieExists('feedback-cookie-with-more-suffix')).false;
-                expect(cookieExists('feedback-cookie-with-even-more-suffix')).false;
-            });
-        });
-
-        describe('Cookie Manager never removes own user preference cookie', () => {
-
-            it ('User preference cookie remains', () => {
-                cookieManager.init(cm_config);
-                expect(cookieExists('cm_user_preferences')).true;
-            });
-        });
-
+        expect(userPreferences.getPreferenceCookie()).toBe(expectedPreferenceCookie);
+        expect(config.getPreferenceCookieName).toHaveBeenCalled();
+        expect(cookieHandler.getCookie).toHaveBeenCalledWith(preferenceCookieName);
     });
 
-    describe('User Preference Form', () => {
+    describe('Save preference cookie', () => {
 
-        beforeEach(() => {
-            cookieManager.init(cm_config);
+        test('Save single preference to cookie', () => {
+            const preferences = { essential: true };
+            const expectedCookiePreferences = { essential: 'on' };
+            const expiryDate = new Date(Date.now() + expiryMilliseconds).toUTCString();
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+
+            userPreferences.getPreferences = jest.fn();
+
+            when(userPreferences.getPreferences).calledWith().mockReturnValue(preferences);
+            when(config.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName)
+
+            userPreferences.savePreferencesToCookie();
+            expect(userPreferences.getPreferences).toHaveBeenCalled();
+            expect(config.getPreferenceCookieName).toHaveBeenCalled();
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${preferenceCookieName}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};path=/`);
+            expect(document.cookie).toBe(`${preferenceCookieName}=${JSON.stringify(expectedCookiePreferences)}`);
         });
 
-        it('Exists in the DOM', () => {
-            const user_preference_form = document.querySelector('form#cm_user_preference_form');
-            expect(user_preference_form, 'User preference form does not exist').to.exist;
+        test('Save multiple preferences to cookie', () => {
+            const preferences = { 'non-essential': true, 'another-non-essential': false };
+            const expectedCookiePreferences = { 'non-essential': 'on', 'another-non-essential': 'off' };
+            const expiryDate = new Date(Date.now() + expiryMilliseconds).toUTCString();
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+
+            userPreferences.getPreferences = jest.fn();
+
+            when(userPreferences.getPreferences).calledWith().mockReturnValue(preferences);
+            when(config.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName)
+
+            userPreferences.savePreferencesToCookie();
+            expect(userPreferences.getPreferences).toHaveBeenCalled();
+            expect(config.getPreferenceCookieName).toHaveBeenCalled();
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${preferenceCookieName}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};path=/`);
+            expect(document.cookie).toBe(`${preferenceCookieName}=${JSON.stringify(expectedCookiePreferences)}`);
+        });
+    })
+
+    describe('Load preferences from cookie', () => {
+
+        test('Load from cookie successfully', () => {
+            const categoryName = 'non-essential'
+            const preferences = { [categoryName]: 'off' };
+
+            const preferencesCookie = new Cookie(preferenceCookieName, JSON.stringify(preferences), 'internal');
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+
+            userPreferences.getPreferenceCookie = jest.fn();
+
+            when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
+            when(manifestHandler.getCategories).calledWith().mockReturnValue([new ManifestCategory(categoryName)]);
+
+            expect(userPreferences.loadPreferencesFromCookie()).toStrictEqual({'non-essential': false});
         });
 
-        describe('User preferences are saved on form submit', () => {
+        test('Handle JSON parse of cookie failure', () => {
+            const preferencesCookie = new Cookie(preferenceCookieName, { 'non-essential': 'off' }, 'internal');
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-            it('Submit button exists in DOM', () => {
-                const user_preference_form = document.querySelector('form#cm_user_preference_form');
-                const submit_button = user_preference_form.querySelector('input[type="submit"]');
-                expect(submit_button, 'Submit button does not exist on user preference form').to.exist;
-            });
+            preferencesCookie.disable = jest.fn();
+            userPreferences.getPreferenceCookie = jest.fn();
+            userPreferences.loadPreferenceDefaults = jest.fn();
 
-            it('Form submit generates user preference cookie', () => {
-                const user_preference_form = document.querySelector('form#cm_user_preference_form');
-                const submit_button = user_preference_form.querySelector('input[type="submit"]');
+            when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
+            when(userPreferences.loadPreferenceDefaults).calledWith().mockReturnValue({ 'non-essential': false });
 
-                expect(cookieExists('cm_user_preferences')).false;
+            expect(userPreferences.loadPreferencesFromCookie()).toStrictEqual({ 'non-essential': false });
+            expect(preferencesCookie.disable).toHaveBeenCalled();
+            expect(userPreferences.loadPreferenceDefaults).toHaveBeenCalled();
+        })
 
-                document.getElementById('analytics_off').checked = true;
-                document.getElementById('feedback_on').checked = true;
+        test('Handle malformed cookie failure', () => {
+            const preferencesCookie = new Cookie(preferenceCookieName, JSON.stringify('malformedCookie'), 'internal');
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-                submit_button.click();
+            preferencesCookie.disable = jest.fn();
+            userPreferences.getPreferenceCookie = jest.fn();
+            userPreferences.loadPreferenceDefaults = jest.fn();
 
-                expect(cookieExists('cm_user_preferences')).true;
+            when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
+            when(userPreferences.loadPreferenceDefaults).calledWith().mockReturnValue({ 'non-essential': false });
 
-                const user_preferences = JSON.parse(cookieGet('cm_user_preferences'));
+            expect(userPreferences.loadPreferencesFromCookie()).toStrictEqual({ 'non-essential': false });
+            expect(preferencesCookie.disable).toHaveBeenCalled();
+            expect(userPreferences.loadPreferenceDefaults).toHaveBeenCalled();
+        })
 
-                console.log(cookieGet('cm_user_preferences'));
-                console.log(document.body.innerHTML);
+        test('Handle outdated cookie failure', () => {
+            const preferences = { 'non-essential': 'off' };
+            const expectedPreferences = {'non-essential': false, 'second-non-essential': false};
 
-                expect(user_preferences['analytics'], 'Expected user preferences for analytics to be off').eql('off');
-                expect(user_preferences['feedback'], 'Expected user preferences for feedback to be off').eql('on');
-            });
-        });
+            const preferencesCookie = new Cookie(preferenceCookieName, JSON.stringify(preferences), 'internal');
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
-        describe('Form defaults to saved preferences if available', () => {
+            preferencesCookie.disable = jest.fn();
+            userPreferences.getPreferenceCookie = jest.fn();
+            userPreferences.loadPreferenceDefaults = jest.fn();
 
-            beforeEach(() => {
-                createUserPreferenceCookie({
-                    "analytics": "on",
-                    "feedback": "off"
-                });
+            when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
+            when(userPreferences.loadPreferenceDefaults).calledWith().mockReturnValue(expectedPreferences);
+            when(manifestHandler.getCategories).calledWith().mockReturnValue([
+                new ManifestCategory('non-essential'),
+                new ManifestCategory('second-non-essential')
+            ]);
 
-                cm_config['set-checkboxes-in-preference-form'] = true;
+            expect(userPreferences.loadPreferencesFromCookie()).toStrictEqual(expectedPreferences);
+            expect(preferencesCookie.disable).toHaveBeenCalled();
+            expect(userPreferences.loadPreferenceDefaults).toHaveBeenCalled();
+        })
+    })
 
-                cookieManager.init(cm_config);
-            });
+    describe('Load preferences from default', () => {
 
-            it('Form categories default state reflects current user preferences', () => {
+        test('Load default preferences as off', () => {
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+            const manifestCategoryOne = new ManifestCategory('essential', false);
+            const manifestCategoryTwo = new ManifestCategory('non-essential', true);
 
-                expect(document.getElementById('analytics_on').checked).eql(true);
-                expect(document.getElementById('analytics_off').checked).eql(false);
-                expect(document.getElementById('feedback_on').checked).eql(false);
-                expect(document.getElementById('feedback_off').checked).eql(true);
+            when(config.getDefaultConsent).calledWith().mockReturnValue(false);
+            when(manifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
 
-            });
-        });
+            expect(userPreferences.loadPreferenceDefaults()).toStrictEqual({'non-essential': false})
+            expect(config.getDefaultConsent).toHaveBeenCalled();
+            expect(manifestHandler.getCategories).toHaveBeenCalled();
+        })
 
-    });
+        test('Load default preferences as on', () => {
+            const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
+            const manifestCategoryOne = new ManifestCategory('essential', false);
+            const manifestCategoryTwo = new ManifestCategory('non-essential', true);
 
-    describe('Removal of undefined cookies', () => {
+            when(config.getDefaultConsent).calledWith().mockReturnValue(true);
+            when(manifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
 
-        describe('Undefined cookies are removed', () => {
-
-            beforeEach(() => {
-                cm_config['delete-undefined-cookies'] = true;
-
-                // Add Cookies
-                cookieAdd('undefined-cookie-a', '', 1);
-                cookieAdd('undefined-cookie-b', '', 1);
-
-                cookieManager.init((cm_config));
-            });
-
-            it('Cookies no longer exist', () => {
-                expect(cookieExists('undefined-cookie-a')).false;
-                expect(cookieExists('undefined-cookie-b')).false;
-            });
-        });
-
-        describe('Undefined cookies are not removed', () => {
-
-            beforeEach(() => {
-                cm_config['delete-undefined-cookies'] = false;
-
-                // Add Cookies
-                cookieAdd('undefined-cookie-a', '', 1);
-                cookieAdd('undefined-cookie-b', '', 1);
-
-                cookieManager.init((cm_config));
-            });
-
-            it('Cookies still exist', () => {
-                expect(cookieExists('undefined-cookie-a')).true;
-                expect(cookieExists('undefined-cookie-b')).true;
-            });
-        });
-
-    });
-
-
-});
+            expect(userPreferences.loadPreferenceDefaults()).toStrictEqual({'non-essential': true})
+            expect(config.getDefaultConsent).toHaveBeenCalled();
+            expect(manifestHandler.getCategories).toHaveBeenCalled();
+        })
+    })
+})
