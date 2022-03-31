@@ -2,10 +2,11 @@
   "name": "@hmcts/cookie-manager",
   "version": "1.0.0",
   "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
-  "main": "cookie-manager.js",
+  "main": "src/cookieManager.js",
   "scripts": {
-    "test": "nyc --check-coverage --lines 80 --reporter=text mocha",
-    "test-html": "nyc --check-coverage --lines 80 --reporter=html mocha --reporter mocha-simple-html-reporter --reporter-options output=test/index.html"
+    "build": "rollup -c src/rollup.config.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "engines": {
     "node": ">=10.0.0"
@@ -20,12 +21,27 @@
     "url": "https://github.com/hmcts/cookie-manager/issues"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "testPathIgnorePatterns": [
+      "<rootDir>/src/common.test.js"
+    ]
   },
   "homepage": "https://github.com/hmcts/cookie-manager#readme",
   "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^13.1.3",
     "jest": "^27.5.1",
     "jest-when": "^3.5.1",
-    "nyc": "^15.0.0"
+    "rollup": "^2.70.1"
   }
 }
