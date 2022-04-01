@@ -1,6 +1,6 @@
 import {when} from "jest-when";
-import ManifestCategory from "../models/manifestCategory";
-import ManifestHandler from "./manifestHandler";
+import ManifestCategory from "../../main/models/manifestCategory";
+import ManifestHandler from "../../main/handlers/manifestHandler";
 
 describe('ManifestHandler', () => {
     const preferenceCookieName = 'preference-cookie';

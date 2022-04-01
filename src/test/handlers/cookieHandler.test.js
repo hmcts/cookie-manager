@@ -1,8 +1,8 @@
 import {when} from "jest-when";
-import CookieHandler from "./cookieHandler";
+import CookieHandler from "../../main/handlers/cookieHandler";
 import {deleteAllCookies} from "../common.test";
-import ManifestCategory from "../models/manifestCategory";
-import Cookie from "../models/cookie";
+import ManifestCategory from "../../main/models/manifestCategory";
+import Cookie from "../../main/models/cookie";
 
 describe('CookieHandler', () => {
     const manifestHandler = {

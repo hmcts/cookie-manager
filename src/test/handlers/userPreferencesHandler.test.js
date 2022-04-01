@@ -1,7 +1,7 @@
 import {when} from "jest-when";
-import UserPreferences from "./userPreferencesHandler";
-import Cookie from "../models/cookie";
-import ManifestCategory from "../models/manifestCategory";
+import UserPreferences from "../../main/handlers/userPreferencesHandler";
+import Cookie from "../../main/models/cookie";
+import ManifestCategory from "../../main/models/manifestCategory";
 import {getmMockedCookieJar, deleteAllCookies} from "../common.test";
 
 describe('UserPreferences', () => {

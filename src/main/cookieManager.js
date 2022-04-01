@@ -2,6 +2,7 @@ import Config from "./models/config";
 import ManifestHandler from "./handlers/manifestHandler";
 import CookieHandler from "./handlers/cookieHandler";
 import UserPreferences from "./handlers/userPreferencesHandler";
+import CookieBannerHandler from "./handlers/cookieBannerHandler";
 
 export default function CookieManager(config) {
     this._Config = new Config(config);
@@ -12,6 +13,7 @@ export default function CookieManager(config) {
 
 CookieManager.prototype.init = function () {
     this._UserPreferences.processPreferences();
+    new CookieBannerHandler(this._Config, this._UserPreferences).setupEventListeners();
     this.processCookies();
 };
 

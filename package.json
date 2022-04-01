@@ -2,9 +2,9 @@
   "name": "@hmcts/cookie-manager",
   "version": "1.0.0",
   "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
-  "main": "src/cookieManager.js",
+  "main": "src/main/cookieManager.js",
   "scripts": {
-    "build": "rollup -c src/rollup.config.js",
+    "build": "rollup -c rollup.config.js",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
@@ -31,7 +31,7 @@
       }
     },
     "testPathIgnorePatterns": [
-      "<rootDir>/src/common.test.js"
+      "<rootDir>/src/test/common.test.js"
     ]
   },
   "homepage": "https://github.com/hmcts/cookie-manager#readme",

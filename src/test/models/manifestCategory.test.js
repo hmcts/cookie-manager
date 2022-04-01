@@ -1,4 +1,4 @@
-import ManifestCategory from "./manifestCategory";
+import ManifestCategory from "../../main/models/manifestCategory";
 
 describe('ManifestCategory', () => {
     const manifestName = 'test-cookie';

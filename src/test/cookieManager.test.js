@@ -1,4 +1,4 @@
-import CookieManager from "./cookieManager";
+import CookieManager from "../main/cookieManager";
 import {deleteAllCookies} from "./common.test";
 
 describe('CookieManager', () => {

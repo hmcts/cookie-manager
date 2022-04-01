@@ -1,4 +1,4 @@
-import Cookie from "./cookie";
+import Cookie from "../../main/models/cookie";
 import {deleteAllCookies, getmMockedCookieJar} from "../common.test";
 
 describe('Cookie', () => {
