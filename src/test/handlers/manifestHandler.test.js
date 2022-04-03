@@ -28,7 +28,7 @@ describe('ManifestHandler', () => {
         config.getCookieManifest.mockClear();
     });
 
-    describe('Get categories', () => {
+    describe('getCategories', () => {
 
         test('Get categories with single essential', () => {
             const cookieManifest = [
@@ -182,7 +182,7 @@ describe('ManifestHandler', () => {
         })
     })
 
-    describe('Get category by cookie name', () => {
+    describe('getCategoryByCookieName', () => {
 
         test(`Get 'internal' category when using preference cookie`, () => {
             const expectedCategory = new ManifestCategory('internal', false);

@@ -1,5 +1,5 @@
 import CookieManager from "../main/cookieManager";
-import {deleteAllCookies} from "./common.test";
+import {deleteAllCookies} from "./common/common";
 
 describe('CookieManager', () => {
     const config = {

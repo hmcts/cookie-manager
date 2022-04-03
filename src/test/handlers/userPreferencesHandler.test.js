@@ -2,7 +2,7 @@ import {when} from "jest-when";
 import UserPreferences from "../../main/handlers/userPreferencesHandler";
 import Cookie from "../../main/models/cookie";
 import ManifestCategory from "../../main/models/manifestCategory";
-import {getmMockedCookieJar, deleteAllCookies} from "../common.test";
+import {getmMockedCookieJar, deleteAllCookies} from "../common/common";
 
 describe('UserPreferences', () => {
     const manifestHandler = {
@@ -27,7 +27,7 @@ describe('UserPreferences', () => {
         deleteAllCookies();
     });
 
-    describe('Process preferences', () => {
+    describe('processPreferences', () => {
 
         test('Should load preferences from cookie when preference cookie is present', () => {
             const preferenceCookie = new Cookie(preferenceCookieName, { 'non-essential': true }, 'internal');
@@ -61,7 +61,7 @@ describe('UserPreferences', () => {
         });
     })
 
-    describe('Get preferences', () => {
+    describe('getPreferences', () => {
 
         test('Get preferences which have been set', () => {
             const preferences = { essential: true };
@@ -78,7 +78,7 @@ describe('UserPreferences', () => {
         });
     })
 
-    test('Set preferences', () => {
+    test('setPreferences', () => {
         const preferences = { essential: true };
         const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
 
@@ -87,7 +87,7 @@ describe('UserPreferences', () => {
         expect(userPreferences.getPreferences()).toStrictEqual(preferences);
     });
 
-    test('Get preference cookie', () => {
+    test('getPreferenceCookie', () => {
         const preferences = { essential: true };
         const expectedPreferenceCookie = new Cookie(preferenceCookieName, preferences, 'internal');
         const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);
@@ -100,7 +100,7 @@ describe('UserPreferences', () => {
         expect(cookieHandler.getCookie).toHaveBeenCalledWith(preferenceCookieName);
     });
 
-    describe('Save preference cookie', () => {
+    describe('savePreferencesToCookie', () => {
 
         test('Save single preference to cookie', () => {
             const preferences = { essential: true };
@@ -139,7 +139,7 @@ describe('UserPreferences', () => {
         });
     })
 
-    describe('Load preferences from cookie', () => {
+    describe('loadPreferencesFromCookie', () => {
 
         test('Load from cookie successfully', () => {
             const categoryName = 'non-essential'
@@ -212,7 +212,7 @@ describe('UserPreferences', () => {
         })
     })
 
-    describe('Load preferences from default', () => {
+    describe('loadPreferenceDefaults', () => {
 
         test('Load default preferences as off', () => {
             const userPreferences = new UserPreferences(config, manifestHandler, cookieHandler);

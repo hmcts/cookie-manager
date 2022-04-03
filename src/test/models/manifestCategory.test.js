@@ -3,12 +3,13 @@ import ManifestCategory from "../../main/models/manifestCategory";
 describe('ManifestCategory', () => {
     const manifestName = 'test-cookie';
 
-    test('Get category name', () => {
+    test('getName', () => {
         const manifestCategory = new ManifestCategory(manifestName, true);
         expect(manifestCategory.getName()).toBe(manifestName);
     });
 
-    describe('Get category optional status', () => {
+    describe('isOptional', () => {
+
         test('Get category is optional', () => {
             const manifestCategory = new ManifestCategory(manifestName, true);
             expect(manifestCategory.isOptional()).toBe(true);

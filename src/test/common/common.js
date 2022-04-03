@@ -1,4 +1,5 @@
 /* File for common test functions, ignored in Jest */
+import { promises as fs } from "fs";
 
 export const getmMockedCookieJar = () => ({
     get: jest.spyOn(document, 'cookie', 'get'),
@@ -16,3 +17,10 @@ export const deleteAllCookies = () => {
     }
 }
 
+export const loadHTMLFromFile = async (file) => {
+    document.body.innerHTML = await fs.readFile(__dirname + '/../html/' + file, "utf-8");
+}
+
+export const wipeDocument = () => {
+    document.body.innerHTML = '';
+}

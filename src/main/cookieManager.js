@@ -3,6 +3,7 @@ import ManifestHandler from "./handlers/manifestHandler";
 import CookieHandler from "./handlers/cookieHandler";
 import UserPreferences from "./handlers/userPreferencesHandler";
 import CookieBannerHandler from "./handlers/cookieBannerHandler";
+import PreferencesFormHandler from "./handlers/preferencesFormHandler";
 
 export default function CookieManager(config) {
     this._Config = new Config(config);
@@ -13,8 +14,9 @@ export default function CookieManager(config) {
 
 CookieManager.prototype.init = function () {
     this._UserPreferences.processPreferences();
-    new CookieBannerHandler(this._Config, this._UserPreferences).setupEventListeners();
     this.processCookies();
+    new CookieBannerHandler(this._Config, this._UserPreferences).init();
+    new PreferencesFormHandler(this._Config, this._UserPreferences).init();
 };
 
 CookieManager.prototype.processCookies = function () {

@@ -2,7 +2,7 @@ import Config from "../../main/models/config";
 
 describe('Config', () => {
 
-    test('Get preference cookie name', () => {
+    test('getPreferenceCookieName', () => {
         const cookieName = 'preference-cookie';
         const configOpts = { 'user-preference-cookie-name': cookieName };
 
@@ -11,7 +11,7 @@ describe('Config', () => {
         expect(config.getPreferenceCookieName()).toBe(cookieName);
     });
 
-    test('Get cookie manifest', () => {
+    test('getCookieManifest', () => {
         const cookieManifest = [
             {
                 "category-name": "essential",
@@ -36,7 +36,7 @@ describe('Config', () => {
         expect(config.getCookieManifest()).toBe(cookieManifest);
     });
 
-    test('Get default consent', () => {
+    test('getDefaultConsent', () => {
         const defaultConsent = false;
         const configOpts = { 'default-consent-value': defaultConsent };
 
@@ -45,7 +45,7 @@ describe('Config', () => {
         expect(config.getDefaultConsent()).toBe(defaultConsent);
     });
 
-    test('Should delete uncategorized', () => {
+    test('shouldDeleteUncategorized', () => {
         let shouldDelete = false;
         let configOpts = { 'delete-undefined-cookies': shouldDelete };
         let config = new Config(configOpts);
@@ -57,5 +57,23 @@ describe('Config', () => {
         config = new Config(configOpts);
 
         expect(config.shouldDeleteUncategorized()).toBe(shouldDelete);
+    });
+
+    test('getCookieBannerId', () => {
+        const cookieBannerId = 'cookie-banner-id';
+        const configOpts = { 'cookie-banner-id': cookieBannerId };
+
+        const config = new Config(configOpts);
+
+        expect(config.getCookieBannerId()).toBe(cookieBannerId);
+    });
+
+    test('getPreferenceFormId', () => {
+        const preferenceFormId = 'cookie-preference-form-id';
+        const configOpts = { 'preference-form-id': preferenceFormId };
+
+        const config = new Config(configOpts);
+
+        expect(config.getPreferencesFormId()).toBe(preferenceFormId);
     });
 });

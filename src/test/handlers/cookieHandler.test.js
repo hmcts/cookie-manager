@@ -1,6 +1,6 @@
 import {when} from "jest-when";
 import CookieHandler from "../../main/handlers/cookieHandler";
-import {deleteAllCookies} from "../common.test";
+import {deleteAllCookies} from "../common/common";
 import ManifestCategory from "../../main/models/manifestCategory";
 import Cookie from "../../main/models/cookie";
 
@@ -14,7 +14,7 @@ describe('CookieHandler', () => {
         deleteAllCookies();
     })
 
-    test('Get cookie', () => {
+    test('getCookie', () => {
         const cookieName = 'first-non-essential-cookie';
         const cookieValue = 'test-value';
         const cookiePath = 'path=/';
@@ -33,7 +33,7 @@ describe('CookieHandler', () => {
         expect(cookieHandler.getAllCookies).toHaveBeenCalled();
     });
 
-    describe('Get all cookies', () => {
+    describe('getAllCookies', () => {
 
         test('Get single cookie', () => {
             const cookieName = 'first-non-essential-cookie';

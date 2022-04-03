@@ -1,5 +1,5 @@
 import Cookie from "../../main/models/cookie";
-import {deleteAllCookies, getmMockedCookieJar} from "../common.test";
+import {deleteAllCookies, getmMockedCookieJar} from "../common/common";
 
 describe('Cookie', () => {
     const mockCookieJar = getmMockedCookieJar();
@@ -20,56 +20,7 @@ describe('Cookie', () => {
         deleteAllCookies();
     })
 
-    test('Get cookie name', () => {
-        const cookie = new Cookie(cookieName, cookieValue);
-        expect(cookie.getName()).toBe(cookieName);
-    });
-
-    test('Get cookie value', () => {
-        const cookie = new Cookie(cookieName, cookieValue);
-        expect(cookie.getValue()).toBe(cookieValue);
-    });
-
-    describe('Get cookie category', () => {
-        test('Get cookie category with defined category', () => {
-            const cookie = new Cookie(cookieName, cookieValue, categoryValue);
-            expect(cookie.getCategory()).toBe(categoryValue);
-        });
-
-        test('Get cookie category with no defined category', () => {
-            const cookie = new Cookie(cookieName, cookieValue);
-            expect(cookie.getCategory()).toBe(noCategoryValue);
-        });
-    });
-
-    describe('Disable cookie', () => {
-        const cookieClearDate = new Date(1000).toUTCString();
-
-        test('When cookie exists in browser, disabling cookie deletes the cookie', () => {
-            document.cookie = `${cookieName}=${cookieValue};${cookiePath}`;
-            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
-
-            mockCookieJar.set.mockClear();
-
-            const cookie = new Cookie(cookieName, cookieValue);
-            cookie.disable();
-
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=;expires=${cookieClearDate};${cookiePath}`);
-            expect(document.cookie).toBe('')
-        });
-
-        test('When cookie does not exist in browser, disabling cookie does nothing', () => {
-            expect(document.cookie).toBe(``);
-
-            const cookie = new Cookie(cookieName, cookieValue);
-            cookie.disable();
-
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=;expires=${cookieClearDate};${cookiePath}`);
-            expect(document.cookie).toBe('')
-        });
-    });
-
-    describe('Enable cookie', () => {
+    describe('enable', () => {
 
         test('When cookie does not exist in browser, enabling cookie creates cookie', () => {
             expect(document.cookie).toBe(``);
@@ -121,5 +72,54 @@ describe('Cookie', () => {
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};expires=${expiryDate};${cookiePath}`);
             expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
         })
+    });
+
+    describe('disable', () => {
+        const cookieClearDate = new Date(1000).toUTCString();
+
+        test('When cookie exists in browser, disabling cookie deletes the cookie', () => {
+            document.cookie = `${cookieName}=${cookieValue};${cookiePath}`;
+            expect(document.cookie).toBe(`${cookieName}=${cookieValue}`)
+
+            mockCookieJar.set.mockClear();
+
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.disable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=;expires=${cookieClearDate};${cookiePath}`);
+            expect(document.cookie).toBe('')
+        });
+
+        test('When cookie does not exist in browser, disabling cookie does nothing', () => {
+            expect(document.cookie).toBe(``);
+
+            const cookie = new Cookie(cookieName, cookieValue);
+            cookie.disable();
+
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=;expires=${cookieClearDate};${cookiePath}`);
+            expect(document.cookie).toBe('')
+        });
+    });
+
+    test('getName', () => {
+        const cookie = new Cookie(cookieName, cookieValue);
+        expect(cookie.getName()).toBe(cookieName);
+    });
+
+    test('getValue', () => {
+        const cookie = new Cookie(cookieName, cookieValue);
+        expect(cookie.getValue()).toBe(cookieValue);
+    });
+
+    describe('getCategory', () => {
+        test('Get cookie category with defined category', () => {
+            const cookie = new Cookie(cookieName, cookieValue, categoryValue);
+            expect(cookie.getCategory()).toBe(categoryValue);
+        });
+
+        test('Get cookie category with no defined category', () => {
+            const cookie = new Cookie(cookieName, cookieValue);
+            expect(cookie.getCategory()).toBe(noCategoryValue);
+        });
     });
 });

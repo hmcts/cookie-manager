@@ -1,0 +1,108 @@
+<form id="cookie-preferences-form">
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Allow cookies that measure website use?
+            </legend>
+            <div class="govuk-radios govuk-radios">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="analytics" name="analytics" type="radio" value="on">
+                    <label class="govuk-label govuk-radios__label" for="analytics">
+                        Use cookies that measure my website use
+                    </label>
+                </div>
+
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off" checked="">
+                    <label class="govuk-label govuk-radios__label" for="analytics-2">
+                        Do not use cookies that measure my website use
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Allow cookies that measure website application performance monitoring?
+            </legend>
+            <div class="govuk-radios govuk-radios">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="apm" name="apm" type="radio" value="on">
+                    <label class="govuk-label govuk-radios__label" for="apm">
+                        Use cookies that measure website application performance monitoring
+                    </label>
+                </div>
+
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="apm-2" name="apm" type="radio" value="off" checked="">
+                    <label class="govuk-label govuk-radios__label" for="apm-2">
+                        Do not use cookies that measure website application performance monitoring
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <button class="govuk-button" data-module="govuk-button">
+        Save
+    </button>
+</form>
+
+<!--
+==== Note ====
+    The above HTML is the equivalent of a preference form created using multiple of the 'govukRadios' macro
+    provided by the 'gov-uk-frontend' package, using the following configuration
+==============
+
+<form id="cookie-preference-form">
+    {{ govukRadios({
+      idPrefix: 'analytics',
+      name: 'analytics',
+      fieldset: {
+        legend: {
+          text: "Allow cookies that measure website use?",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      items: [
+        {
+          value: 'on',
+          text: 'Use cookies that measure my website use'
+        },
+        {
+          value: 'off',
+          text: 'Do not use cookies that measure my website use',
+          checked: true
+        }
+      ]
+    }) }}
+
+    {{ govukRadios({
+      idPrefix: 'apm',
+      name: 'apm',
+      fieldset: {
+        legend: {
+          text: "Allow cookies that measure website application performance monitoring?",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      items: [
+        {
+          value: 'on',
+          text: 'Use cookies that measure website application performance monitoring'
+        },
+        {
+          value: 'off',
+          text: 'Do not use cookies that measure website application performance monitoring',
+          checked: true
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: 'Save'
+    }) }}
+</form>
+-->
