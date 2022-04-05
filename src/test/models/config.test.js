@@ -1,7 +1,6 @@
-import Config from "../../main/models/config";
+import Config from '../../main/models/config';
 
 describe('Config', () => {
-
     test('getPreferenceCookieName', () => {
         const cookieName = 'preference-cookie';
         const configOpts = { 'user-preference-cookie-name': cookieName };
@@ -14,19 +13,19 @@ describe('Config', () => {
     test('getCookieManifest', () => {
         const cookieManifest = [
             {
-                "category-name": "essential",
-                "optional": false,
-                "cookies": [ "first-essential-cookie", "second-essential-cookie" ]
+                'category-name': 'essential',
+                optional: false,
+                cookies: ['first-essential-cookie', 'second-essential-cookie']
             },
             {
-                "category-name": "non-essential",
-                "optional": true,
-                "cookies": [ "first-non-essential-cookie", "second-non-essential-cookie" ]
+                'category-name': 'non-essential',
+                optional: true,
+                cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
             },
             {
-                "category-name": "another-non-essential",
-                "optional": true,
-                "cookies": [ "third-non-essential-cookie" ]
+                'category-name': 'another-non-essential',
+                optional: true,
+                cookies: ['third-non-essential-cookie']
             }
         ];
         const configOpts = { 'cookie-manifest': cookieManifest };

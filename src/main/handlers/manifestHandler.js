@@ -1,37 +1,38 @@
-import ManifestCategory from "../models/manifestCategory";
+import ManifestCategory from '../models/manifestCategory';
 
-export default function ManifestHandler(Config) {
-    this._Config = Config;
-}
-
-ManifestHandler.prototype.getCategoryByCookieName = function(cookieName) {
-    if(cookieName === this._Config.getPreferenceCookieName()) {
-        return new ManifestCategory('internal', false);
+export default class ManifestHandler {
+    constructor (config) {
+        this._config = config;
     }
 
-    for(const category of this._Config.getCookieManifest()) {
-        if (category.cookies.some(manifestCookieName => manifestCookieName === cookieName)) {
-            const name = category['category-name'];
-            const optional = category.optional;
-
-            return new ManifestCategory(name, optional);
+    getCategoryByCookieName (cookieName) {
+        if (cookieName === this._config.getPreferenceCookieName()) {
+            return new ManifestCategory('internal', false);
         }
+
+        for (let i = 0; i < this._config.getCookieManifest().length; i++) {
+            const category = this._config.getCookieManifest()[i];
+
+            if (category.cookies.some(manifestCookieName => manifestCookieName === cookieName)) {
+                return new ManifestCategory(category['category-name'], category.optional);
+            }
+        }
+
+        return new ManifestCategory('un-categorized', true);
     }
 
-    return new ManifestCategory('un-categorized', true);
-};
-
-ManifestHandler.prototype.getCategories = function() {
-    return this._Config.getCookieManifest()
-        .filter(category => {
-            if(!category['category-name'] || !Array.isArray(category.cookies)) {
-                console.debug('Malformed cookie manifest category, ignoring.');
-                return false;
-            } else {
-                return true;
-            }
-        })
-        .map(category => {
-            return new ManifestCategory(category['category-name'], category.optional);
-        })
-};
+    getCategories () {
+        return this._config.getCookieManifest()
+            .filter(category => {
+                if (!category['category-name'] || !Array.isArray(category.cookies)) {
+                    console.debug('Malformed cookie manifest category, ignoring.');
+                    return false;
+                } else {
+                    return true;
+                }
+            })
+            .map(category => {
+                return new ManifestCategory(category['category-name'], category.optional);
+            });
+    }
+}

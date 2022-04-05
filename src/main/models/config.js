@@ -1,33 +1,42 @@
+export default class Config {
+    static DEFAULTS = {
+        PREFERENCE_COOKIE_NAME: 'cm-user-preferences',
+        PREFERENCE_COOKIE_EXPIRY: 365,
+        CONSENT: false,
+        DELETE_UNCATEGORIZED: true,
+        COOKIE_BANNER_ID: 'cm-cookie-banner',
+        PREFERENCES_FORM_ID: 'cm-preference-form'
+    }
 
-const DEFAULT_PREFERENCE_COOKIE_NAME = 'cm-user-preferences'
-const DEFAULT_CONSENT                = false;
-const DEFAULT_COOKIE_BANNER_ID       = 'cm-cookie-banner';
-const DEFAULT_PREFERENCES_FORM_ID    = "cm-preference-form"
+    constructor (config) {
+        this._config = config;
+    }
 
-export default function Config (configObject) {
-    this._config = configObject;
-}
+    getPreferenceCookieName () {
+        return this._config['user-preference-cookie-name'] ?? Config.DEFAULTS.PREFERENCE_COOKIE_NAME;
+    }
 
-Config.prototype.getPreferenceCookieName = function () {
-    return this._config['user-preference-cookie-name'] ?? DEFAULT_PREFERENCE_COOKIE_NAME;
-}
+    getCookieManifest () {
+        return this._config['cookie-manifest'];
+    }
 
-Config.prototype.getCookieManifest = function () {
-    return this._config['cookie-manifest'];
-}
+    getDefaultConsent () {
+        return this._config['default-consent-value'] ?? Config.DEFAULTS.CONSENT;
+    }
 
-Config.prototype.getDefaultConsent = function () {
-    return this._config['default-consent-value'] ?? DEFAULT_CONSENT;
-}
+    shouldDeleteUncategorized () {
+        return this._config['delete-undefined-cookies'] ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
+    }
 
-Config.prototype.shouldDeleteUncategorized = function () {
-    return this._config['delete-undefined-cookies'] ?? true;
-}
+    getCookieBannerId () {
+        return this._config['cookie-banner-id'] ?? Config.DEFAULTS.COOKIE_BANNER_ID;
+    }
 
-Config.prototype.getCookieBannerId = function () {
-    return this._config['cookie-banner-id'] ?? DEFAULT_COOKIE_BANNER_ID;
-}
+    getPreferencesFormId () {
+        return this._config['preference-form-id'] ?? Config.DEFAULTS.PREFERENCES_FORM_ID;
+    }
 
-Config.prototype.getPreferencesFormId = function () {
-    return this._config['preference-form-id'] ?? DEFAULT_PREFERENCES_FORM_ID;
+    getPreferenceCookieExpiryDays () {
+        return this._config['user-preference-cookie-expiry-days'] ?? Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY;
+    }
 }

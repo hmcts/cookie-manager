@@ -1,92 +1,96 @@
-import Cookie from "../models/cookie";
+import Cookie from '../models/cookie';
+import CookieHandler from './cookieHandler';
+import { EventProcessor } from './EventHandler';
 
-export default function UserPreferences (Config, ManifestHandler, CookieHandler) {
-    this._Config = Config;
-    this._CookieHandler = CookieHandler;
-    this._ManifestHandler = ManifestHandler;
-}
-
-UserPreferences.prototype.processPreferences = function () {
-    this._preferencesCookie = this.getPreferenceCookie();
-
-    if(this._preferencesCookie) {
-        this.setPreferences(this.loadPreferencesFromCookie(this._preferencesCookie));
-    } else {
-        this.setPreferences(this.loadPreferenceDefaults());
-    }
-}
-
-UserPreferences.prototype.getPreferences = function () {
-    if(!this._preferences) {
-        console.error('User preferences not loaded/set, call .processPreferences() first')
-        return {};
+export default class UserPreferences {
+    constructor (Config, ManifestHandler) {
+        this._config = Config;
+        this._manifestHandler = ManifestHandler;
     }
 
-    return this._preferences;
-};
+    processPreferences () {
+        this._preferencesCookie = this.getPreferenceCookie();
 
-UserPreferences.prototype.setPreferences = function (preferences) {
-    this._preferences = preferences;
-};
-
-UserPreferences.prototype.getPreferenceCookie = function () {
-    return this._CookieHandler.getCookie(this._Config.getPreferenceCookieName());
-};
-
-UserPreferences.prototype.savePreferencesToCookie = function () {
-    const cookieValue = {};
-    const preferences = this.getPreferences();
-
-    Object.keys(preferences).forEach(key => cookieValue[key] = preferences[key] ? 'on' : 'off');
-
-    this._preferencesCookie = new Cookie(this._Config.getPreferenceCookieName(), cookieValue);
-    this._preferencesCookie.enable(365 * 24 * 60 * 60 * 1000);
-};
-
-UserPreferences.prototype.loadPreferencesFromCookie = function () {
-    let cookiePreferences;
-    const preferenceCookie = this.getPreferenceCookie();
-
-    try {
-        console.debug('Loading preferences from cookie');
-        cookiePreferences = JSON.parse(preferenceCookie.getValue());
-    } catch (e) {
-        console.error(`Unable to parse user preference cookie "${preferenceCookie.getName()}" as JSON.`);
-        preferenceCookie.disable();
-        return this.loadPreferenceDefaults();
+        if (this._preferencesCookie) {
+            this.setPreferences(this._loadPreferencesFromCookie(this._preferencesCookie));
+        } else {
+            this.setPreferences(this._loadPreferenceDefaults());
+        }
     }
 
-    try {
+    getPreferences () {
+        if (!this._preferences) {
+            console.error('User preferences not loaded/set, call .processPreferences() first');
+            return {};
+        }
+
+        return this._preferences;
+    };
+
+    setPreferences (preferences) {
+        console.debug('Setting preferences to: ' + JSON.stringify(preferences));
+        this._preferences = preferences;
+        EventProcessor.emit('UserPreferencesSet', (preferences));
+    };
+
+    getPreferenceCookie () {
+        return CookieHandler.getCookie(this._config.getPreferenceCookieName());
+    };
+
+    savePreferencesToCookie () {
+        const cookieValue = {};
+        const preferences = this.getPreferences();
+
+        Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
+
+        this._preferencesCookie = new Cookie(this._config.getPreferenceCookieName(), cookieValue);
+        this._preferencesCookie.enable(this._config.getPreferenceCookieExpiryDays() * 24 * 60 * 60 * 1000);
+        EventProcessor.emit('UserPreferencesSaved', (preferences));
+    };
+
+    _loadPreferencesFromCookie () {
+        let cookiePreferences;
+        const preferenceCookie = this.getPreferenceCookie();
+
+        try {
+            console.debug('Loading preferences from cookie');
+            cookiePreferences = JSON.parse(preferenceCookie.getValue());
+        } catch (e) {
+            console.error(`Unable to parse user preference cookie "${preferenceCookie.getName()}" as JSON.`);
+            preferenceCookie.disable();
+            return this._loadPreferenceDefaults();
+        }
+
         if (typeof cookiePreferences !== 'object') {
-            throw new Error('User preferences cookie is malformed');
+            console.debug('User preferences cookie is malformed, deleting old user preferences cookie.');
+            preferenceCookie.disable();
+            return this._loadPreferenceDefaults();
         }
 
-        for (const configCategory of this._ManifestHandler.getCategories().filter(category => category.isOptional())) {
-            if (!Object.keys(cookiePreferences).includes(configCategory.getName())) {
-                throw new Error('User preferences cookie is missing category: ' + configCategory.getName());
-            }
+        if (this._manifestHandler.getCategories()
+            .filter(category => category.isOptional())
+            .some(category => !Object.keys(cookiePreferences).includes(category.getName()))) {
+            console.debug('User preferences cookie is missing categories, deleting old user preferences cookie.');
+            preferenceCookie.disable();
+            return this._loadPreferenceDefaults();
         }
-    } catch (e) {
-        console.debug(e + ', deleting old user preferences cookie.');
-        preferenceCookie.disable();
-        return this.loadPreferenceDefaults();
-    }
 
-    const preferences = {};
-    Object.keys(cookiePreferences).forEach(key => preferences[key] = cookiePreferences[key] === 'on');
+        const preferences = {};
+        Object.keys(cookiePreferences).forEach(key => { preferences[key] = cookiePreferences[key] === 'on'; });
 
-    return preferences;
-};
+        return preferences;
+    };
 
-UserPreferences.prototype.loadPreferenceDefaults = function () {
-    console.debug('Loading preferences from defaults');
+    _loadPreferenceDefaults () {
+        console.debug('Loading preferences from defaults');
 
-    const preferences = {};
-    this._ManifestHandler.getCategories()
-        .filter(category => category.isOptional())
-        .forEach(category => {
-            preferences[category.getName()] = this._Config.getDefaultConsent();
-        });
+        const preferences = {};
+        this._manifestHandler.getCategories()
+            .filter(category => category.isOptional())
+            .forEach(category => {
+                preferences[category.getName()] = this._config.getDefaultConsent();
+            });
 
-    return preferences;
-};
+        return preferences;
+    };
+}

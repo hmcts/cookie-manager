@@ -1,31 +1,41 @@
 {
   "name": "@hmcts/cookie-manager",
+  "description": "@hmcts/cookie-manager is a JavaScript library for handling and managing a services cookies.",
   "version": "1.0.0",
-  "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
-  "main": "src/main/cookieManager.js",
+  "main": "index.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "test": "jest -c jest.config.js",
-    "test:coverage": "jest --coverage -c jest.config.js"
+    "test:coverage": "jest --coverage -c jest.config.js",
+    "lint": "eslint"
   },
   "engines": {
     "node": ">=10.0.0"
   },
+  "author": "HM Courts and Tribunals",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hmcts/cookie-manager.git"
   },
-  "author": "HM Courts and Tribunals",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/hmcts/cookie-manager/issues"
   },
-  "homepage": "https://github.com/hmcts/cookie-manager#readme",
+  "homepage": "https://github.com/hmcts/cookie-manager",
+  "keywords": [
+    "cookie",
+    "manager",
+    "hmcts"
+  ],
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.17.8",
+    "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-node-resolve": "^13.1.3",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^26.1.3",
     "jest": "^27.5.1",
     "jest-when": "^3.5.1",
     "rollup": "^2.70.1",

@@ -1,56 +1,74 @@
-// Buttons
-const ACCEPT_BUTT0N_CLASS   = 'cookie-banner-accept';
-const REJECT_BUTT0N_CLASS   = 'cookie-banner-reject';
-const HIDE_BUTT0N_CLASS     = 'cookie-banner-hide';
+import { EventProcessor } from './EventHandler';
 
-// Message wrappers
-const MESSAGE_CLASS         = 'cookie-banner-message';
-const ACCEPT_MESSAGE_CLASS  = 'cookie-banner-accept-message';
-const REJECT_MESSAGE_CLASS  = 'cookie-banner-reject-message';
-
-export default function CookieBannerHandler (Config, UserPreferencesHandler) {
-    this._Config = Config;
-    this._UserPreferencesHandler = UserPreferencesHandler;
-}
-
-CookieBannerHandler.prototype.init = function () {
-    if(this.getBannerNode() && !this._UserPreferencesHandler.getPreferenceCookie()) {
-        this.setupEventListeners();
-        this.getBannerNode().hidden = false;
+export default class CookieBannerHandler {
+    static DEFAULTS = {
+        ACCEPT_BUTT0N_CLASS: 'cookie-banner-accept',
+        REJECT_BUTT0N_CLASS: 'cookie-banner-reject',
+        HIDE_BUTT0N_CLASS: 'cookie-banner-hide',
+        MESSAGE_CLASS: 'cookie-banner-message',
+        ACCEPT_MESSAGE_CLASS: 'cookie-banner-accept-message',
+        REJECT_MESSAGE_CLASS: 'cookie-banner-reject-message'
     }
-}
 
-CookieBannerHandler.prototype.setupEventListeners = function () {
-    this.getBannerNode()
-        .querySelectorAll('button')
-        .forEach(button => button
-            .addEventListener('click', this.clickEventHandler)
-        );
-};
-
-CookieBannerHandler.prototype.clickEventHandler = function (event) {
-    event.preventDefault();
-    const button = event.target;
-
-    if(button.classList.contains(HIDE_BUTT0N_CLASS)) {
-        this.getBannerNode().hidden = true;
-    } else {
-        const consent = button.classList.contains(ACCEPT_BUTT0N_CLASS)
-        this.updatePreferences(consent);
-        this.getBannerNode().querySelector('.' + MESSAGE_CLASS).hidden = true;
-        this.getBannerNode().querySelector('.' + ACCEPT_MESSAGE_CLASS).hidden = consent;
-        this.getBannerNode().querySelector('.' + REJECT_MESSAGE_CLASS).hidden = !consent;
+    constructor (Config, UserPreferencesHandler) {
+        this._config = Config;
+        this._userPreferencesHandler = UserPreferencesHandler;
     }
+
+    init () {
+        if (document.readyState === 'loading') {
+            console.debug('DOM is not ready; adding event to bind to banner when ready.');
+            document.addEventListener('DOMContentLoaded', () => this.init());
+            return;
+        }
+
+        const preferencesForm = document.getElementById(this._config.getPreferencesFormId());
+
+        if (this._getBannerNode() && !preferencesForm && !this._userPreferencesHandler.getPreferenceCookie()) {
+            this._setupEventListeners();
+            this._getBannerNode().hidden = false;
+            EventProcessor.emit('CookieBannerInitialized');
+        }
+    }
+
+    _setupEventListeners () {
+        const buttonClasses = [
+            CookieBannerHandler.DEFAULTS.ACCEPT_BUTT0N_CLASS,
+            CookieBannerHandler.DEFAULTS.REJECT_BUTT0N_CLASS,
+            CookieBannerHandler.DEFAULTS.HIDE_BUTT0N_CLASS
+        ];
+
+        this._getBannerNode()
+            .querySelectorAll('.' + buttonClasses.join(', .'))
+            .forEach(button => button.addEventListener('click', (event) => this._clickEventHandler(event, button)));
+    };
+
+    _clickEventHandler (event, button) {
+        event.preventDefault();
+        const bannerNode = this._getBannerNode();
+
+        if (button.classList.contains(CookieBannerHandler.DEFAULTS.HIDE_BUTT0N_CLASS)) {
+            bannerNode.hidden = true;
+        } else {
+            const consent = button.classList.contains(CookieBannerHandler.DEFAULTS.ACCEPT_BUTT0N_CLASS);
+            EventProcessor.emit('CookieBannerSubmitted', (consent));
+
+            this._updatePreferences(consent);
+            bannerNode.querySelector('.' + CookieBannerHandler.DEFAULTS.MESSAGE_CLASS).hidden = true;
+            bannerNode.querySelector('.' + CookieBannerHandler.DEFAULTS.ACCEPT_MESSAGE_CLASS).hidden = !consent;
+            bannerNode.querySelector('.' + CookieBannerHandler.DEFAULTS.REJECT_MESSAGE_CLASS).hidden = consent;
+        }
+    }
+
+    _updatePreferences (consent) {
+        const preferences = this._userPreferencesHandler.getPreferences();
+        Object.keys(preferences).forEach(category => { preferences[category] = consent; });
+
+        this._userPreferencesHandler.setPreferences(preferences);
+        this._userPreferencesHandler.savePreferencesToCookie();
+    }
+
+    _getBannerNode () {
+        return document.getElementById(this._config.getCookieBannerId());
+    };
 }
-
-CookieBannerHandler.prototype.updatePreferences = function (consent) {
-    const preferences = this._UserPreferencesHandler.getPreferences();
-    Object.keys(preferences).forEach(category => preferences[category] = consent);
-
-    this._UserPreferencesHandler.setPreferences(preferences);
-    this._UserPreferencesHandler.savePreferencesToCookie();
-}
-
-CookieBannerHandler.prototype.getBannerNode = function() {
-    return document.getElementById(this._Config.getCookieBannerId());
-};

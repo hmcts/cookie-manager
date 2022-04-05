@@ -1,50 +1,62 @@
-export default function PreferencesFormHandler (Config, UserPreferencesHandler) {
-    this._Config = Config;
-    this._UserPreferencesHandler = UserPreferencesHandler;
-}
+import { EventProcessor } from './EventHandler';
 
-PreferencesFormHandler.prototype.init = function () {
-    if(this.getPreferencesForm()) {
-        this.setupEventListeners();
-        this.configureFormRadios();
+export default class PreferencesFormHandler {
+    constructor (Config, UserPreferencesHandler) {
+        this._config = Config;
+        this._userPreferencesHandler = UserPreferencesHandler;
     }
-}
 
-PreferencesFormHandler.prototype.getPreferencesForm = function () {
-    return document.getElementById(this._Config.getPreferencesFormId());
-}
+    init () {
+        if (document.readyState === 'loading') {
+            console.debug('DOM is not ready; adding event to bind to preference form when ready.');
+            document.addEventListener('DOMContentLoaded', () => this.init());
+            return;
+        }
 
-PreferencesFormHandler.prototype.setupEventListeners = function () {
-    this.getPreferencesForm().addEventListener('submit', this.submitEventHandler)
-}
+        if (this._getPreferencesForm()) {
+            this._setupEventListeners();
+            this._configureFormRadios();
+            EventProcessor.emit('PreferenceFormInitialized');
+        }
+    }
 
-PreferencesFormHandler.prototype.submitEventHandler = function (event) {
-    event.preventDefault();
+    _getPreferencesForm () {
+        return document.getElementById(this._config.getPreferencesFormId());
+    }
 
-    const preferences = {};
-    event.target
-        .querySelectorAll('input[type="radio"]:checked')
-        .forEach(radio => {
-            const name = radio.getAttribute('name');
-            const value = radio.getAttribute('value');
-            preferences[name] = value === 'on';
-        })
+    _setupEventListeners () {
+        this._getPreferencesForm().addEventListener('submit', (event) => this._submitEventHandler(event));
+    }
 
-    this.updatePreferences(preferences);
-}
+    _submitEventHandler (event) {
+        event.preventDefault();
 
-PreferencesFormHandler.prototype.updatePreferences = function (preferences) {
-    this._UserPreferencesHandler.setPreferences(preferences);
-    this._UserPreferencesHandler.savePreferencesToCookie();
-}
+        const preferences = {};
+        event.target
+            .querySelectorAll('input[type="radio"]:checked')
+            .forEach(radio => {
+                const name = radio.getAttribute('name');
+                const value = radio.getAttribute('value');
+                preferences[name] = value === 'on';
+            });
 
-PreferencesFormHandler.prototype.configureFormRadios = function () {
-    Object.entries(this._UserPreferencesHandler.getPreferences())
-        .forEach(([category, value]) => {
-            const checkboxValue = value ? 'on' : 'off'
-            const checkbox = this.getPreferencesForm().querySelector(`input[name=${category}][value=${checkboxValue}]`);
-            if(checkbox) {
-                checkbox.checked = true;
-            }
-        })
+        EventProcessor.emit('PreferenceFormSubmitted', (preferences));
+        this._updatePreferences(preferences);
+    }
+
+    _updatePreferences (preferences) {
+        this._userPreferencesHandler.setPreferences(preferences);
+        this._userPreferencesHandler.savePreferencesToCookie();
+    }
+
+    _configureFormRadios () {
+        Object.entries(this._userPreferencesHandler.getPreferences())
+            .forEach(entry => {
+                const checkboxValue = entry[1] ? 'on' : 'off';
+                const checkbox = this._getPreferencesForm().querySelector(`input[name=${entry[0]}][value=${checkboxValue}]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+    }
 }

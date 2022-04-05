@@ -6,4 +6,4 @@ export const MockUserPreferences = () => ({
     savePreferencesToCookie: jest.fn(),
     loadPreferencesFromCookie: jest.fn(),
     loadPreferenceDefaults: jest.fn()
-})
+});

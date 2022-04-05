@@ -6,42 +6,11 @@
     <script src="./cookie-manager.js"></script>
     <script>
 
-        /*  This callback is called when the 'accept' action is fired within the cookie banner
-        *   This is where you'd hide the first stage in a decision/confirmation style banner
-        */
-        const bannerAcceptCallback = function () {
-            document.querySelector('.cm-cookie-banner__decision').hidden = true;
-            document.querySelector('.cm-cookie-banner__confirmation').hidden = false;
-        }
-
-        /*  This callback is called when the 'reject' action is fired within the cookie banner
-        *   This is where you'd hide the first stage in a decision/confirmation style banner
-        */
-        const bannerRejectCallback = function () {
-            document.querySelector('.cm-cookie-banner__decision').hidden = true;
-            document.querySelector('.cm-cookie-banner__confirmation').hidden = false;
-        }
-
-        /*  This callback is called when the banner save action is fired within the cookie banner (caused by accepting or rejecting).
-        *   This is where you'd likely call a method to that would programmatically remove or add the
-        *   consent-required scripts/tags back onto the page.
-        */
-        const bannerSaveCallback = function (cookieStatus) {
-            updateConsent(cookieStatus);
-        }
-
-        /*  This callback is called when the save action is fired within the preference form (caused by saving the form).
-        *   This is where you'd likely call a method to that would programmatically remove or add the
-        *   consent-required scripts/tags back onto the page.
-        */
-        const preferenceFormSaveCallBack = function (cookieStatus) {
-            updateConsent(cookieStatus);
-        }
-
         /*  This is where you'd perform logic regarding granting or denying the injection
         *   of cookies, scripts and tags that required consent. This callback is called
         *   with an object containing the current cookie preferences.
         */
+
         const updateConsent = function (cookieStatus) {
             // Google Tag Manager Analytics Consent
             const gtag = window.gtag || function () {
@@ -66,48 +35,46 @@
         *   expect to appear on the site, and their subsequent categories and optionality.
         */
         const cookieManagerConfig = {
-        "preference-form-id": "cookie-manager-form",
-        "user-preference-cookie-name": "cm-user-preferences",
-        "preference-form-saved-callback": preferenceFormSaveCallBack,
-        "cookie-banner-id": "cm-cookie-banner",
-        "cookie-banner-visible-on-page-with-preference-form": true,
-        "cookie-banner-auto-hide": false,
-        "cookie-banner-accept-callback": bannerAcceptCallback,
-        "cookie-banner-reject-callback": bannerRejectCallback,
-        "cookie-banner-save-callback": bannerSaveCallback,
-        "cookie-manifest": [
-            {
-                "category-name": "essential",
-                "optional": false,
-                "cookies": [
-                    "cm-user-preferences"
-                ]
-            },
-            {
-                "category-name": "analytics",
-                "optional": true,
-                "cookies": [
-                    "_ga",
-                    "_gtm"
-                ]
-            },
-            {
-                'category-name': 'apm',
-                'optional': true,
-                'cookies': [
-                    'dtCookie',
-                    'dtLatC',
-                    'dtPC',
-                    'dtSa',
-                    'rxVisitor',
-                    'rxvt'
-                ]
-            }
-        ]
-    };
+            "user-preference-cookie-name": "cm-user-preferences",
+            "cookie-banner-id": "cm-cookie-banner",
+            "preference-form-id": "cm-preference-form",
+            "cookie-manifest": [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": [
+                        "cm-user-preferences"
+                    ]
+                },
+                {
+                    "category-name": "analytics",
+                    "optional": true,
+                    "cookies": [
+                        "_ga",
+                        "_gtm"
+                    ]
+                },
+                {
+                    'category-name': 'apm',
+                    'optional': true,
+                    'cookies': [
+                        'dtCookie',
+                        'dtLatC',
+                        'dtPC',
+                        'dtSa',
+                        'rxVisitor',
+                        'rxvt'
+                    ]
+                }
+            ]
+        };
 
         /*  Initializes the cookie manager with the provided settings */
         cookieManager.init(cookieManagerConfig);
+
+        cookieManager.on('CookieBannerDecision', (consent) => {
+            console.debug('Consented ' + consent);
+        });
     </script>
 </head>
 <style type="text/css">
@@ -339,46 +306,60 @@
             Multi-stage cookie banner component that provides a decision (accept or reject)
             which is then followed up by a confirmation banner.
         </p>
-        <div class="global-cookie-message" id="cm-cookie-banner">
-        <div class="govuk-cookie-banner" role="region" aria-label="Cookies on Find a Court or Tribunal">
-            <div class="govuk-cookie-banner__message govuk-width-container cm-cookie-banner__decision">
+        <div id="cm-cookie-banner" class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Cookies on [name of service]" hidden>
+            <div class="cookie-banner-message govuk-cookie-banner__message govuk-width-container">
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
-                        <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on Find a Court or Tribunal</h2>
+                        <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on [name of service]</h2>
                         <div class="govuk-cookie-banner__content">
                             <p class="govuk-body">We use some essential cookies to make this service work.</p>
-                            <p class="govuk-body">We’d also like to use analytics cookies so we can understand how you use
-                                the service and make improvements.</p>
+                            <p class="govuk-body">We’d like to set additional cookies so we can remember your settings, understand how people use the service and make improvements.</p>
                         </div>
                     </div>
                 </div>
                 <div class="govuk-button-group">
-                    <button class="govuk-button" data-cm-action="accept">
-                        Accept analytics cookies
+                    <button value="accept" type="submit" name="cookies" class="cookie-banner-accept govuk-button" data-module="govuk-button">
+                        Accept additional cookies
                     </button>
-                    <button class="govuk-button" data-cm-action="reject">
-                        Reject analytics cookies
+                    <button value="reject" type="submit" name="cookies" class="cookie-banner-reject govuk-button" data-module="govuk-button">
+                        Reject additional cookies
                     </button>
-                    <a class="govuk-link" href="/cookies">View cookies</a>
+                    <a class="govuk-link" href="#">View cookies</a>
                 </div>
             </div>
-            <div class="govuk-cookie-banner__message govuk-width-container cm-cookie-banner__confirmation" role="alert"
-                 hidden>
+            <div class="cookie-banner-accept-message govuk-cookie-banner__message govuk-width-container" hidden>
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
+
                         <div class="govuk-cookie-banner__content">
-                            <p>You can <a href="/cookies">change your cookie settings</a> at any time.</p>
+                            <p class="govuk-body">You’ve accepted additional cookies. You can <a class="govuk-link" href="#">change your cookie settings</a> at any time.</p>
                         </div>
                     </div>
                 </div>
+
                 <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button" data-cm-action="hide">
+                    <a href="#" role="button" draggable="false" class="cookie-banner-hide govuk-button" data-module="govuk-button">
                         Hide this message
-                    </button>
+                    </a>
+                </div>
+            </div>
+            <div class="cookie-banner-reject-message govuk-cookie-banner__message govuk-width-container" hidden>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+
+                        <div class="govuk-cookie-banner__content">
+                            <p class="govuk-body">You’ve rejected additional cookies. You can <a class="govuk-link" href="#">change your cookie settings</a> at any time.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="govuk-button-group">
+                    <a href="#" role="button" draggable="false" class="cookie-banner-hide govuk-button" data-module="govuk-button">
+                        Hide this message
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
         <div style="display: flex; margin-top: 2%; margin-bottom: 2%">
             <div style="width: 49%; margin-right: 1%">
                 <!-- HTML Box -->
@@ -540,7 +521,7 @@
             </br>
             This preference form should be included at the end.
         </p>
-        <form id="cm-preference-form" class="js-show">
+        <form id="cm-preference-for">
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -553,9 +534,9 @@
                                 Use cookies that measure my website use
                             </label>
                         </div>
+
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off"
-                                   checked="">
+                            <input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off" checked="">
                             <label class="govuk-label govuk-radios__label" for="analytics-2">
                                 Do not use cookies that measure my website use
                             </label>
@@ -563,6 +544,7 @@
                     </div>
                 </fieldset>
             </div>
+
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -575,6 +557,7 @@
                                 Use cookies that measure website application performance monitoring
                             </label>
                         </div>
+
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="apm-2" name="apm" type="radio" value="off" checked="">
                             <label class="govuk-label govuk-radios__label" for="apm-2">
@@ -584,10 +567,12 @@
                     </div>
                 </fieldset>
             </div>
+
             <button class="govuk-button" data-module="govuk-button">
                 Save
             </button>
         </form>
+
         <div style="display: flex; margin-top: 2%; margin-bottom: 2%">
             <div style="width: 49%; margin-right: 1%">
                 <!-- HTML Box -->

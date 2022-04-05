@@ -1,12 +1,14 @@
-export default function ManifestCategory (name, optional = true) {
-    this._name = name;
-    this._optional = optional;
+export default class ManifestCategory {
+    constructor (name, optional = true) {
+        this._name = name;
+        this._optional = optional;
+    }
+
+    getName () {
+        return this._name;
+    };
+
+    isOptional () {
+        return this._optional;
+    };
 }
-
-ManifestCategory.prototype.getName = function() {
-    return this._name;
-};
-
-ManifestCategory.prototype.isOptional = function() {
-    return this._optional;
-};

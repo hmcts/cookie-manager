@@ -1,9 +1,8 @@
-import PreferencesFormHandler from "../../main/handlers/preferencesFormHandler";
-import {MockConfig} from "../common/mockConfig";
-import {MockUserPreferences} from "../common/mockUserPreferences";
-import {loadHTMLFromFile, wipeDocument} from "../common/common";
-import {when} from "jest-when";
-
+import PreferencesFormHandler from '../../main/handlers/preferencesFormHandler';
+import { MockConfig } from '../common/mockConfig';
+import { MockUserPreferences } from '../common/mockUserPreferences';
+import { loadHTMLFromFile, wipeDocument } from '../common/common';
+import { when } from 'jest-when';
 
 describe('PreferencesFormHandler', () => {
     let mockConfig;
@@ -14,43 +13,72 @@ describe('PreferencesFormHandler', () => {
     beforeEach(() => {
         mockConfig = MockConfig();
         mockUserPreferences = MockUserPreferences();
-    })
+    });
 
     describe('init', () => {
+        test('DOM is not ready, so eventListener is added to DOM and preferences form is setup when DOM is loaded', () => {
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+
+            let readyState = 'loading';
+            Object.defineProperty(document, 'readyState', {
+                get () { return readyState; },
+                set (value) { readyState = value; }
+            });
+
+            const documentSpy = jest.spyOn(document, 'addEventListener');
+            const initSpy = jest.spyOn(preferencesFormHandler, 'init');
+            preferencesFormHandler._configureFormRadios = jest.fn();
+            preferencesFormHandler._setupEventListeners = jest.fn();
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(true);
+
+            preferencesFormHandler.init();
+            expect(documentSpy).toHaveBeenCalledWith('DOMContentLoaded', expect.any(Function));
+            expect(initSpy).toHaveBeenCalledTimes(1);
+
+            document.readyState = 'complete';
+            document.dispatchEvent(new Event('DOMContentLoaded', {
+                bubbles: true,
+                cancelable: true
+            }));
+
+            expect(initSpy).toHaveBeenCalledTimes(2);
+            expect(preferencesFormHandler._configureFormRadios).toHaveBeenCalled();
+            expect(preferencesFormHandler._setupEventListeners).toHaveBeenCalled();
+        });
 
         test('Preferences form does not exist in DOM, so do not setup form', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
-            preferencesFormHandler.configureFormRadios = jest.fn();
-            preferencesFormHandler.setupEventListeners = jest.fn();
-            preferencesFormHandler.getPreferencesForm = jest.fn().mockReturnValue(false);
+            preferencesFormHandler._configureFormRadios = jest.fn();
+            preferencesFormHandler._setupEventListeners = jest.fn();
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(false);
 
             preferencesFormHandler.init();
-            expect(preferencesFormHandler.configureFormRadios).not.toHaveBeenCalled();
-            expect(preferencesFormHandler.setupEventListeners).not.toHaveBeenCalled();
+            expect(preferencesFormHandler._configureFormRadios).not.toHaveBeenCalled();
+            expect(preferencesFormHandler._setupEventListeners).not.toHaveBeenCalled();
         });
 
         test('Preferences form exists in DOM, so setup form', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
-            preferencesFormHandler.configureFormRadios = jest.fn();
-            preferencesFormHandler.setupEventListeners = jest.fn();
-            preferencesFormHandler.getPreferencesForm = jest.fn().mockReturnValue(true);
+            preferencesFormHandler._configureFormRadios = jest.fn();
+            preferencesFormHandler._setupEventListeners = jest.fn();
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(true);
 
             preferencesFormHandler.init();
-            expect(preferencesFormHandler.configureFormRadios).toHaveBeenCalled();
-            expect(preferencesFormHandler.setupEventListeners).toHaveBeenCalled();
+            expect(preferencesFormHandler._configureFormRadios).toHaveBeenCalled();
+            expect(preferencesFormHandler._setupEventListeners).toHaveBeenCalled();
         });
     });
 
     describe('getPreferencesForm', () => {
         beforeEach(async () => {
             await loadHTMLFromFile('PreferencesForm.html');
-        })
+        });
 
         test('Get preferences form node when exists preferences form exists in DOM', async () => {
             const expectedElement = document.getElementById(mockConfig.getPreferencesFormId());
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
 
-            expect(preferencesFormHandler.getPreferencesForm()).toBe(expectedElement);
+            expect(preferencesFormHandler._getPreferencesForm()).toBe(expectedElement);
             expect(mockConfig.getPreferencesFormId).toHaveBeenCalled();
         });
 
@@ -58,7 +86,7 @@ describe('PreferencesFormHandler', () => {
             when(mockConfig.getPreferencesFormId).mockReturnValue('some-incorrect-id');
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
 
-            expect(preferencesFormHandler.getPreferencesForm()).toBe(null);
+            expect(preferencesFormHandler._getPreferencesForm()).toBe(null);
             expect(mockConfig.getPreferencesFormId).toHaveBeenCalled();
         });
 
@@ -67,7 +95,7 @@ describe('PreferencesFormHandler', () => {
 
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
 
-            expect(preferencesFormHandler.getPreferencesForm()).toBe(null);
+            expect(preferencesFormHandler._getPreferencesForm()).toBe(null);
             expect(mockConfig.getPreferencesFormId).toHaveBeenCalled();
         });
     });
@@ -75,73 +103,72 @@ describe('PreferencesFormHandler', () => {
     describe('setupEventListeners', () => {
         beforeEach(async () => {
             await loadHTMLFromFile('PreferencesForm.html');
-        })
+        });
 
         test('Form submission event has event listener attached', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
 
-            preferencesFormHandler.getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
             const preferencesFormSpy = jest.spyOn(getPreferencesForm(), 'addEventListener');
 
-            preferencesFormHandler.setupEventListeners();
-            expect(preferencesFormSpy).toHaveBeenCalledWith('submit', preferencesFormHandler.submitEventHandler);
-        })
+            preferencesFormHandler._setupEventListeners();
+            expect(preferencesFormSpy).toHaveBeenCalledWith('submit', expect.any(Function));
+        });
     });
 
     describe('submitEventHandler', () => {
         beforeEach(async () => {
             await loadHTMLFromFile('PreferencesForm.html');
-        })
+        });
 
         test('Form submission should consent to single preference', () => {
             const event = {
                 preventDefault: jest.fn(),
                 target: getPreferencesForm()
-            }
+            };
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
 
-            preferencesFormHandler.updatePreferences = jest.fn();
+            preferencesFormHandler._updatePreferences = jest.fn();
             document.getElementsByName('analytics')[1].checked = true;
             document.getElementsByName('apm')[0].checked = true;
 
-            preferencesFormHandler.submitEventHandler(event)
+            preferencesFormHandler._submitEventHandler(event);
             expect(event.preventDefault).toHaveBeenCalled();
-            expect(preferencesFormHandler.updatePreferences).toHaveBeenCalledWith({analytics: false, apm: true});
+            expect(preferencesFormHandler._updatePreferences).toHaveBeenCalledWith({ analytics: false, apm: true });
         });
 
         test('Form submission should consent to multiple preferences', () => {
             const event = {
                 preventDefault: jest.fn(),
                 target: getPreferencesForm()
-            }
+            };
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
 
-            preferencesFormHandler.updatePreferences = jest.fn();
+            preferencesFormHandler._updatePreferences = jest.fn();
             document.getElementsByName('analytics')[0].checked = true;
             document.getElementsByName('apm')[0].checked = true;
 
-            preferencesFormHandler.submitEventHandler(event)
+            preferencesFormHandler._submitEventHandler(event);
             expect(event.preventDefault).toHaveBeenCalled();
-            expect(preferencesFormHandler.updatePreferences).toHaveBeenCalledWith({analytics: true, apm: true});
-        })
+            expect(preferencesFormHandler._updatePreferences).toHaveBeenCalledWith({ analytics: true, apm: true });
+        });
     });
 
     describe('updatePreferences', () => {
-
         test('Should update preferences', () => {
-            const preferences = {category: true, anotherCategory: true};
+            const preferences = { category: true, anotherCategory: true };
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
-            preferencesFormHandler.updatePreferences(preferences);
+            preferencesFormHandler._updatePreferences(preferences);
 
             expect(mockUserPreferences.setPreferences).toHaveBeenCalledWith(preferences);
             expect(mockUserPreferences.savePreferencesToCookie).toHaveBeenCalled();
-        })
-    })
+        });
+    });
 
     describe('configureFormRadios', () => {
         beforeEach(async () => {
             await loadHTMLFromFile('PreferencesForm.html');
-        })
+        });
 
         test('Disable all checkboxes', () => {
             const preferences = { apm: false, analytics: false };
@@ -152,9 +179,9 @@ describe('PreferencesFormHandler', () => {
             const analyticsOffRadio = document.getElementsByName('analytics')[1];
 
             when(mockUserPreferences.getPreferences).mockReturnValue(preferences);
-            preferencesFormHandler.getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
 
-            preferencesFormHandler.configureFormRadios();
+            preferencesFormHandler._configureFormRadios();
             expect(mockUserPreferences.getPreferences).toHaveBeenCalled();
             expect(analyticsOnRadio.checked).toBe(false);
             expect(analyticsOffRadio.checked).toBe(true);
@@ -171,9 +198,9 @@ describe('PreferencesFormHandler', () => {
             const analyticsOffRadio = document.getElementsByName('analytics')[1];
 
             when(mockUserPreferences.getPreferences).mockReturnValue(preferences);
-            preferencesFormHandler.getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
 
-            preferencesFormHandler.configureFormRadios();
+            preferencesFormHandler._configureFormRadios();
             expect(mockUserPreferences.getPreferences).toHaveBeenCalled();
             expect(analyticsOnRadio.checked).toBe(true);
             expect(analyticsOffRadio.checked).toBe(false);
@@ -190,14 +217,14 @@ describe('PreferencesFormHandler', () => {
             const analyticsOffRadio = document.getElementsByName('analytics')[1];
 
             when(mockUserPreferences.getPreferences).mockReturnValue(preferences);
-            preferencesFormHandler.getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
+            preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
 
-            preferencesFormHandler.configureFormRadios();
+            preferencesFormHandler._configureFormRadios();
             expect(mockUserPreferences.getPreferences).toHaveBeenCalled();
             expect(apmOnRadio.checked).toBe(true);
             expect(apmOffRadio.checked).toBe(false);
             expect(analyticsOnRadio.checked).toBe(false);
             expect(analyticsOffRadio.checked).toBe(true);
         });
-    })
-})
+    });
+});
