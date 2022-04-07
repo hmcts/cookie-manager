@@ -21,6 +21,7 @@ module.exports = {
         'jest/valid-expect': 'error',
         indent: ['error', 4],
         semi: [2, 'always'],
-        'no-trailing-spaces': ['error', { skipBlankLines: true }]
+        'no-trailing-spaces': ['error', { skipBlankLines: true }],
+        'no-fallthrough': 1
     }
 };

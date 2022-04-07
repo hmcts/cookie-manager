@@ -4,10 +4,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "build:package": "rollup -c rollup.publish.config.js",
+    "build:examples": "rollup -c rollup.examples.config.js",
     "test": "jest -c jest.config.js",
     "test:coverage": "jest --coverage -c jest.config.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepare":"npm run build:package"
   },
   "engines": {
     "node": ">=10.0.0"
