@@ -4,8 +4,8 @@ export default class Config {
         PREFERENCE_COOKIE_EXPIRY: 365,
         CONSENT: false,
         DELETE_UNCATEGORIZED: true,
-        COOKIE_BANNER_ID: 'cm-cookie-banner',
-        PREFERENCES_FORM_ID: 'cm-preference-form'
+        COOKIE_BANNER_CLASS: 'cookie-banner',
+        PREFERENCES_FORM_CLASS: 'cookie-preferences-form'
     }
 
     constructor (config) {
@@ -13,30 +13,30 @@ export default class Config {
     }
 
     getPreferenceCookieName () {
-        return this._config['user-preference-cookie-name'] ?? Config.DEFAULTS.PREFERENCE_COOKIE_NAME;
-    }
-
-    getCookieManifest () {
-        return this._config['cookie-manifest'];
-    }
-
-    getDefaultConsent () {
-        return this._config['default-consent-value'] ?? Config.DEFAULTS.CONSENT;
-    }
-
-    shouldDeleteUncategorized () {
-        return this._config['delete-undefined-cookies'] ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
-    }
-
-    getCookieBannerId () {
-        return this._config['cookie-banner-id'] ?? Config.DEFAULTS.COOKIE_BANNER_ID;
-    }
-
-    getPreferencesFormId () {
-        return this._config['preference-form-id'] ?? Config.DEFAULTS.PREFERENCES_FORM_ID;
+        return this._config.userPreferences?.cookieName ?? Config.DEFAULTS.PREFERENCE_COOKIE_NAME;
     }
 
     getPreferenceCookieExpiryDays () {
-        return this._config['user-preference-cookie-expiry-days'] ?? Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY;
+        return this._config.userPreferences?.cookieExpiry ?? Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY;
+    }
+
+    getCookieManifest () {
+        return this._config.cookieManifest ?? [];
+    }
+
+    getDefaultConsent () {
+        return this._config.userPreferences?.defaultConsent ?? Config.DEFAULTS.CONSENT;
+    }
+
+    shouldDeleteUncategorized () {
+        return this._config.deleteUndefinedCookies ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
+    }
+
+    getCookieBannerClass () {
+        return this._config.cookieBanner?.class ?? Config.DEFAULTS.COOKIE_BANNER_CLASS;
+    }
+
+    getPreferencesFormClass () {
+        return this._config.preferencesForm?.class ?? Config.DEFAULTS.PREFERENCES_FORM_CLASS;
     }
 }

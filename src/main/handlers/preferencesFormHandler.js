@@ -1,9 +1,10 @@
 import { EventProcessor } from './EventHandler';
 
 export default class PreferencesFormHandler {
-    constructor (Config, UserPreferencesHandler) {
+    constructor (Config, UserPreferencesHandler, CookieHandler) {
         this._config = Config;
         this._userPreferencesHandler = UserPreferencesHandler;
+        this._cookieHandler = CookieHandler;
     }
 
     init () {
@@ -21,7 +22,7 @@ export default class PreferencesFormHandler {
     }
 
     _getPreferencesForm () {
-        return document.getElementById(this._config.getPreferencesFormId());
+        return document.querySelector('.' + this._config.getPreferencesFormClass());
     }
 
     _setupEventListeners () {
@@ -47,6 +48,7 @@ export default class PreferencesFormHandler {
     _updatePreferences (preferences) {
         this._userPreferencesHandler.setPreferences(preferences);
         this._userPreferencesHandler.savePreferencesToCookie();
+        this._cookieHandler.processCookies();
     }
 
     _configureFormRadios () {

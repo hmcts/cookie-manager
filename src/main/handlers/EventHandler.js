@@ -1,24 +1,42 @@
 export class EventProcessor {
-     static handlerMap = new Map();
+     static _handlerMap = new Map();
 
-     static on (type, handler) {
-         type = type.toLowerCase();
-         if (!EventProcessor.handlerMap.has(type)) {
-             EventProcessor.handlerMap.set(type, new Map());
+     static on (eventName, handler) {
+         if (typeof eventName !== 'string') {
+             console.error('Event not provided');
+             return;
          }
 
-         const token = Math.random().toString(16).slice(2);
-         EventProcessor.handlerMap.get(type).set(token, handler);
+         if (typeof handler !== 'function') {
+             console.error('No callback function provided');
+             return;
+         }
 
-         return { type, token };
+         eventName = eventName.toLowerCase();
+         const token = Math.random().toString(16).slice(2);
+
+         if (!EventProcessor._handlerMap.has(eventName)) {
+             EventProcessor._handlerMap.set(eventName, new Map());
+         }
+
+         EventProcessor._handlerMap.get(eventName).set(token, handler);
+         return { type: eventName, token };
      }
 
      static off (eventToken) {
-         let { type, token } = eventToken;
-         type = type.toLowerCase();
+         let type;
+         let token;
 
-         if (EventProcessor.handlerMap.has(type)) {
-             EventProcessor.handlerMap.get(type).delete(token);
+         try {
+             type = eventToken.type.toLowerCase();
+             token = eventToken.token;
+         } catch (e) {
+             console.error('Missing or malformed event token provided');
+             return;
+         }
+
+         if (EventProcessor._handlerMap.has(type)) {
+             EventProcessor._handlerMap.get(type).delete(token);
          }
      }
 
@@ -26,8 +44,8 @@ export class EventProcessor {
          type = type.toLowerCase();
          console.debug('Event fired: ' + type);
 
-         if (EventProcessor.handlerMap.has(type)) {
-             EventProcessor.handlerMap.get(type).forEach(value => value(data));
+         if (EventProcessor._handlerMap.has(type)) {
+             EventProcessor._handlerMap.get(type).forEach(value => value(data));
          }
      }
 }

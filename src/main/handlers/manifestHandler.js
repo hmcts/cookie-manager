@@ -1,38 +1,39 @@
 import ManifestCategory from '../models/manifestCategory';
 
 export default class ManifestHandler {
+    static DEFAULTS = {
+        UNDEFINED_CATEGORY_NAME: 'un-categorized'
+    }
+
     constructor (config) {
         this._config = config;
     }
 
     getCategoryByCookieName (cookieName) {
-        if (cookieName === this._config.getPreferenceCookieName()) {
-            return new ManifestCategory('internal', false);
-        }
+        const category = this.getCategories().find(category => {
+            return category.getCookies().some(cookie => {
+                switch (category.getMatchBy()) {
+                case 'startsWith': return cookieName.startsWith(cookie);
+                case 'exact': return cookieName === cookie;
+                case 'includes': return cookieName.includes(cookie);
+                default: return false;
+                }
+            });
+        });
 
-        for (let i = 0; i < this._config.getCookieManifest().length; i++) {
-            const category = this._config.getCookieManifest()[i];
-
-            if (category.cookies.some(manifestCookieName => manifestCookieName === cookieName)) {
-                return new ManifestCategory(category['category-name'], category.optional);
-            }
-        }
-
-        return new ManifestCategory('un-categorized', true);
+        return category ?? new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
     }
 
     getCategories () {
         return this._config.getCookieManifest()
             .filter(category => {
-                if (!category['category-name'] || !Array.isArray(category.cookies)) {
+                if (!category.categoryName || !Array.isArray(category.cookies)) {
                     console.debug('Malformed cookie manifest category, ignoring.');
                     return false;
                 } else {
                     return true;
                 }
             })
-            .map(category => {
-                return new ManifestCategory(category['category-name'], category.optional);
-            });
+            .map(category => new ManifestCategory(category.categoryName, category.cookies, category.optional, category.matchBy));
     }
 }

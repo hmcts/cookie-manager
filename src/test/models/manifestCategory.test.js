@@ -10,12 +10,12 @@ describe('ManifestCategory', () => {
 
     describe('isOptional', () => {
         test('Get category is optional', () => {
-            const manifestCategory = new ManifestCategory(manifestName, true);
+            const manifestCategory = new ManifestCategory(manifestName, [], true);
             expect(manifestCategory.isOptional()).toBe(true);
         });
 
         test('Get category is essential', () => {
-            const manifestCategory = new ManifestCategory(manifestName, false);
+            const manifestCategory = new ManifestCategory(manifestName, [], false);
             expect(manifestCategory.isOptional()).toBe(false);
         });
 

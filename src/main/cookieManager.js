@@ -15,13 +15,13 @@ export default {
         const manifestHandler = new ManifestHandler(config);
         const userPreferences = new UserPreferences(config, manifestHandler);
         const cookieHandler = new CookieHandler(config, manifestHandler, userPreferences);
-        new CookieBannerHandler(config, userPreferences).init();
-        new PreferencesFormHandler(config, userPreferences).init();
+        EventProcessor.emit('CookieManagerLoaded', ('loaded'));
 
         userPreferences.processPreferences();
         cookieHandler.processCookies();
 
-        EventProcessor.emit('CookieManagerLoaded', ('loaded'));
+        new CookieBannerHandler(config, userPreferences, cookieHandler).init();
+        new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
     },
     on: EventProcessor.on,
     off: EventProcessor.off

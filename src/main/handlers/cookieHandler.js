@@ -1,4 +1,5 @@
 import Cookie from '../models/cookie';
+import ManifestHandler from './manifestHandler';
 
 export default class CookieHandler {
     constructor (Config, ManifestHandler, UserPreferences) {
@@ -16,19 +17,21 @@ export default class CookieHandler {
 
     _processNonConsentedCookies () {
         console.debug('Deleting non-consented cookies');
-        Object.values(CookieHandler.getAllCookies())
-            .filter(cookie => {
-                const category = this._manifestHandler.getCategoryByCookieName(cookie.getName());
-                return category.getName() !== 'un-categorized' && category.isOptional() && !this._userPreferences.getPreferences()[category.getName()];
-            })
-            .forEach(cookie => cookie.disable());
+        CookieHandler.getAllCookies().filter(cookie => {
+            const category = this._manifestHandler.getCategoryByCookieName(cookie.getName());
+            return category.getName() !== ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME &&
+                    category.isOptional() &&
+                    !this._userPreferences.getPreferences()[category.getName()];
+        }).forEach(cookie => cookie.disable());
     }
 
     _processUnCategorizedCookies () {
-        console.debug('Deleting un-categorized cookies');
-        Object.values(CookieHandler.getAllCookies())
-            .filter(cookie => this._manifestHandler.getCategoryByCookieName(cookie.getName()).getName() === 'un-categorized')
-            .forEach(cookie => { cookie.disable(); });
+        console.debug('Deleting non-categorized cookies');
+
+        CookieHandler.getAllCookies().filter(cookie => {
+            const cookieCategory = this._manifestHandler.getCategoryByCookieName(cookie.getName());
+            return cookieCategory.getName() === ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME;
+        }).forEach(cookie => cookie.disable());
     }
 
     static getAllCookies () {

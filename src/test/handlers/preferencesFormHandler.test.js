@@ -7,17 +7,21 @@ import { when } from 'jest-when';
 describe('PreferencesFormHandler', () => {
     let mockConfig;
     let mockUserPreferences;
-    const PREFERENCES_FORM_ID = 'cookie-preferences-form';
-    const getPreferencesForm = () => document.getElementById(PREFERENCES_FORM_ID);
+    let mockCookieHandler;
+    const PREFERENCES_FORM_CLASS = 'cookie-preferences-form';
+    const getPreferencesForm = () => document.querySelector('.' + PREFERENCES_FORM_CLASS);
 
     beforeEach(() => {
         mockConfig = MockConfig();
         mockUserPreferences = MockUserPreferences();
+        mockCookieHandler = {
+            processCookies: jest.fn()
+        };
     });
 
     describe('init', () => {
         test('DOM is not ready, so eventListener is added to DOM and preferences form is setup when DOM is loaded', () => {
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             let readyState = 'loading';
             Object.defineProperty(document, 'readyState', {
@@ -47,7 +51,7 @@ describe('PreferencesFormHandler', () => {
         });
 
         test('Preferences form does not exist in DOM, so do not setup form', () => {
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             preferencesFormHandler._configureFormRadios = jest.fn();
             preferencesFormHandler._setupEventListeners = jest.fn();
             preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(false);
@@ -58,7 +62,7 @@ describe('PreferencesFormHandler', () => {
         });
 
         test('Preferences form exists in DOM, so setup form', () => {
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             preferencesFormHandler._configureFormRadios = jest.fn();
             preferencesFormHandler._setupEventListeners = jest.fn();
             preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(true);
@@ -74,29 +78,30 @@ describe('PreferencesFormHandler', () => {
             await loadHTMLFromFile('PreferencesForm.html');
         });
 
-        test('Get preferences form node when exists preferences form exists in DOM', async () => {
-            const expectedElement = document.getElementById(mockConfig.getPreferencesFormId());
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+        test('Get preferences form node when exists preferences form exists in DOM', () => {
+            const expectedElement = getPreferencesForm();
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(preferencesFormHandler._getPreferencesForm()).toBe(expectedElement);
-            expect(mockConfig.getPreferencesFormId).toHaveBeenCalled();
+            expect(mockConfig.getPreferencesFormClass).toHaveBeenCalled();
+            expect(expectedElement).not.toBe(null);
         });
 
-        test('Get null when preferences form is configured incorrectly', async () => {
-            when(mockConfig.getPreferencesFormId).mockReturnValue('some-incorrect-id');
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+        test('Get null when preferences form is configured incorrectly', () => {
+            when(mockConfig.getPreferencesFormClass).mockReturnValue('some-incorrect-id');
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(preferencesFormHandler._getPreferencesForm()).toBe(null);
-            expect(mockConfig.getPreferencesFormId).toHaveBeenCalled();
+            expect(mockConfig.getPreferencesFormClass).toHaveBeenCalled();
         });
 
         test('Get null when preferences form does not exist in DOM', () => {
             wipeDocument();
 
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(preferencesFormHandler._getPreferencesForm()).toBe(null);
-            expect(mockConfig.getPreferencesFormId).toHaveBeenCalled();
+            expect(mockConfig.getPreferencesFormClass).toHaveBeenCalled();
         });
     });
 
@@ -106,7 +111,7 @@ describe('PreferencesFormHandler', () => {
         });
 
         test('Form submission event has event listener attached', () => {
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
             const preferencesFormSpy = jest.spyOn(getPreferencesForm(), 'addEventListener');
@@ -126,7 +131,7 @@ describe('PreferencesFormHandler', () => {
                 preventDefault: jest.fn(),
                 target: getPreferencesForm()
             };
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             preferencesFormHandler._updatePreferences = jest.fn();
             document.getElementsByName('analytics')[1].checked = true;
@@ -142,7 +147,7 @@ describe('PreferencesFormHandler', () => {
                 preventDefault: jest.fn(),
                 target: getPreferencesForm()
             };
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             preferencesFormHandler._updatePreferences = jest.fn();
             document.getElementsByName('analytics')[0].checked = true;
@@ -157,11 +162,12 @@ describe('PreferencesFormHandler', () => {
     describe('updatePreferences', () => {
         test('Should update preferences', () => {
             const preferences = { category: true, anotherCategory: true };
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             preferencesFormHandler._updatePreferences(preferences);
 
             expect(mockUserPreferences.setPreferences).toHaveBeenCalledWith(preferences);
             expect(mockUserPreferences.savePreferencesToCookie).toHaveBeenCalled();
+            expect(mockCookieHandler.processCookies).toHaveBeenCalled();
         });
     });
 
@@ -172,7 +178,7 @@ describe('PreferencesFormHandler', () => {
 
         test('Disable all checkboxes', () => {
             const preferences = { apm: false, analytics: false };
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             const apmOnRadio = document.getElementsByName('apm')[0];
             const apmOffRadio = document.getElementsByName('apm')[1];
             const analyticsOnRadio = document.getElementsByName('analytics')[0];
@@ -191,7 +197,7 @@ describe('PreferencesFormHandler', () => {
 
         test('Enable all checkboxes', () => {
             const preferences = { apm: true, analytics: true };
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             const apmOnRadio = document.getElementsByName('apm')[0];
             const apmOffRadio = document.getElementsByName('apm')[1];
             const analyticsOnRadio = document.getElementsByName('analytics')[0];
@@ -210,7 +216,7 @@ describe('PreferencesFormHandler', () => {
 
         test('Enable mixture of checkboxes', () => {
             const preferences = { apm: true, analytics: false };
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences);
+            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             const apmOnRadio = document.getElementsByName('apm')[0];
             const apmOffRadio = document.getElementsByName('apm')[1];
             const analyticsOnRadio = document.getElementsByName('analytics')[0];

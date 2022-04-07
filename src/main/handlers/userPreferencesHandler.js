@@ -45,7 +45,7 @@ export default class UserPreferences {
 
         this._preferencesCookie = new Cookie(this._config.getPreferenceCookieName(), cookieValue);
         this._preferencesCookie.enable(this._config.getPreferenceCookieExpiryDays() * 24 * 60 * 60 * 1000);
-        EventProcessor.emit('UserPreferencesSaved', (preferences));
+        EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
 
     _loadPreferencesFromCookie () {
@@ -78,6 +78,7 @@ export default class UserPreferences {
         const preferences = {};
         Object.keys(cookiePreferences).forEach(key => { preferences[key] = cookiePreferences[key] === 'on'; });
 
+        EventProcessor.emit('UserPreferencesLoaded', (cookiePreferences));
         return preferences;
     };
 
@@ -85,12 +86,15 @@ export default class UserPreferences {
         console.debug('Loading preferences from defaults');
 
         const preferences = {};
+        const cookiePreferences = {};
         this._manifestHandler.getCategories()
             .filter(category => category.isOptional())
             .forEach(category => {
                 preferences[category.getName()] = this._config.getDefaultConsent();
+                cookiePreferences[category.getName()] = this._config.getDefaultConsent() ? 'on' : 'off';
             });
 
+        EventProcessor.emit('UserPreferencesLoaded', (cookiePreferences));
         return preferences;
     };
 }

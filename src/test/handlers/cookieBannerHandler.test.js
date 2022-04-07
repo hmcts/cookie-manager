@@ -5,22 +5,24 @@ import CookieBannerHandler from '../../main/handlers/cookieBannerHandler.js';
 import { when } from 'jest-when';
 
 describe('CookieBannerHandler', () => {
-    // Message wrappers
-    const COOKIE_BANNER_ID = 'cookie-banner-id';
-
+    let mockCookieHandler;
     let mockConfig;
     let mockUserPreferences;
 
-    const getBannerNode = () => document.getElementById(COOKIE_BANNER_ID);
+    const COOKIE_BANNER_CLASS = 'cookie-banner';
+    const getBannerNode = () => document.querySelector('.' + COOKIE_BANNER_CLASS);
 
     beforeEach(() => {
         mockConfig = MockConfig();
         mockUserPreferences = MockUserPreferences();
+        mockCookieHandler = {
+            processCookies: jest.fn()
+        };
     });
 
     describe('init', () => {
         test('DOM is not ready, so eventListener is added to DOM and cookie banner is setup when DOM ready', () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             let readyState = 'loading';
             Object.defineProperty(document, 'readyState', {
@@ -49,7 +51,7 @@ describe('CookieBannerHandler', () => {
         });
 
         test('Cookie banner does not exist in DOM, so do not setup cookie banner', async () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             cookieBannerHandler._setupEventListeners = jest.fn();
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(false);
@@ -60,7 +62,7 @@ describe('CookieBannerHandler', () => {
         });
 
         test('User preferences cookie is already set, so do not setup cookie banner', async () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             cookieBannerHandler._setupEventListeners = jest.fn();
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue({ hidden: true });
@@ -72,7 +74,7 @@ describe('CookieBannerHandler', () => {
         });
 
         test('User preferences cookie is not set and cookie banner exists in DOM, so setup cookie banner', async () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             cookieBannerHandler._setupEventListeners = jest.fn();
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue({ hidden: true });
@@ -88,52 +90,55 @@ describe('CookieBannerHandler', () => {
         test('Get cookie banner element when exists banner exists in DOM', async () => {
             await loadHTMLFromFile('CookieBanner.html');
 
-            const expectedElement = document.getElementById(mockConfig.getCookieBannerId());
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const expectedElement = getBannerNode();
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(cookieBannerHandler._getBannerNode()).toBe(expectedElement);
-            expect(mockConfig.getCookieBannerId).toHaveBeenCalled();
+            expect(mockConfig.getCookieBannerClass).toHaveBeenCalled();
+            expect(expectedElement).not.toBe(null);
         });
 
         test('Get null when cookie banner is configured incorrectly', async () => {
             await loadHTMLFromFile('CookieBanner.html');
 
-            when(mockConfig.getCookieBannerId).mockReturnValue('some-incorrect-id');
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            when(mockConfig.getCookieBannerClass).mockReturnValue('some-incorrect-class');
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(cookieBannerHandler._getBannerNode()).toBe(null);
-            expect(mockConfig.getCookieBannerId).toHaveBeenCalled();
+            expect(mockConfig.getCookieBannerClass).toHaveBeenCalled();
         });
 
         test('Get null when cookie banner does not exist in DOM', () => {
             wipeDocument();
 
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(cookieBannerHandler._getBannerNode()).toBe(null);
-            expect(mockConfig.getCookieBannerId).toHaveBeenCalled();
+            expect(mockConfig.getCookieBannerClass).toHaveBeenCalled();
         });
     });
 
     describe('updatePreferences', () => {
         test('Consent to cookies', () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             when(mockUserPreferences.getPreferences).mockReturnValue({ 'non-essential': false, 'another-non-essential': false });
 
             cookieBannerHandler._updatePreferences(true);
             expect(mockUserPreferences.setPreferences).toHaveBeenCalledWith({ 'non-essential': true, 'another-non-essential': true });
             expect(mockUserPreferences.savePreferencesToCookie).toHaveBeenCalled();
+            expect(mockCookieHandler.processCookies).toHaveBeenCalled();
         });
 
         test('Do not consent to cookies', () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             when(mockUserPreferences.getPreferences).mockReturnValue({ 'non-essential': false, 'another-non-essential': false });
 
             cookieBannerHandler._updatePreferences(false);
             expect(mockUserPreferences.setPreferences).toHaveBeenCalledWith({ 'non-essential': false, 'another-non-essential': false });
             expect(mockUserPreferences.savePreferencesToCookie).toHaveBeenCalled();
+            expect(mockCookieHandler.processCookies).toHaveBeenCalled();
         });
     });
 
@@ -143,7 +148,7 @@ describe('CookieBannerHandler', () => {
         });
 
         test('Buttons have click listeners added if cookie banner exists in DOM', async () => {
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
 
@@ -170,7 +175,7 @@ describe('CookieBannerHandler', () => {
                 preventDefault: jest.fn(),
                 target: document.getElementsByClassName(CookieBannerHandler.DEFAULTS.HIDE_BUTT0N_CLASS)[0]
             };
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             cookieBannerHandler._clickEventHandler(event, event.target);
             expect(event.preventDefault).toHaveBeenCalled();
@@ -185,7 +190,7 @@ describe('CookieBannerHandler', () => {
                 target: acceptButtonNode
             };
 
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             cookieBannerHandler._updatePreferences = jest.fn();
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
 
@@ -206,7 +211,7 @@ describe('CookieBannerHandler', () => {
                 target: rejectButtonNode
             };
 
-            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences);
+            const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
             cookieBannerHandler._updatePreferences = jest.fn();
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
 

@@ -10,9 +10,10 @@ export default class CookieBannerHandler {
         REJECT_MESSAGE_CLASS: 'cookie-banner-reject-message'
     }
 
-    constructor (Config, UserPreferencesHandler) {
+    constructor (Config, UserPreferencesHandler, CookieHandler) {
         this._config = Config;
         this._userPreferencesHandler = UserPreferencesHandler;
+        this._cookieHandler = CookieHandler;
     }
 
     init () {
@@ -22,7 +23,7 @@ export default class CookieBannerHandler {
             return;
         }
 
-        const preferencesForm = document.getElementById(this._config.getPreferencesFormId());
+        const preferencesForm = document.querySelector('.' + this._config.getPreferencesFormClass());
 
         if (this._getBannerNode() && !preferencesForm && !this._userPreferencesHandler.getPreferenceCookie()) {
             this._setupEventListeners();
@@ -66,9 +67,10 @@ export default class CookieBannerHandler {
 
         this._userPreferencesHandler.setPreferences(preferences);
         this._userPreferencesHandler.savePreferencesToCookie();
+        this._cookieHandler.processCookies();
     }
 
     _getBannerNode () {
-        return document.getElementById(this._config.getCookieBannerId());
+        return document.querySelector('.' + this._config.getCookieBannerClass());
     };
 }

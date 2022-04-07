@@ -205,8 +205,8 @@ describe('UserPreferences', () => {
     describe('loadPreferenceDefaults', () => {
         test('Load default preferences as off', () => {
             const userPreferences = new UserPreferences(mockConfig, manifestHandler);
-            const manifestCategoryOne = new ManifestCategory('essential', false);
-            const manifestCategoryTwo = new ManifestCategory('non-essential', true);
+            const manifestCategoryOne = new ManifestCategory('essential', [], false);
+            const manifestCategoryTwo = new ManifestCategory('non-essential', [], true);
 
             when(mockConfig.getDefaultConsent).calledWith().mockReturnValue(false);
             when(manifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
@@ -218,8 +218,8 @@ describe('UserPreferences', () => {
 
         test('Load default preferences as on', () => {
             const userPreferences = new UserPreferences(mockConfig, manifestHandler);
-            const manifestCategoryOne = new ManifestCategory('essential', false);
-            const manifestCategoryTwo = new ManifestCategory('non-essential', true);
+            const manifestCategoryOne = new ManifestCategory('essential', [], false);
+            const manifestCategoryTwo = new ManifestCategory('non-essential', [], true);
 
             when(mockConfig.getDefaultConsent).calledWith().mockReturnValue(true);
             when(manifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
