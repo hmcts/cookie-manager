@@ -5,7 +5,29 @@ export default class Config {
         CONSENT: false,
         DELETE_UNCATEGORIZED: true,
         COOKIE_BANNER_CLASS: 'cookie-banner',
-        PREFERENCES_FORM_CLASS: 'cookie-preferences-form'
+        PREFERENCES_FORM_CLASS: 'cookie-preferences-form',
+
+        COOKIE_BANNER_CONFIG: {
+            class: 'cookie-banner',
+            actions: [
+                {
+                    name: 'accept',
+                    buttonClass: 'cookie-banner-accept-button',
+                    confirmationClass: 'cookie-banner-accept-message',
+                    consentCategories: true
+                },
+                {
+                    name: 'reject',
+                    buttonClass: 'cookie-banner-reject-button',
+                    confirmationClass: 'cookie-banner-reject-message',
+                    consentCategories: false
+                },
+                {
+                    name: 'hide',
+                    buttonClass: 'cookie-banner-hide-button'
+                }
+            ]
+        }
     }
 
     constructor (config) {
@@ -32,8 +54,8 @@ export default class Config {
         return this._config.deleteUndefinedCookies ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
     }
 
-    getCookieBannerClass () {
-        return this._config.cookieBanner?.class ?? Config.DEFAULTS.COOKIE_BANNER_CLASS;
+    getCookieBannerConfiguration () {
+        return this._config.cookieBanner ?? Config.DEFAULTS.COOKIE_BANNER_CONFIG;
     }
 
     getPreferencesFormClass () {

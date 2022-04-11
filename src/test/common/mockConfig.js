@@ -5,7 +5,7 @@ export const MockConfig = () => ({
     getCookieManifest: jest.fn(),
     getDefaultConsent: jest.fn().mockReturnValue(Config.DEFAULTS.CONSENT),
     shouldDeleteUncategorized: jest.fn().mockReturnValue(Config.DEFAULTS.DELETE_UNCATEGORIZED),
-    getCookieBannerClass: jest.fn().mockReturnValue('cookie-banner'),
+    getCookieBannerConfiguration: jest.fn().mockReturnValue(Config.DEFAULTS.COOKIE_BANNER_CONFIG),
     getPreferencesFormClass: jest.fn().mockReturnValue('cookie-preferences-form'),
     getPreferenceCookieExpiryDays: jest.fn().mockReturnValue(Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY)
 });

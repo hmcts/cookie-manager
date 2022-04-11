@@ -99,24 +99,29 @@ describe('Config', () => {
         });
     });
 
-    describe('getCookieBannerClass', () => {
+    describe('getCookieBannerConfiguration', () => {
         test('Should return banner class set in config', () => {
-            const cookieBannerClass = 'cookie-banner-test';
-            const testConfig = {
-                cookieBanner: {
-                    class: cookieBannerClass
-                }
+            const cookieBannerConfig = {
+                class: 'cookie-banner',
+                actions: [
+                    {
+                        name: 'hide',
+                        buttonClass: 'cookie-banner-hide-button'
+                    }
+                ]
             };
-
+            const testConfig = {
+                cookieBanner: cookieBannerConfig
+            };
             const config = new Config(testConfig);
 
-            expect(config.getCookieBannerClass()).toBe(cookieBannerClass);
+            expect(config.getCookieBannerConfiguration()).toBe(cookieBannerConfig);
         });
 
         test('Should return default banner class', () => {
             const config = new Config({});
 
-            expect(config.getCookieBannerClass()).toBe(Config.DEFAULTS.COOKIE_BANNER_CLASS);
+            expect(config.getCookieBannerConfiguration()).toBe(Config.DEFAULTS.COOKIE_BANNER_CONFIG);
         });
     });
 

@@ -1,15 +1,6 @@
 import { EventProcessor } from './EventHandler';
 
 export default class CookieBannerHandler {
-    static DEFAULTS = {
-        ACCEPT_BUTT0N_CLASS: 'cookie-banner-accept',
-        REJECT_BUTT0N_CLASS: 'cookie-banner-reject',
-        HIDE_BUTT0N_CLASS: 'cookie-banner-hide',
-        MESSAGE_CLASS: 'cookie-banner-message',
-        ACCEPT_MESSAGE_CLASS: 'cookie-banner-accept-message',
-        REJECT_MESSAGE_CLASS: 'cookie-banner-reject-message'
-    }
-
     constructor (Config, UserPreferencesHandler, CookieHandler) {
         this._config = Config;
         this._userPreferencesHandler = UserPreferencesHandler;
@@ -33,44 +24,55 @@ export default class CookieBannerHandler {
     }
 
     _setupEventListeners () {
-        const buttonClasses = [
-            CookieBannerHandler.DEFAULTS.ACCEPT_BUTT0N_CLASS,
-            CookieBannerHandler.DEFAULTS.REJECT_BUTT0N_CLASS,
-            CookieBannerHandler.DEFAULTS.HIDE_BUTT0N_CLASS
-        ];
-
-        this._getBannerNode()
-            .querySelectorAll('.' + buttonClasses.join(', .'))
-            .forEach(button => button.addEventListener('click', (event) => this._clickEventHandler(event, button)));
+        const actions = this._config.getCookieBannerConfiguration()?.actions;
+        if (actions) {
+            actions.forEach(action => {
+                const element = this._getBannerNode().querySelector('.' + action.buttonClass);
+                if (element) {
+                    element.addEventListener('click', (event) => {
+                        this._clickEventHandler(event, action.name, action.confirmationClass, action.consentCategories);
+                    });
+                }
+            });
+        }
     };
 
-    _clickEventHandler (event, button) {
+    _clickEventHandler (event, name, confirmationClass, consentCategories) {
         event.preventDefault();
-        const bannerNode = this._getBannerNode();
+        EventProcessor.emit('CookieBannerAction', name);
 
-        if (button.classList.contains(CookieBannerHandler.DEFAULTS.HIDE_BUTT0N_CLASS)) {
-            bannerNode.hidden = true;
+        if (confirmationClass) {
+            [...this._getBannerNode().children]
+                .forEach(child => {
+                    child.hidden = !child.classList.contains(confirmationClass);
+                });
         } else {
-            const consent = button.classList.contains(CookieBannerHandler.DEFAULTS.ACCEPT_BUTT0N_CLASS);
-            EventProcessor.emit('CookieBannerSubmitted', (consent));
+            this._getBannerNode().hidden = true;
+        }
 
-            this._updatePreferences(consent);
-            bannerNode.querySelector('.' + CookieBannerHandler.DEFAULTS.MESSAGE_CLASS).hidden = true;
-            bannerNode.querySelector('.' + CookieBannerHandler.DEFAULTS.ACCEPT_MESSAGE_CLASS).hidden = !consent;
-            bannerNode.querySelector('.' + CookieBannerHandler.DEFAULTS.REJECT_MESSAGE_CLASS).hidden = consent;
+        if (consentCategories !== undefined) {
+            const preferences = this._userPreferencesHandler.getPreferences();
+            // If set to TRUE (consent all) or FALSE (reject all)
+            if (typeof consentCategories === 'boolean') {
+                Object.keys(preferences).forEach(category => { preferences[category] = consentCategories; });
+            }
+
+            // If is array of categories
+            if (Array.isArray(consentCategories)) {
+                consentCategories.forEach(category => { preferences[category] = true; });
+            }
+
+            this._updatePreferences(preferences);
         }
     }
 
-    _updatePreferences (consent) {
-        const preferences = this._userPreferencesHandler.getPreferences();
-        Object.keys(preferences).forEach(category => { preferences[category] = consent; });
-
+    _updatePreferences (preferences) {
         this._userPreferencesHandler.setPreferences(preferences);
         this._userPreferencesHandler.savePreferencesToCookie();
         this._cookieHandler.processCookies();
     }
 
     _getBannerNode () {
-        return document.querySelector('.' + this._config.getCookieBannerClass());
+        return document.querySelector('.' + this._config.getCookieBannerConfiguration()?.class);
     };
 }
