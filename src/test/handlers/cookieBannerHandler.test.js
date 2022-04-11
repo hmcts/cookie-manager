@@ -10,8 +10,7 @@ describe('CookieBannerHandler', () => {
     let mockConfig;
     let mockUserPreferences;
 
-    const COOKIE_BANNER_CLASS = 'cookie-banner';
-    const getBannerNode = () => document.querySelector('.' + COOKIE_BANNER_CLASS);
+    const getBannerNode = () => document.querySelector('.' + Config.DEFAULTS.COOKIE_BANNER_CONFIG.class);
 
     beforeEach(() => {
         mockConfig = MockConfig();

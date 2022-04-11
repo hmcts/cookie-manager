@@ -4,7 +4,6 @@ export default class Config {
         PREFERENCE_COOKIE_EXPIRY: 365,
         CONSENT: false,
         DELETE_UNCATEGORIZED: true,
-        COOKIE_BANNER_CLASS: 'cookie-banner',
         PREFERENCES_FORM_CLASS: 'cookie-preferences-form',
 
         COOKIE_BANNER_CONFIG: {
