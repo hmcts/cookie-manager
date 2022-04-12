@@ -159,7 +159,7 @@ describe('Config', () => {
             };
             const config = new Config(testConfig);
 
-            expect(config.getCookieBannerConfiguration()).toBe(cookieBannerConfig);
+            expect(config.getCookieBannerConfiguration()).toStrictEqual(cookieBannerConfig);
         });
 
         test('Should return default banner configuration', () => {

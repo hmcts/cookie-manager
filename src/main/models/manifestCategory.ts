@@ -1,5 +1,4 @@
 export default class ManifestCategory {
-    // eslint-disable-next-line no-useless-constructor
     constructor (
         private readonly name: string,
         private readonly cookies: string[] = [],

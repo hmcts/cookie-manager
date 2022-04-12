@@ -6,7 +6,6 @@ export default class ManifestHandler {
         UNDEFINED_CATEGORY_NAME: 'un-categorized'
     }
 
-    // eslint-disable-next-line no-useless-constructor
     constructor (
         private readonly config: Config
     ) {}

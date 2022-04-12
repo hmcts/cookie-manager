@@ -1,8 +1,9 @@
 import Cookie from '../../main/models/cookie';
-import { deleteAllCookies, getMockedCookieJar } from '../common/common';
+import { deleteAllCookies } from '../common/common';
+import { MockedCookieJar } from '../common/mockCookieJar';
 
 describe('Cookie', () => {
-    const mockCookieJar = getMockedCookieJar();
+    let mockCookieJar;
 
     const cookieName = 'test-cookie';
     const cookieValue = 'test-value';
@@ -13,8 +14,7 @@ describe('Cookie', () => {
     const cookiePath = 'path=/';
 
     beforeEach(() => {
-        mockCookieJar.get.mockClear();
-        mockCookieJar.set.mockClear();
+        mockCookieJar = MockedCookieJar();
         deleteAllCookies();
     });
 

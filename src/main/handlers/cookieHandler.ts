@@ -4,7 +4,6 @@ import UserPreferences from './userPreferencesHandler';
 import Config from '../models/config';
 
 export default class CookieHandler {
-    // eslint-disable-next-line no-useless-constructor
     constructor (
         private readonly config: Config,
         private readonly manifestHandler: ManifestHandler,

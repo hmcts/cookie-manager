@@ -2,10 +2,10 @@ import { when } from 'jest-when';
 import UserPreferences from '../../main/handlers/userPreferencesHandler';
 import Cookie from '../../main/models/cookie';
 import ManifestCategory from '../../main/models/manifestCategory';
-import { getMockedCookieJar } from '../common/common';
 import CookieHandler from '../../main/handlers/cookieHandler';
 import { MockConfig } from '../common/mockConfig';
 import { MockManifestHandler } from '../common/mockManifestHandler';
+import { MockedCookieJar } from '../common/mockCookieJar';
 
 describe('UserPreferences', () => {
     let mockConfig;
@@ -16,7 +16,7 @@ describe('UserPreferences', () => {
 
     beforeEach(() => {
         mockConfig = MockConfig();
-        mockCookieJar = getMockedCookieJar();
+        mockCookieJar = MockedCookieJar();
         mockManifestHandler = MockManifestHandler();
     });
 
@@ -105,8 +105,7 @@ describe('UserPreferences', () => {
             userPreferences.savePreferencesToCookie();
             expect(userPreferences.getPreferences).toHaveBeenCalled();
             expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};path=/`);
-            expect(document.cookie).toBe(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)}`);
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/`);
         });
 
         test('Save multiple preferences to cookie', () => {
@@ -123,8 +122,7 @@ describe('UserPreferences', () => {
             userPreferences.savePreferencesToCookie();
             expect(userPreferences.getPreferences).toHaveBeenCalled();
             expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};path=/`);
-            expect(document.cookie).toBe(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)}`);
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/`);
         });
     });
 

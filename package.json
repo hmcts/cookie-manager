@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build:package": "rollup -c",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "jest --silent",
+    "test:coverage": "jest --coverage --silent",
     "lint": "eslint",
     "prepare": "npm run build:package"
   },

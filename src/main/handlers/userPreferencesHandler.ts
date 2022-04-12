@@ -7,7 +7,6 @@ import ManifestHandler from './manifestHandler';
 export default class UserPreferences {
     private preferences: { [key: string]: boolean };
 
-    // eslint-disable-next-line no-useless-constructor
     constructor (
         private readonly config: Config,
         private readonly manifestHandler: ManifestHandler
@@ -49,7 +48,7 @@ export default class UserPreferences {
         Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
 
         const preferencesCookie = new Cookie(this.config.getUserPreferencesCookieName(), cookieValue);
-        preferencesCookie.enable(this.config.getUserPreferencesCookieExpiry() * 24 * 60 * 60 * 1000);
+        preferencesCookie.enable(this.config.getUserPreferencesCookieExpiry() * 24 * 60 * 60 * 1000, this.config.getUserPreferencesCookieSecure());
         EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
 

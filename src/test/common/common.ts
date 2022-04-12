@@ -2,11 +2,6 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-export const getMockedCookieJar = () => ({
-    get: jest.spyOn(document, 'cookie', 'get'),
-    set: jest.spyOn(document, 'cookie', 'set')
-});
-
 export const deleteAllCookies = () => {
     const cookies = document.cookie.split(';');
 

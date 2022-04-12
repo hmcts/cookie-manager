@@ -1,22 +1,26 @@
 export default class Cookie {
-    // eslint-disable-next-line no-useless-constructor
     constructor (
         private readonly name: string,
         private readonly value: any
     ) {}
 
-    enable (expiry?) {
+    enable (expiry?: number, isSecure?: boolean) {
         let expires = '';
+        let secure = '';
         let value = this.value;
         if (expiry) {
             expires = ';expires=' + new Date(Date.now() + expiry).toUTCString();
+        }
+
+        if (isSecure) {
+            secure = ';secure';
         }
 
         if (typeof this.value === 'object') {
             value = JSON.stringify(value);
         }
 
-        document.cookie = this.name + '=' + value + expires + ';path=/';
+        document.cookie = this.name + '=' + value + expires + secure + ';path=/';
         console.debug(`Saved '${this.name}' cookie`);
     };
 

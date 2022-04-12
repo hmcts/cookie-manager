@@ -18,6 +18,8 @@ module.exports = {
     rules: {
         indent: ['error', 4],
         semi: [2, 'always'],
-        'no-trailing-spaces': ['error', { skipBlankLines: true }]
+        'no-trailing-spaces': ['error', { skipBlankLines: true }],
+        'no-useless-constructor': 'off',
+        '@typescript-eslint/no-useless-constructor': ['error']
     }
 };
