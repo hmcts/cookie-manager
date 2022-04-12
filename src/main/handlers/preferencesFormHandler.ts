@@ -18,15 +18,17 @@ export default class PreferencesFormHandler {
             return;
         }
 
-        if (this._getPreferencesForm()) {
-            this._setupEventListeners();
-            this._configureFormRadios();
-            EventProcessor.emit('PreferenceFormInitialized');
+        if (!this._getPreferencesForm()) {
+            return;
         }
+
+        this._setupEventListeners();
+        this._configureFormRadios();
+        EventProcessor.emit('PreferenceFormInitialized');
     }
 
     _getPreferencesForm () {
-        return document.querySelector('.' + this.config.getPreferencesFormClass());
+        return document.getElementsByClassName(this.config.getPreferencesFormConfiguration().class)[0];
     }
 
     _setupEventListeners () {

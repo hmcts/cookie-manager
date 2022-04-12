@@ -4,7 +4,6 @@ import ManifestHandler from '../../main/handlers/manifestHandler';
 import { MockConfig } from '../common/mockConfig';
 
 describe('ManifestHandler', () => {
-    const preferenceCookieName = 'preference-cookie';
     const cookieManifest = [
         {
             categoryName: 'essential',
@@ -26,7 +25,6 @@ describe('ManifestHandler', () => {
 
     beforeEach(() => {
         mockConfig = MockConfig();
-        when(mockConfig.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName);
     });
 
     describe('getCategories', () => {

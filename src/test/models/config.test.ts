@@ -1,22 +1,60 @@
 import Config from '../../main/models/config';
+import { IConfig } from '../../main/interfaces/Config';
 
 describe('Config', () => {
+    const defaultConfig = {
+        userPreferences: {
+            cookieName: 'cookie-preferences',
+            cookieExpiry: 365,
+            cookieSecure: true
+        },
+        preferencesForm: {
+            class: 'cookie-preferences-form'
+        },
+        cookieBanner: {
+            class: 'cookie-banner',
+            actions: [
+                {
+                    name: 'accept',
+                    buttonClass: 'cookie-banner-accept-button',
+                    confirmationClass: 'cookie-banner-accept-message',
+                    consent: true
+                },
+                {
+                    name: 'reject',
+                    buttonClass: 'cookie-banner-reject-button',
+                    confirmationClass: 'cookie-banner-reject-message',
+                    consent: false
+                },
+                {
+                    name: 'hide',
+                    buttonClass: 'cookie-banner-hide-button'
+                }
+            ]
+        },
+        cookieManifest: [],
+        additionalOptions: {
+            deleteUndefinedCookies: true,
+            defaultConsent: false
+        }
+    };
+
     describe('getPreferenceCookieName', () => {
         test('Should get preference cookie name from config', () => {
             const preferenceCookieName = 'preference-cookie-test';
-            const testConfig = {
+            const testConfig: Partial<IConfig> = {
                 userPreferences: {
                     cookieName: preferenceCookieName
                 }
             };
             const config = new Config(testConfig);
 
-            expect(config.getPreferenceCookieName()).toBe(preferenceCookieName);
+            expect(config.getUserPreferencesCookieName()).toBe(preferenceCookieName);
         });
 
         test('Should use default preference cookie name', () => {
             const config = new Config({});
-            expect(config.getPreferenceCookieName()).toBe(Config.DEFAULTS.PREFERENCE_COOKIE_NAME);
+            expect(config.getUserPreferencesCookieName()).toBe(defaultConfig.userPreferences.cookieName);
         });
     });
 
@@ -38,7 +76,9 @@ describe('Config', () => {
                 cookies: ['third-non-essential-cookie']
             }
         ];
-        const testConfig = { cookieManifest: cookieManifest };
+        const testConfig = {
+            cookieManifest: cookieManifest
+        };
 
         const config = new Config(testConfig);
 
@@ -48,7 +88,7 @@ describe('Config', () => {
     describe('getDefaultConsent', () => {
         test('Default consent set to false', () => {
             const testConfig = {
-                userPreferences: {
+                additionalOptions: {
                     defaultConsent: false
                 }
             };
@@ -59,7 +99,7 @@ describe('Config', () => {
 
         test('Default consent set to true', () => {
             const testConfig = {
-                userPreferences: {
+                additionalOptions: {
                     defaultConsent: true
                 }
             };
@@ -70,14 +110,16 @@ describe('Config', () => {
 
         test('Default consent not set in config, use default value', () => {
             const config = new Config({});
-            expect(config.getDefaultConsent()).toBe(Config.DEFAULTS.CONSENT);
+            expect(config.getDefaultConsent()).toBe(defaultConfig.additionalOptions.defaultConsent);
         });
     });
 
     describe('shouldDeleteUncategorized', () => {
         test('Should delete set to false', () => {
             const testConfig = {
-                deleteUndefinedCookies: false
+                additionalOptions: {
+                    deleteUndefinedCookies: false
+                }
             };
             const config = new Config(testConfig);
 
@@ -86,21 +128,23 @@ describe('Config', () => {
 
         test('Should delete set to true', () => {
             const testConfig = {
-                deleteUndefinedCookies: test
+                additionalOptions: {
+                    deleteUndefinedCookies: true
+                }
             };
             const config = new Config(testConfig);
 
-            expect(config.shouldDeleteUncategorized()).toBe(test);
+            expect(config.shouldDeleteUncategorized()).toBe(true);
         });
 
         test('Should delete not set in config, use default value', () => {
             const config = new Config({});
-            expect(config.shouldDeleteUncategorized()).toBe(Config.DEFAULTS.DELETE_UNCATEGORIZED);
+            expect(config.shouldDeleteUncategorized()).toBe(defaultConfig.additionalOptions.deleteUndefinedCookies);
         });
     });
 
     describe('getCookieBannerConfiguration', () => {
-        test('Should return banner class set in config', () => {
+        test('Should return cookie banner configuration set in config', () => {
             const cookieBannerConfig = {
                 class: 'cookie-banner',
                 actions: [
@@ -118,31 +162,31 @@ describe('Config', () => {
             expect(config.getCookieBannerConfiguration()).toBe(cookieBannerConfig);
         });
 
-        test('Should return default banner class', () => {
+        test('Should return default banner configuration', () => {
             const config = new Config({});
 
-            expect(config.getCookieBannerConfiguration()).toBe(Config.DEFAULTS.COOKIE_BANNER_CONFIG);
+            expect(config.getCookieBannerConfiguration()).toStrictEqual(defaultConfig.cookieBanner);
         });
     });
 
     describe('getPreferenceFormClass', () => {
-        test('Should return preferences form class set in config', () => {
-            const preferenceFormClass = 'cookie-preference-form-test';
+        test('Should return preferences form configuration set in config', () => {
+            const preferenceFormConfiguration = {
+                class: 'cookie-preferences-form'
+            };
             const testConfig = {
-                preferencesForm: {
-                    class: preferenceFormClass
-                }
+                preferencesForm: preferenceFormConfiguration
             };
 
             const config = new Config(testConfig);
 
-            expect(config.getPreferencesFormClass()).toBe(preferenceFormClass);
+            expect(config.getPreferencesFormConfiguration()).toBe(preferenceFormConfiguration);
         });
 
-        test('Should return default preferences form class', () => {
+        test('Should return default preferences configuration', () => {
             const config = new Config({});
 
-            expect(config.getPreferencesFormClass()).toBe(Config.DEFAULTS.PREFERENCES_FORM_CLASS);
+            expect(config.getPreferencesFormConfiguration()).toStrictEqual(defaultConfig.preferencesForm);
         });
     });
 
@@ -157,13 +201,13 @@ describe('Config', () => {
 
             const config = new Config(testConfig);
 
-            expect(config.getPreferenceCookieExpiryDays()).toBe(cookieExpiryDays);
+            expect(config.getUserPreferencesCookieExpiry()).toBe(cookieExpiryDays);
         });
 
         test('Should return default expiry days', () => {
             const config = new Config({});
 
-            expect(config.getPreferenceCookieExpiryDays()).toBe(Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY);
+            expect(config.getUserPreferencesCookieExpiry()).toBe(defaultConfig.userPreferences.cookieExpiry);
         });
     });
 });

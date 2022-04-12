@@ -1,12 +1,16 @@
-export default class Config {
-    static DEFAULTS = {
-        PREFERENCE_COOKIE_NAME: 'cm-user-preferences',
-        PREFERENCE_COOKIE_EXPIRY: 365,
-        CONSENT: false,
-        DELETE_UNCATEGORIZED: true,
-        PREFERENCES_FORM_CLASS: 'cookie-preferences-form',
+import { IConfig } from '../interfaces/Config';
 
-        COOKIE_BANNER_CONFIG: {
+export default class Config {
+    private readonly defaultConfig = {
+        userPreferences: {
+            cookieName: 'cookie-preferences',
+            cookieExpiry: 365,
+            cookieSecure: true
+        },
+        preferencesForm: {
+            class: 'cookie-preferences-form'
+        },
+        cookieBanner: {
             class: 'cookie-banner',
             actions: [
                 {
@@ -26,39 +30,62 @@ export default class Config {
                     buttonClass: 'cookie-banner-hide-button'
                 }
             ]
+        },
+        cookieManifest: [],
+        additionalOptions: {
+            deleteUndefinedCookies: true,
+            defaultConsent: false
         }
     }
 
-    // eslint-disable-next-line no-useless-constructor
-    constructor (
-        private readonly config: any
-    ) {}
+    private activeConfig: IConfig = {};
 
-    getPreferenceCookieName () {
-        return this.config.userPreferences?.cookieName ?? Config.DEFAULTS.PREFERENCE_COOKIE_NAME;
+    constructor (config: Partial<IConfig>) {
+        if (config) {
+            this.activeConfig.userPreferences = { ...this.defaultConfig.userPreferences, ...config.userPreferences };
+            this.activeConfig.preferencesForm = config.preferencesForm ?? this.defaultConfig.preferencesForm;
+            this.activeConfig.cookieBanner = { ...this.defaultConfig.cookieBanner, ...config.cookieBanner };
+            this.activeConfig.cookieManifest = config.cookieManifest ?? this.defaultConfig.cookieManifest;
+            this.activeConfig.additionalOptions = { ...this.defaultConfig.additionalOptions, ...config.additionalOptions };
+        } else {
+            this.activeConfig = this.defaultConfig;
+        }
     }
 
-    getPreferenceCookieExpiryDays () {
-        return this.config.userPreferences?.cookieExpiry ?? Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY;
+    /* UserPreferences */
+    getUserPreferencesCookieName () {
+        return this.activeConfig.userPreferences.cookieName;
     }
 
+    getUserPreferencesCookieExpiry () {
+        return this.activeConfig.userPreferences.cookieExpiry;
+    }
+
+    getUserPreferencesCookieSecure () {
+        return this.activeConfig.userPreferences.cookieSecure;
+    }
+
+    /* PreferencesForm */
+    getPreferencesFormConfiguration () {
+        return this.activeConfig.preferencesForm;
+    }
+
+    /* CookieBanner */
+    getCookieBannerConfiguration () {
+        return this.activeConfig.cookieBanner;
+    }
+
+    /* CookieManifest */
     getCookieManifest () {
-        return this.config.cookieManifest ?? [];
+        return this.activeConfig.cookieManifest;
     }
 
+    /* AdditionalOptions */
     getDefaultConsent () {
-        return this.config.userPreferences?.defaultConsent ?? Config.DEFAULTS.CONSENT;
+        return this.activeConfig.additionalOptions.defaultConsent;
     }
 
     shouldDeleteUncategorized () {
-        return this.config.deleteUndefinedCookies ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
-    }
-
-    getCookieBannerConfiguration () {
-        return this.config.cookieBanner ?? Config.DEFAULTS.COOKIE_BANNER_CONFIG;
-    }
-
-    getPreferencesFormClass () {
-        return this.config.preferencesForm?.class ?? Config.DEFAULTS.PREFERENCES_FORM_CLASS;
+        return this.activeConfig.additionalOptions.deleteUndefinedCookies;
     }
 }

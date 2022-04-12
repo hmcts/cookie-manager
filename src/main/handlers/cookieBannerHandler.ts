@@ -17,14 +17,13 @@ export default class CookieBannerHandler {
             document.addEventListener('DOMContentLoaded', () => this.init());
             return;
         }
+        if (this.userPreferencesHandler.getPreferenceCookie()) return;
+        if (!this._getBannerNode()) return;
+        if (document.getElementsByClassName(this.config.getPreferencesFormConfiguration().class)[0]) return;
 
-        const preferencesForm = document.querySelector('.' + this.config.getPreferencesFormClass());
-
-        if (this._getBannerNode() && !preferencesForm && !this.userPreferencesHandler.getPreferenceCookie()) {
-            this._setupEventListeners();
-            this._getBannerNode().hidden = false;
-            EventProcessor.emit('CookieBannerInitialized');
-        }
+        this._setupEventListeners();
+        this._getBannerNode().hidden = false;
+        EventProcessor.emit('CookieBannerInitialized');
     }
 
     _setupEventListeners () {

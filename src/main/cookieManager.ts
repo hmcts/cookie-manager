@@ -5,13 +5,14 @@ import UserPreferences from './handlers/userPreferencesHandler';
 import CookieBannerHandler from './handlers/cookieBannerHandler';
 import PreferencesFormHandler from './handlers/preferencesFormHandler';
 import { EventProcessor } from './handlers/EventHandler';
+import { IConfig } from './interfaces/Config';
 
 export default {
-    init: function (rawConfig) {
+    init: function (providedConfig: IConfig): void {
         console.debug('CookieManager initializing...');
         EventProcessor.emit('CookieManagerLoaded', ('loading'));
 
-        const config = new Config(rawConfig);
+        const config = new Config(providedConfig);
         const manifestHandler = new ManifestHandler(config);
         const userPreferences = new UserPreferences(config, manifestHandler);
         const cookieHandler = new CookieHandler(config, manifestHandler, userPreferences);

@@ -12,7 +12,7 @@ export default [
     },
     {
         input: 'src/main/cookieManager.ts',
-        output: [{ file: 'dist/cookieManager.min.js', format: 'umd', name: 'cookieManager' }],
+        output: [{ file: 'dist/cookie-manager.min.js', format: 'umd', name: 'cookieManager' }],
         plugins: [
             typescript({ tsconfig: './tsconfig.json' }),
             terser({

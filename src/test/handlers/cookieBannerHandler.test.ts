@@ -1,16 +1,14 @@
-import { loadHTMLFromFile, wipeDocument } from '../common/common';
 import { MockConfig } from '../common/mockConfig';
 import { MockUserPreferences } from '../common/mockUserPreferences';
 import CookieBannerHandler from '../../main/handlers/cookieBannerHandler';
 import { when } from 'jest-when';
-import Config from '../../main/models/config';
+import { loadHTMLFromFile, wipeDocument } from '../common/common';
 
 describe('CookieBannerHandler', () => {
-    let mockCookieHandler;
     let mockConfig;
     let mockUserPreferences;
-
-    const getBannerNode = (): HTMLDivElement => document.querySelector('.' + Config.DEFAULTS.COOKIE_BANNER_CONFIG.class);
+    let mockCookieHandler;
+    const getBannerNode = (): HTMLDivElement => document.querySelector('.' + mockConfig.getCookieBannerConfiguration().class);
 
     beforeEach(() => {
         mockConfig = MockConfig();
@@ -152,8 +150,8 @@ describe('CookieBannerHandler', () => {
 
             cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
 
-            const acceptButtonSpy = jest.spyOn(document.getElementsByClassName(Config.DEFAULTS.COOKIE_BANNER_CONFIG.actions[0].buttonClass)[0], 'addEventListener');
-            const rejectButtonSpy = jest.spyOn(document.getElementsByClassName(Config.DEFAULTS.COOKIE_BANNER_CONFIG.actions[1].buttonClass)[0], 'addEventListener');
+            const acceptButtonSpy = jest.spyOn(document.getElementsByClassName(mockConfig.getCookieBannerConfiguration().actions[0].buttonClass)[0], 'addEventListener');
+            const rejectButtonSpy = jest.spyOn(document.getElementsByClassName(mockConfig.getCookieBannerConfiguration().actions[1].buttonClass)[0], 'addEventListener');
 
             cookieBannerHandler._setupEventListeners();
             expect(acceptButtonSpy).toHaveBeenCalledWith('click', expect.any(Function));
@@ -162,14 +160,17 @@ describe('CookieBannerHandler', () => {
     });
 
     describe('buttonEventHandler', () => {
-        const acceptAction = Config.DEFAULTS.COOKIE_BANNER_CONFIG.actions[0];
+        let acceptAction;
+        let rejectAction;
+        let hideAction;
         const acceptConfirmationNode = (): HTMLDivElement => getBannerNode().querySelector('.' + acceptAction.confirmationClass);
-        const rejectAction = Config.DEFAULTS.COOKIE_BANNER_CONFIG.actions[1];
         const rejectConfirmationNode = (): HTMLDivElement => getBannerNode().querySelector('.' + rejectAction.confirmationClass);
-        const hideAction = Config.DEFAULTS.COOKIE_BANNER_CONFIG.actions[2];
 
         beforeEach(async () => {
             await loadHTMLFromFile('CookieBanner.html');
+            acceptAction = mockConfig.getCookieBannerConfiguration().actions[0];
+            rejectAction = mockConfig.getCookieBannerConfiguration().actions[1];
+            hideAction = mockConfig.getCookieBannerConfiguration().actions[2];
         });
 
         test('Click on hide button should hide cookie banner', () => {

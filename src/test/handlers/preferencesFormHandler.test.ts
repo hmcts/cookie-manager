@@ -83,25 +83,25 @@ describe('PreferencesFormHandler', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(preferencesFormHandler._getPreferencesForm()).toBe(expectedElement);
-            expect(mockConfig.getPreferencesFormClass).toHaveBeenCalled();
+            expect(mockConfig.getPreferencesFormConfiguration).toHaveBeenCalled();
             expect(expectedElement).not.toBe(null);
         });
 
-        test('Get null when preferences form is configured incorrectly', () => {
-            when(mockConfig.getPreferencesFormClass).mockReturnValue('some-incorrect-id');
+        test('Get undefined when preferences form is configured incorrectly', () => {
+            when(mockConfig.getPreferencesFormConfiguration).mockReturnValue('some-incorrect-id');
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
-            expect(preferencesFormHandler._getPreferencesForm()).toBe(null);
-            expect(mockConfig.getPreferencesFormClass).toHaveBeenCalled();
+            expect(preferencesFormHandler._getPreferencesForm()).toBe(undefined);
+            expect(mockConfig.getPreferencesFormConfiguration).toHaveBeenCalled();
         });
 
-        test('Get null when preferences form does not exist in DOM', () => {
+        test('Get undefined when preferences form does not exist in DOM', () => {
             wipeDocument();
 
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
-            expect(preferencesFormHandler._getPreferencesForm()).toBe(null);
-            expect(mockConfig.getPreferencesFormClass).toHaveBeenCalled();
+            expect(preferencesFormHandler._getPreferencesForm()).toBe(undefined);
+            expect(mockConfig.getPreferencesFormConfiguration).toHaveBeenCalled();
         });
     });
 

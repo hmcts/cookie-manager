@@ -39,7 +39,7 @@ export default class UserPreferences {
     };
 
     getPreferenceCookie () {
-        return CookieHandler.getCookie(this.config.getPreferenceCookieName());
+        return CookieHandler.getCookie(this.config.getUserPreferencesCookieName());
     };
 
     savePreferencesToCookie () {
@@ -48,8 +48,8 @@ export default class UserPreferences {
 
         Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
 
-        const preferencesCookie = new Cookie(this.config.getPreferenceCookieName(), cookieValue);
-        preferencesCookie.enable(this.config.getPreferenceCookieExpiryDays() * 24 * 60 * 60 * 1000);
+        const preferencesCookie = new Cookie(this.config.getUserPreferencesCookieName(), cookieValue);
+        preferencesCookie.enable(this.config.getUserPreferencesCookieExpiry() * 24 * 60 * 60 * 1000);
         EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
 
