@@ -1,6 +1,7 @@
 import { when } from 'jest-when';
 import ManifestCategory from '../../main/models/manifestCategory';
 import ManifestHandler from '../../main/handlers/manifestHandler';
+import { MockConfig } from '../common/mockConfig';
 
 describe('ManifestHandler', () => {
     const preferenceCookieName = 'preference-cookie';
@@ -21,11 +22,11 @@ describe('ManifestHandler', () => {
             cookies: ['third-non-essential-cookie']
         }
     ];
-    const config = { getPreferenceCookieName: jest.fn(), getCookieManifest: jest.fn() };
-    when(config.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName);
+    let mockConfig;
 
     beforeEach(() => {
-        config.getCookieManifest.mockClear();
+        mockConfig = MockConfig();
+        when(mockConfig.getPreferenceCookieName).calledWith().mockReturnValue(preferenceCookieName);
     });
 
     describe('getCategories', () => {
@@ -44,12 +45,12 @@ describe('ManifestHandler', () => {
                     false
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Get categories with multiple essential', () => {
@@ -87,12 +88,12 @@ describe('ManifestHandler', () => {
                     true
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Get categories with single optional', () => {
@@ -120,12 +121,12 @@ describe('ManifestHandler', () => {
                     true
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Get categories with multiple optional', () => {
@@ -164,12 +165,12 @@ describe('ManifestHandler', () => {
                     true
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Get categories with multiple essential and optional', () => {
@@ -217,12 +218,12 @@ describe('ManifestHandler', () => {
                     true
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Ignore categories when category is malformed', () => {
@@ -248,12 +249,12 @@ describe('ManifestHandler', () => {
                     false
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Duplicate categories are handled correctly', () => {
@@ -291,55 +292,55 @@ describe('ManifestHandler', () => {
                     true
                 )
             ];
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategories()).toEqual(expectedCategories);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
     });
 
     describe('getCategoryByCookieName', () => {
         beforeEach(() => {
-            config.getCookieManifest = jest.fn();
+            mockConfig.getCookieManifest = jest.fn();
         });
 
         test('Get un-categorized category when cookie does not exist in manifest', () => {
             const expectedCategory = new ManifestCategory('un-categorized');
             const nonManifestCookie = 'non-manifest-cookie';
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategoryByCookieName(nonManifestCookie)).toEqual(expectedCategory);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Get category for essential cookie', () => {
             const expectedCategory = new ManifestCategory('essential', ['first-essential-cookie', 'second-essential-cookie'], false);
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategoryByCookieName('first-essential-cookie')).toEqual(expectedCategory);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         test('Get category for optional cookie', () => {
             const expectedCategory = new ManifestCategory('non-essential', ['first-non-essential-cookie', 'second-non-essential-cookie']);
-            const manifestHandler = new ManifestHandler(config);
+            const manifestHandler = new ManifestHandler(mockConfig);
 
-            when(config.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
+            when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
 
             expect(manifestHandler.getCategoryByCookieName('first-non-essential-cookie')).toEqual(expectedCategory);
-            expect(config.getCookieManifest).toHaveBeenCalled();
+            expect(mockConfig.getCookieManifest).toHaveBeenCalled();
         });
 
         describe('Get category for cookies by exact match', () => {
             test('Should return category for cookies that does exactly match', () => {
                 const expectedCategory = new ManifestCategory('essential', ['first-essential-cookie', 'second-essential-cookie'], false, 'exact');
-                const manifestHandler = new ManifestHandler(config);
+                const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'exact',
@@ -347,15 +348,15 @@ describe('ManifestHandler', () => {
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 }];
 
-                when(config.getCookieManifest).mockReturnValue(mockCookieManifest);
+                when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
                 expect(manifestHandler.getCategoryByCookieName('second-essential-cookie')).toEqual(expectedCategory);
-                expect(config.getCookieManifest).toHaveBeenCalled();
+                expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
 
             test('Should return un-categorized category for cookie that does not exactly match', () => {
                 const expectedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
-                const manifestHandler = new ManifestHandler(config);
+                const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'exact',
@@ -363,17 +364,17 @@ describe('ManifestHandler', () => {
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 }];
 
-                when(config.getCookieManifest).mockReturnValue(mockCookieManifest);
+                when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
                 expect(manifestHandler.getCategoryByCookieName('second-essential')).toEqual(expectedCategory);
-                expect(config.getCookieManifest).toHaveBeenCalled();
+                expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
         });
 
         describe('Get category for cookies by includes match', () => {
             test('Should return category for cookies that does includes match', () => {
                 const expectedCategory = new ManifestCategory('essential', ['essential', 'test'], false, 'includes');
-                const manifestHandler = new ManifestHandler(config);
+                const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'includes',
@@ -381,15 +382,15 @@ describe('ManifestHandler', () => {
                     cookies: ['essential', 'test']
                 }];
 
-                when(config.getCookieManifest).mockReturnValue(mockCookieManifest);
+                when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
                 expect(manifestHandler.getCategoryByCookieName('cookie-test')).toEqual(expectedCategory);
-                expect(config.getCookieManifest).toHaveBeenCalled();
+                expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
 
             test('Should return un-categorized category for cookie that does not includes match', () => {
                 const expectedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
-                const manifestHandler = new ManifestHandler(config);
+                const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'includes',
@@ -397,17 +398,17 @@ describe('ManifestHandler', () => {
                     cookies: ['test']
                 }];
 
-                when(config.getCookieManifest).mockReturnValue(mockCookieManifest);
+                when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
                 expect(manifestHandler.getCategoryByCookieName('second-essential')).toEqual(expectedCategory);
-                expect(config.getCookieManifest).toHaveBeenCalled();
+                expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
         });
 
         describe('Get category for cookies by startsWith match', () => {
             test('Should return category for cookies that does startsWith match', () => {
                 const expectedCategory = new ManifestCategory('essential', ['test-cookie', 'cookies'], false, 'startsWith');
-                const manifestHandler = new ManifestHandler(config);
+                const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'startsWith',
@@ -415,15 +416,15 @@ describe('ManifestHandler', () => {
                     cookies: ['test-cookie', 'cookies']
                 }];
 
-                when(config.getCookieManifest).mockReturnValue(mockCookieManifest);
+                when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
                 expect(manifestHandler.getCategoryByCookieName('test-cookie-one')).toEqual(expectedCategory);
-                expect(config.getCookieManifest).toHaveBeenCalled();
+                expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
 
             test('Should return un-categorized category for cookie that does not startsWith match', () => {
                 const expectedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
-                const manifestHandler = new ManifestHandler(config);
+                const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'startsWith',
@@ -431,10 +432,10 @@ describe('ManifestHandler', () => {
                     cookies: ['test']
                 }];
 
-                when(config.getCookieManifest).mockReturnValue(mockCookieManifest);
+                when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
                 expect(manifestHandler.getCategoryByCookieName('second-essential')).toEqual(expectedCategory);
-                expect(config.getCookieManifest).toHaveBeenCalled();
+                expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
         });
     });

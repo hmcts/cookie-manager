@@ -1,9 +1,0 @@
-.idea/
-.vscode/
-node_modules/
-dist/
-examples/
-src/
-package/
-*.config.js
-.eslintrc.js

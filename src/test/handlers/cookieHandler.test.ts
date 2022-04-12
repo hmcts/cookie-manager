@@ -6,6 +6,7 @@ import Cookie from '../../main/models/cookie';
 import { MockConfig } from '../common/mockConfig';
 import { MockUserPreferences } from '../common/mockUserPreferences';
 import ManifestHandler from '../../main/handlers/manifestHandler';
+import { MockManifestHandler } from '../common/mockManifestHandler';
 
 describe('CookieHandler', () => {
     let mockConfig;
@@ -25,10 +26,7 @@ describe('CookieHandler', () => {
         deleteAllCookies();
         mockConfig = MockConfig();
         mockUserPreferences = MockUserPreferences();
-        mockManifestHandler = {
-            getCategoryByCookieName: jest.fn(),
-            getCategories: jest.fn()
-        };
+        mockManifestHandler = MockManifestHandler();
     });
 
     describe('getAllCookies', () => {

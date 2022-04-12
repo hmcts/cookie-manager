@@ -1,40 +1,45 @@
 import Cookie from '../models/cookie';
 import CookieHandler from './cookieHandler';
 import { EventProcessor } from './EventHandler';
+import Config from '../models/config';
+import ManifestHandler from './manifestHandler';
 
 export default class UserPreferences {
-    constructor (Config, ManifestHandler) {
-        this._config = Config;
-        this._manifestHandler = ManifestHandler;
-    }
+    private preferences: { [key: string]: boolean };
+
+    // eslint-disable-next-line no-useless-constructor
+    constructor (
+        private readonly config: Config,
+        private readonly manifestHandler: ManifestHandler
+    ) {}
 
     processPreferences () {
-        this._preferencesCookie = this.getPreferenceCookie();
+        const preferencesCookie = this.getPreferenceCookie();
 
-        if (this._preferencesCookie) {
-            this.setPreferences(this._loadPreferencesFromCookie(this._preferencesCookie));
+        if (preferencesCookie) {
+            this.setPreferences(this._loadPreferencesFromCookie());
         } else {
             this.setPreferences(this._loadPreferenceDefaults());
         }
     }
 
     getPreferences () {
-        if (!this._preferences) {
+        if (!this.preferences) {
             console.error('User preferences not loaded/set, call .processPreferences() first');
             return {};
         }
 
-        return this._preferences;
+        return this.preferences;
     };
 
-    setPreferences (preferences) {
+    setPreferences (preferences: { [key: string]: boolean }) {
         console.debug('Setting preferences to: ' + JSON.stringify(preferences));
-        this._preferences = preferences;
+        this.preferences = preferences;
         EventProcessor.emit('UserPreferencesSet', (preferences));
     };
 
     getPreferenceCookie () {
-        return CookieHandler.getCookie(this._config.getPreferenceCookieName());
+        return CookieHandler.getCookie(this.config.getPreferenceCookieName());
     };
 
     savePreferencesToCookie () {
@@ -43,8 +48,8 @@ export default class UserPreferences {
 
         Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
 
-        this._preferencesCookie = new Cookie(this._config.getPreferenceCookieName(), cookieValue);
-        this._preferencesCookie.enable(this._config.getPreferenceCookieExpiryDays() * 24 * 60 * 60 * 1000);
+        const preferencesCookie = new Cookie(this.config.getPreferenceCookieName(), cookieValue);
+        preferencesCookie.enable(this.config.getPreferenceCookieExpiryDays() * 24 * 60 * 60 * 1000);
         EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
 
@@ -67,7 +72,7 @@ export default class UserPreferences {
             return this._loadPreferenceDefaults();
         }
 
-        if (this._manifestHandler.getCategories()
+        if (this.manifestHandler.getCategories()
             .filter(category => category.isOptional())
             .some(category => !Object.keys(cookiePreferences).includes(category.getName()))) {
             console.debug('User preferences cookie is missing categories, deleting old user preferences cookie.');
@@ -87,11 +92,11 @@ export default class UserPreferences {
 
         const preferences = {};
         const cookiePreferences = {};
-        this._manifestHandler.getCategories()
+        this.manifestHandler.getCategories()
             .filter(category => category.isOptional())
             .forEach(category => {
-                preferences[category.getName()] = this._config.getDefaultConsent();
-                cookiePreferences[category.getName()] = this._config.getDefaultConsent() ? 'on' : 'off';
+                preferences[category.getName()] = this.config.getDefaultConsent();
+                cookiePreferences[category.getName()] = this.config.getDefaultConsent() ? 'on' : 'off';
             });
 
         EventProcessor.emit('UserPreferencesLoaded', (cookiePreferences));

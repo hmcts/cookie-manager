@@ -1,10 +1,6 @@
-const path = require('path');
 module.exports = {
     transform: {
-        '^.+\\.[t|j]sx?$': [
-            'babel-jest',
-            { configFile: path.join(__dirname, '/src/test/babel.config.js') }
-        ]
+        '^.+\\.ts?$': 'ts-jest'
     },
     collectCoverage: false,
     testEnvironment: 'jsdom',

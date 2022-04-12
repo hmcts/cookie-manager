@@ -1,6 +1,4 @@
 module.exports = {
-    parser: '@babel/eslint-parser',
-    plugins: ['jest'],
     env: {
         browser: true,
         es2021: true,
@@ -9,19 +7,17 @@ module.exports = {
     extends: [
         'standard'
     ],
+    parser: '@typescript-eslint/parser',
     parserOptions: {
-        ecmaVersion: 12,
+        ecmaVersion: 'latest',
         sourceType: 'module'
     },
+    plugins: [
+        '@typescript-eslint'
+    ],
     rules: {
-        'jest/no-disabled-tests': 'warn',
-        'jest/no-focused-tests': 'error',
-        'jest/no-identical-title': 'error',
-        'jest/prefer-to-have-length': 'warn',
-        'jest/valid-expect': 'error',
         indent: ['error', 4],
         semi: [2, 'always'],
-        'no-trailing-spaces': ['error', { skipBlankLines: true }],
-        'no-fallthrough': 1
+        'no-trailing-spaces': ['error', { skipBlankLines: true }]
     }
 };

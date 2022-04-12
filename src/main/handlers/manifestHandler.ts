@@ -1,15 +1,17 @@
 import ManifestCategory from '../models/manifestCategory';
+import Config from '../models/config';
 
 export default class ManifestHandler {
     static DEFAULTS = {
         UNDEFINED_CATEGORY_NAME: 'un-categorized'
     }
 
-    constructor (config) {
-        this._config = config;
-    }
+    // eslint-disable-next-line no-useless-constructor
+    constructor (
+        private readonly config: Config
+    ) {}
 
-    getCategoryByCookieName (cookieName) {
+    getCategoryByCookieName (cookieName: string): ManifestCategory {
         const category = this.getCategories().find(category => {
             return category.getCookies().some(cookie => {
                 switch (category.getMatchBy()) {
@@ -24,8 +26,8 @@ export default class ManifestHandler {
         return category ?? new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
     }
 
-    getCategories () {
-        return this._config.getCookieManifest()
+    getCategories (): ManifestCategory[] {
+        return this.config.getCookieManifest()
             .filter(category => {
                 if (!category.categoryName || !Array.isArray(category.cookies)) {
                     console.debug('Malformed cookie manifest category, ignoring.');

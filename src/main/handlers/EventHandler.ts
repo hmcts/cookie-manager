@@ -1,7 +1,7 @@
 export class EventProcessor {
      static _handlerMap = new Map();
 
-     static on (eventName, handler) {
+     static on (eventName: string, handler: Function) {
          if (typeof eventName !== 'string') {
              console.error('Event not provided');
              return;
@@ -40,7 +40,7 @@ export class EventProcessor {
          }
      }
 
-     static emit (type, data) {
+     static emit (type: string, data?: any) {
          type = type.toLowerCase();
          console.debug('Event fired: ' + type);
 

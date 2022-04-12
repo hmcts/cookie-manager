@@ -39,7 +39,7 @@ describe('PreferencesFormHandler', () => {
             expect(documentSpy).toHaveBeenCalledWith('DOMContentLoaded', expect.any(Function));
             expect(initSpy).toHaveBeenCalledTimes(1);
 
-            document.readyState = 'complete';
+            readyState = 'complete';
             document.dispatchEvent(new Event('DOMContentLoaded', {
                 bubbles: true,
                 cancelable: true
@@ -134,8 +134,8 @@ describe('PreferencesFormHandler', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             preferencesFormHandler._updatePreferences = jest.fn();
-            document.getElementsByName('analytics')[1].checked = true;
-            document.getElementsByName('apm')[0].checked = true;
+            (document.getElementsByName('analytics')[1] as HTMLInputElement).checked = true;
+            (document.getElementsByName('apm')[0] as HTMLInputElement).checked = true;
 
             preferencesFormHandler._submitEventHandler(event);
             expect(event.preventDefault).toHaveBeenCalled();
@@ -150,8 +150,8 @@ describe('PreferencesFormHandler', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             preferencesFormHandler._updatePreferences = jest.fn();
-            document.getElementsByName('analytics')[0].checked = true;
-            document.getElementsByName('apm')[0].checked = true;
+            (document.getElementsByName('analytics')[0] as HTMLInputElement).checked = true;
+            (document.getElementsByName('apm')[0] as HTMLInputElement).checked = true;
 
             preferencesFormHandler._submitEventHandler(event);
             expect(event.preventDefault).toHaveBeenCalled();
@@ -179,10 +179,10 @@ describe('PreferencesFormHandler', () => {
         test('Disable all checkboxes', () => {
             const preferences = { apm: false, analytics: false };
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
-            const apmOnRadio = document.getElementsByName('apm')[0];
-            const apmOffRadio = document.getElementsByName('apm')[1];
-            const analyticsOnRadio = document.getElementsByName('analytics')[0];
-            const analyticsOffRadio = document.getElementsByName('analytics')[1];
+            const apmOnRadio = document.getElementsByName('apm')[0] as HTMLInputElement;
+            const apmOffRadio = document.getElementsByName('apm')[1] as HTMLInputElement;
+            const analyticsOnRadio = document.getElementsByName('analytics')[0] as HTMLInputElement;
+            const analyticsOffRadio = document.getElementsByName('analytics')[1] as HTMLInputElement;
 
             when(mockUserPreferences.getPreferences).mockReturnValue(preferences);
             preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
@@ -198,10 +198,10 @@ describe('PreferencesFormHandler', () => {
         test('Enable all checkboxes', () => {
             const preferences = { apm: true, analytics: true };
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
-            const apmOnRadio = document.getElementsByName('apm')[0];
-            const apmOffRadio = document.getElementsByName('apm')[1];
-            const analyticsOnRadio = document.getElementsByName('analytics')[0];
-            const analyticsOffRadio = document.getElementsByName('analytics')[1];
+            const apmOnRadio = document.getElementsByName('apm')[0] as HTMLInputElement;
+            const apmOffRadio = document.getElementsByName('apm')[1] as HTMLInputElement;
+            const analyticsOnRadio = document.getElementsByName('analytics')[0] as HTMLInputElement;
+            const analyticsOffRadio = document.getElementsByName('analytics')[1] as HTMLInputElement;
 
             when(mockUserPreferences.getPreferences).mockReturnValue(preferences);
             preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());
@@ -217,10 +217,10 @@ describe('PreferencesFormHandler', () => {
         test('Enable mixture of checkboxes', () => {
             const preferences = { apm: true, analytics: false };
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
-            const apmOnRadio = document.getElementsByName('apm')[0];
-            const apmOffRadio = document.getElementsByName('apm')[1];
-            const analyticsOnRadio = document.getElementsByName('analytics')[0];
-            const analyticsOffRadio = document.getElementsByName('analytics')[1];
+            const apmOnRadio = document.getElementsByName('apm')[0] as HTMLInputElement;
+            const apmOffRadio = document.getElementsByName('apm')[1] as HTMLInputElement;
+            const analyticsOnRadio = document.getElementsByName('analytics')[0] as HTMLInputElement;
+            const analyticsOffRadio = document.getElementsByName('analytics')[1] as HTMLInputElement;
 
             when(mockUserPreferences.getPreferences).mockReturnValue(preferences);
             preferencesFormHandler._getPreferencesForm = jest.fn().mockReturnValue(getPreferencesForm());

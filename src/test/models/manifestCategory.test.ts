@@ -4,7 +4,7 @@ describe('ManifestCategory', () => {
     const manifestName = 'test-cookie';
 
     test('getName', () => {
-        const manifestCategory = new ManifestCategory(manifestName, true);
+        const manifestCategory = new ManifestCategory(manifestName);
         expect(manifestCategory.getName()).toBe(manifestName);
     });
 

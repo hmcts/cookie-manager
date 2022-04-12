@@ -84,7 +84,7 @@ describe('EventProcessor', () => {
             const eventName = 'testEvent';
             const listenerFunction = jest.fn();
             const expectedToken = {
-                token: expect.anything(String),
+                token: expect.any(String),
                 type: eventName.toLowerCase()
             };
 
@@ -94,9 +94,18 @@ describe('EventProcessor', () => {
         });
 
         test('Should catch error when no token provided', () => {
-            expect(() => { EventProcessor.on(); }).not.toThrow();
-            expect(() => { EventProcessor.on({}); }).not.toThrow();
-            expect(() => { EventProcessor.on('event', 'string'); }).not.toThrow();
+            expect(() => {
+                // @ts-ignore
+                EventProcessor.on();
+            }).not.toThrow();
+            expect(() => {
+                // @ts-ignore
+                EventProcessor.on({});
+            }).not.toThrow();
+            expect(() => {
+                // @ts-ignore
+                EventProcessor.on('event', 'string');
+            }).not.toThrow();
         });
     });
 
@@ -123,7 +132,10 @@ describe('EventProcessor', () => {
         });
 
         test('Should catch error when no token provided', () => {
-            expect(() => { EventProcessor.off(); }).not.toThrow();
+            expect(() => {
+                // @ts-ignore
+                EventProcessor.off();
+            }).not.toThrow();
             expect(() => { EventProcessor.off('malformedData'); }).not.toThrow();
         });
     });

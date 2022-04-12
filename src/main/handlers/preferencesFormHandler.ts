@@ -1,11 +1,15 @@
 import { EventProcessor } from './EventHandler';
+import Config from '../models/config';
+import UserPreferences from './userPreferencesHandler';
+import CookieHandler from './cookieHandler';
 
 export default class PreferencesFormHandler {
-    constructor (Config, UserPreferencesHandler, CookieHandler) {
-        this._config = Config;
-        this._userPreferencesHandler = UserPreferencesHandler;
-        this._cookieHandler = CookieHandler;
-    }
+    // eslint-disable-next-line no-useless-constructor
+    constructor (
+        private readonly config: Config,
+        private readonly userPreferencesHandler: UserPreferences,
+        private readonly cookieHandler: CookieHandler
+    ) {}
 
     init () {
         if (document.readyState === 'loading') {
@@ -22,7 +26,7 @@ export default class PreferencesFormHandler {
     }
 
     _getPreferencesForm () {
-        return document.querySelector('.' + this._config.getPreferencesFormClass());
+        return document.querySelector('.' + this.config.getPreferencesFormClass());
     }
 
     _setupEventListeners () {
@@ -45,17 +49,17 @@ export default class PreferencesFormHandler {
         this._updatePreferences(preferences);
     }
 
-    _updatePreferences (preferences) {
-        this._userPreferencesHandler.setPreferences(preferences);
-        this._userPreferencesHandler.savePreferencesToCookie();
-        this._cookieHandler.processCookies();
+    _updatePreferences (preferences: { [key: string]: boolean }) {
+        this.userPreferencesHandler.setPreferences(preferences);
+        this.userPreferencesHandler.savePreferencesToCookie();
+        this.cookieHandler.processCookies();
     }
 
     _configureFormRadios () {
-        Object.entries(this._userPreferencesHandler.getPreferences())
+        Object.entries(this.userPreferencesHandler.getPreferences())
             .forEach(entry => {
                 const checkboxValue = entry[1] ? 'on' : 'off';
-                const checkbox = this._getPreferencesForm().querySelector(`input[name=${entry[0]}][value=${checkboxValue}]`);
+                const checkbox: HTMLInputElement = this._getPreferencesForm().querySelector(`input[name=${entry[0]}][value=${checkboxValue}]`);
                 if (checkbox) {
                     checkbox.checked = true;
                 }

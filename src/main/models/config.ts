@@ -13,13 +13,13 @@ export default class Config {
                     name: 'accept',
                     buttonClass: 'cookie-banner-accept-button',
                     confirmationClass: 'cookie-banner-accept-message',
-                    consentCategories: true
+                    consent: true
                 },
                 {
                     name: 'reject',
                     buttonClass: 'cookie-banner-reject-button',
                     confirmationClass: 'cookie-banner-reject-message',
-                    consentCategories: false
+                    consent: false
                 },
                 {
                     name: 'hide',
@@ -29,35 +29,36 @@ export default class Config {
         }
     }
 
-    constructor (config) {
-        this._config = config;
-    }
+    // eslint-disable-next-line no-useless-constructor
+    constructor (
+        private readonly config: any
+    ) {}
 
     getPreferenceCookieName () {
-        return this._config.userPreferences?.cookieName ?? Config.DEFAULTS.PREFERENCE_COOKIE_NAME;
+        return this.config.userPreferences?.cookieName ?? Config.DEFAULTS.PREFERENCE_COOKIE_NAME;
     }
 
     getPreferenceCookieExpiryDays () {
-        return this._config.userPreferences?.cookieExpiry ?? Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY;
+        return this.config.userPreferences?.cookieExpiry ?? Config.DEFAULTS.PREFERENCE_COOKIE_EXPIRY;
     }
 
     getCookieManifest () {
-        return this._config.cookieManifest ?? [];
+        return this.config.cookieManifest ?? [];
     }
 
     getDefaultConsent () {
-        return this._config.userPreferences?.defaultConsent ?? Config.DEFAULTS.CONSENT;
+        return this.config.userPreferences?.defaultConsent ?? Config.DEFAULTS.CONSENT;
     }
 
     shouldDeleteUncategorized () {
-        return this._config.deleteUndefinedCookies ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
+        return this.config.deleteUndefinedCookies ?? Config.DEFAULTS.DELETE_UNCATEGORIZED;
     }
 
     getCookieBannerConfiguration () {
-        return this._config.cookieBanner ?? Config.DEFAULTS.COOKIE_BANNER_CONFIG;
+        return this.config.cookieBanner ?? Config.DEFAULTS.COOKIE_BANNER_CONFIG;
     }
 
     getPreferencesFormClass () {
-        return this._config.preferencesForm?.class ?? Config.DEFAULTS.PREFERENCES_FORM_CLASS;
+        return this.config.preferencesForm?.class ?? Config.DEFAULTS.PREFERENCES_FORM_CLASS;
     }
 }
