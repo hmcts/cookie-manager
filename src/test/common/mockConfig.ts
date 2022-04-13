@@ -9,6 +9,7 @@ const testConfig = {
     },
     cookieBanner: {
         class: 'cookie-banner',
+        showWithPreferencesForm: false,
         actions: [
             {
                 name: 'accept',

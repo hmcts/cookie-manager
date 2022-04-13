@@ -11,14 +11,19 @@ export default class CookieBannerHandler {
     ) {}
 
     init () {
+        if (this.userPreferencesHandler.getPreferenceCookie()) return;
+
         if (document.readyState === 'loading') {
             console.debug('DOM is not ready; adding event to bind to banner when ready.');
             document.addEventListener('DOMContentLoaded', () => this.init());
             return;
         }
-        if (this.userPreferencesHandler.getPreferenceCookie()) return;
+
         if (!this._getBannerNode()) return;
-        if (document.getElementsByClassName(this.config.getPreferencesFormConfiguration().class)[0]) return;
+
+        if (document.getElementsByClassName(this.config.getPreferencesFormConfiguration().class)[0] &&
+            !this.config.getCookieBannerConfiguration().showWithPreferencesForm
+        ) return;
 
         this._setupEventListeners();
         this._getBannerNode().hidden = false;

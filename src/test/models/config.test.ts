@@ -13,6 +13,7 @@ describe('Config', () => {
         },
         cookieBanner: {
             class: 'cookie-banner',
+            showWithPreferencesForm: false,
             actions: [
                 {
                     name: 'accept',
@@ -147,6 +148,7 @@ describe('Config', () => {
         test('Should return cookie banner configuration set in config', () => {
             const cookieBannerConfig = {
                 class: 'cookie-banner',
+                showWithPreferencesForm: true,
                 actions: [
                     {
                         name: 'hide',

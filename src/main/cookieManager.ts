@@ -21,8 +21,13 @@ export default {
         userPreferences.processPreferences();
         cookieHandler.processCookies();
 
-        new CookieBannerHandler(config, userPreferences, cookieHandler).init();
-        new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
+        if (Object.keys(this.config.getCookieBannerConfiguration())) {
+            new CookieBannerHandler(config, userPreferences, cookieHandler).init();
+        }
+
+        if (Object.keys(this.config.getPreferencesFormConfiguration())) {
+            new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
+        }
     },
     on: EventProcessor.on,
     off: EventProcessor.off

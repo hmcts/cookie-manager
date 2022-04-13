@@ -12,6 +12,7 @@ export default class Config {
         },
         cookieBanner: {
             class: 'cookie-banner',
+            showWithPreferencesForm: false,
             actions: [
                 {
                     name: 'accept',

@@ -8,8 +8,9 @@ export interface IConfig {
         class: string
     };
     cookieBanner?: {
-        class: string,
-        actions: {
+        class?: string,
+        showWithPreferencesForm?: boolean,
+        actions?: {
             name: string;
             buttonClass: string;
             confirmationClass?: string;

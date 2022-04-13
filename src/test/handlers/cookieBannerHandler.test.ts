@@ -24,8 +24,12 @@ describe('CookieBannerHandler', () => {
 
             let readyState = 'loading';
             Object.defineProperty(document, 'readyState', {
-                get () { return readyState; },
-                set (value) { readyState = value; }
+                get () {
+                    return readyState;
+                },
+                set (value) {
+                    readyState = value;
+                }
             });
 
             const documentSpy = jest.spyOn(document, 'addEventListener');
@@ -81,6 +85,48 @@ describe('CookieBannerHandler', () => {
             cookieBannerHandler.init();
             expect(cookieBannerHandler._setupEventListeners).toHaveBeenCalled();
             expect(cookieBannerHandler._getBannerNode().hidden).toBe(false);
+        });
+
+        describe('Cookie banner and preferences form are in the DOM together', () => {
+            beforeEach(() => {
+                const mockPreferencesFormElement = document.createElement('div');
+                mockPreferencesFormElement.classList.add(mockConfig.getPreferencesFormConfiguration().class);
+                document.body.appendChild(mockPreferencesFormElement);
+            });
+
+            test('Cookie banner should be displayed when `showWithPreferencesForm` is set to true', () => {
+                const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+
+                cookieBannerHandler._setupEventListeners = jest.fn();
+                cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue({ hidden: true });
+
+                when(mockUserPreferences.getPreferenceCookie).mockReturnValue(false);
+                when(mockConfig.getCookieBannerConfiguration).mockReturnValue({
+                    class: 'cookie-banner',
+                    showWithPreferencesForm: true
+                });
+
+                cookieBannerHandler.init();
+                expect(cookieBannerHandler._setupEventListeners).toHaveBeenCalled();
+                expect(cookieBannerHandler._getBannerNode().hidden).toBe(false);
+            });
+
+            test('Cookie banner should be displayed when `showWithPreferencesForm` is set to false', () => {
+                const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+
+                cookieBannerHandler._setupEventListeners = jest.fn();
+                cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue({ hidden: true });
+
+                when(mockUserPreferences.getPreferenceCookie).mockReturnValue(false);
+                when(mockConfig.getCookieBannerConfiguration).mockReturnValue({
+                    class: 'cookie-banner',
+                    showWithPreferencesForm: false
+                });
+
+                cookieBannerHandler.init();
+                expect(cookieBannerHandler._setupEventListeners).not.toHaveBeenCalled();
+                expect(cookieBannerHandler._getBannerNode().hidden).toBe(true);
+            });
         });
     });
 
@@ -159,7 +205,7 @@ describe('CookieBannerHandler', () => {
         });
     });
 
-    describe('buttonEventHandler', () => {
+    describe('clickEventHandler', () => {
         let acceptAction;
         let rejectAction;
         let hideAction;
@@ -171,6 +217,112 @@ describe('CookieBannerHandler', () => {
             acceptAction = mockConfig.getCookieBannerConfiguration().actions[0];
             rejectAction = mockConfig.getCookieBannerConfiguration().actions[1];
             hideAction = mockConfig.getCookieBannerConfiguration().actions[2];
+        });
+
+        describe('Confirmation class', () => {
+            test('Action with no confirmation class should hide cookie banner', () => {
+                const mockEvent = { preventDefault: jest.fn() } as unknown as Event;
+                const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+                const mockPreferences = { analytics: false };
+                const expectedPreferences = { analytics: true };
+
+                when(mockUserPreferences.getPreferences).mockReturnValue(mockPreferences);
+                cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
+                cookieBannerHandler._updatePreferences = jest.fn();
+
+                cookieBannerHandler._clickEventHandler(mockEvent, acceptAction.name, undefined, acceptAction.consent);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(getBannerNode().hidden).toBe(true);
+                expect(cookieBannerHandler._updatePreferences).toHaveBeenCalledWith(expectedPreferences);
+            });
+
+            test('Action with confirmation class should not hide cookie banner', () => {
+                const mockEvent = { preventDefault: jest.fn() } as unknown as Event;
+                const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+                const mockPreferences = { analytics: false };
+                const expectedPreferences = { analytics: true };
+
+                when(mockUserPreferences.getPreferences).mockReturnValue(mockPreferences);
+                cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
+                cookieBannerHandler._updatePreferences = jest.fn();
+
+                cookieBannerHandler._clickEventHandler(mockEvent, acceptAction.name, acceptAction.confirmationClass, acceptAction.consent);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(getBannerNode().hidden).toBe(false);
+                expect(cookieBannerHandler._updatePreferences).toHaveBeenCalledWith(expectedPreferences);
+            });
+        });
+
+        describe('Consent', () => {
+            test('Action with no consent should not update user preferences', () => {
+                const mockEvent = { preventDefault: jest.fn() } as unknown as Event;
+                const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+
+                cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
+                cookieBannerHandler._updatePreferences = jest.fn();
+
+                cookieBannerHandler._clickEventHandler(mockEvent, acceptAction.name, acceptAction.confirmationClass);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(getBannerNode().hidden).toBe(false);
+                expect(mockUserPreferences.getPreferences).not.toHaveBeenCalled();
+                expect(cookieBannerHandler._updatePreferences).not.toHaveBeenCalled();
+            });
+
+            test('Action with type of boolean consent attribute should update user preferences', () => {
+                const mockEvent = { preventDefault: jest.fn() } as unknown as Event;
+                const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+                const mockPreferences = { analytics: false };
+                const expectedPreferences = { analytics: true };
+
+                when(mockUserPreferences.getPreferences).mockReturnValue(mockPreferences);
+                cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
+                cookieBannerHandler._updatePreferences = jest.fn();
+
+                cookieBannerHandler._clickEventHandler(mockEvent, acceptAction.name, acceptAction.confirmationClass, true);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(getBannerNode().hidden).toBe(false);
+                expect(mockUserPreferences.getPreferences).toHaveBeenCalled();
+                expect(cookieBannerHandler._updatePreferences).toHaveBeenCalled();
+                expect(cookieBannerHandler._updatePreferences).toHaveBeenCalledWith(expectedPreferences);
+            });
+
+            describe('Type of string array', () => {
+                test('Action with type of string array consent attribute (single) should update user preferences', () => {
+                    const mockEvent = { preventDefault: jest.fn() } as unknown as Event;
+                    const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+                    const mockPreferences = { analytics: false, anotherCategory: false };
+                    const expectedPreferences = { analytics: false, anotherCategory: true };
+
+                    when(mockUserPreferences.getPreferences).mockReturnValue(mockPreferences);
+                    cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
+                    cookieBannerHandler._updatePreferences = jest.fn();
+
+                    cookieBannerHandler._clickEventHandler(mockEvent, acceptAction.name, acceptAction.confirmationClass, ['anotherCategory']);
+                    expect(mockEvent.preventDefault).toHaveBeenCalled();
+                    expect(getBannerNode().hidden).toBe(false);
+                    expect(mockUserPreferences.getPreferences).toHaveBeenCalled();
+                    expect(cookieBannerHandler._updatePreferences).toHaveBeenCalled();
+                    expect(cookieBannerHandler._updatePreferences).toHaveBeenCalledWith(expectedPreferences);
+                });
+
+                test('Action with type of string array consent attribute (multiple) should update user preferences (multiple)', () => {
+                    const mockEvent = { preventDefault: jest.fn() } as unknown as Event;
+                    const cookieBannerHandler = new CookieBannerHandler(mockConfig, mockUserPreferences, mockCookieHandler);
+                    const mockPreferences = { analytics: false, anotherCategory: false, thirdCategory: false };
+                    const expectedPreferences = { analytics: true, anotherCategory: true, thirdCategory: false };
+
+                    when(mockUserPreferences.getPreferences).mockReturnValue(mockPreferences);
+                    cookieBannerHandler._getBannerNode = jest.fn().mockReturnValue(getBannerNode());
+                    cookieBannerHandler._updatePreferences = jest.fn();
+
+                    cookieBannerHandler._clickEventHandler(mockEvent, acceptAction.name, acceptAction.confirmationClass, ['anotherCategory', 'analytics']);
+                    expect(mockEvent.preventDefault).toHaveBeenCalled();
+                    expect(getBannerNode().hidden).toBe(false);
+                    expect(mockUserPreferences.getPreferences).toHaveBeenCalled();
+                    expect(cookieBannerHandler._updatePreferences).toHaveBeenCalled();
+                    expect(cookieBannerHandler._updatePreferences).toHaveBeenCalledWith(expectedPreferences);
+                });
+            });
         });
 
         test('Click on hide button should hide cookie banner', () => {
