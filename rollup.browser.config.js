@@ -6,7 +6,11 @@ export default [
         input: 'src/main/cookieManager.ts',
         output: [{ file: './dist/cookie-manager.min.js', format: 'umd', name: 'cookieManager' }],
         plugins: [
-            typescript({ tsconfig: './tsconfig.json' }),
+            typescript({
+                tsconfig: './tsconfig.json',
+                declaration: false,
+                declarationDir: null
+            }),
             terser({
                 compress: {
                     booleans_as_integers: true,
@@ -16,5 +20,5 @@ export default [
                 format: { comments: false }
             })
         ]
-    },
+    }
 ];
