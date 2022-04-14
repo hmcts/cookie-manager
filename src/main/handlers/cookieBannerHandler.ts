@@ -34,12 +34,11 @@ export default class CookieBannerHandler {
         const actions = this.config.getCookieBannerConfiguration()?.actions || [];
 
         actions.forEach(action => {
-            this._getBannerNode().querySelectorAll('.' + action.buttonClass)
-                .forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        this._clickEventHandler(event, action.name, action.confirmationClass, action.consent);
-                    });
+            for (const button of this._getBannerNode().querySelectorAll('.' + action.buttonClass)) {
+                button.addEventListener('click', (event) => {
+                    this._clickEventHandler(event, action.name, action.confirmationClass, action.consent);
                 });
+            }
         });
     };
 
@@ -48,7 +47,7 @@ export default class CookieBannerHandler {
         EventProcessor.emit('CookieBannerAction', name);
 
         if (confirmationClass) {
-            for (const child of this._getBannerNode().children as HTMLCollection) {
+            for (const child of this._getBannerNode().children) {
                 (child as HTMLDivElement).hidden = !child.classList.contains(confirmationClass);
             }
         } else {

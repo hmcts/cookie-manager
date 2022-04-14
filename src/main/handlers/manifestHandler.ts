@@ -15,7 +15,7 @@ export default class ManifestHandler {
             return new ManifestCategory('__cookie-manager', [], false);
         }
 
-        const category = this.getCategories().find(category => {
+        const category = this.getCategories().filter(category => {
             return category.getCookies().some(cookie => {
                 switch (category.getMatchBy()) {
                 case 'startsWith': return cookieName.startsWith(cookie);
@@ -24,7 +24,7 @@ export default class ManifestHandler {
                 default: return false;
                 }
             });
-        });
+        })[0];
 
         return category ?? new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
     }

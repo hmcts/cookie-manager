@@ -39,15 +39,16 @@ export default class CookieHandler {
     static getAllCookies (): Cookie[] {
         return decodeURIComponent(document.cookie)
             .split(';')
+            .map(cookie => cookie.trim())
             .filter(cookie => cookie.length)
             .map(cookie => {
-                const components = cookie.split(/=(.*)/s);
-                return new Cookie(components[0].trim(), components[1].trim());
+                const cookieComponents = cookie.split(/=(.*)/).map(component => component.trim());
+                return new Cookie(cookieComponents[0], cookieComponents[1]);
             });
     }
 
     static getCookie (name: string) {
-        return CookieHandler.getAllCookies().find(cookie => cookie.getName() === name);
+        return CookieHandler.getAllCookies().filter(cookie => cookie.getName() === name)[0];
     }
 
     static saveCookie (cookie: Cookie, expiry?: number, secure?: boolean) {

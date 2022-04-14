@@ -18,11 +18,11 @@ export default {
 
         userPreferences.processPreferences();
 
-        if (Object.keys(config.getCookieBannerConfiguration())) {
+        if (Object.keys(config.getCookieBannerConfiguration()).length) {
             new CookieBannerHandler(config, userPreferences, cookieHandler).init();
         }
 
-        if (Object.keys(config.getPreferencesFormConfiguration())) {
+        if (Object.keys(config.getPreferencesFormConfiguration()).length) {
             new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
         }
 

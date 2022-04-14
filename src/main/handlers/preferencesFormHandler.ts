@@ -38,13 +38,12 @@ export default class PreferencesFormHandler {
         event.preventDefault();
 
         const preferences = {};
-        event.target
-            .querySelectorAll('input[type="radio"]:checked')
-            .forEach(radio => {
-                const name = radio.getAttribute('name');
-                const value = radio.getAttribute('value');
-                preferences[name] = value === 'on';
-            });
+
+        for (const radio of event.target.querySelectorAll('input[type="radio"]:checked')) {
+            const name = radio.getAttribute('name');
+            const value = radio.getAttribute('value');
+            preferences[name] = value === 'on';
+        }
 
         EventProcessor.emit('PreferenceFormSubmitted', (preferences));
         this._updatePreferences(preferences);
@@ -57,13 +56,13 @@ export default class PreferencesFormHandler {
     }
 
     _configureFormRadios () {
-        Object.entries(this.userPreferencesHandler.getPreferences())
-            .forEach(entry => {
-                const checkboxValue = entry[1] ? 'on' : 'off';
-                const checkbox: HTMLInputElement = this._getPreferencesForm().querySelector(`input[name=${entry[0]}][value=${checkboxValue}]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
+        const preferences = this.userPreferencesHandler.getPreferences();
+        for (const key in preferences) {
+            const checkboxValue = preferences[key] ? 'on' : 'off';
+            const checkbox: HTMLInputElement = this._getPreferencesForm().querySelector(`input[name=${key}][value=${checkboxValue}]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        }
     }
 }

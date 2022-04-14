@@ -6,7 +6,7 @@
     "declaration": true,
     "declarationDir": "./typings",
     "target": "es5",
-    "lib": ["es6", "dom", "dom.iterable"],
+    "lib": ["es5", "dom", "dom.iterable"],
     "downlevelIteration": true,
   }
 }
