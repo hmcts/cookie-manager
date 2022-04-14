@@ -210,15 +210,21 @@ parameter is the function to use as a callback. Some events will provide data to
 function which can then be used for whatever purpose you like.</p>
 <h2 id="listener-functions">Listener functions</h2>
 <h4 id="on-eventname-callback"><code>on (eventName,  callback)</code></h4>
-<p>Adds an event listener to the specified event, which will be called when the event occurs.</p>
-<div class="highlight"><pre class="highlight plaintext" tabindex="0"><code>* *param* *`string`* -- eventName -- The event to listen for.
-* *param* *`Function`* -- callback -- The function to be called when the event is emitted.
-* *return* *`EventToken`* -- Object which acts as unique identifier for added listener,
-to be passed to the `off` function to remove the added listener..
-</code></pre></div><h4 id="off-eventtoken"><code>off (eventToken)</code></h4>
+<p>Adds a callback/event listener to the specified event, which will be called when the event occurs.</p>
+
+<ul>
+<li><em>param</em> <em><code>string</code></em> &ndash; eventName &ndash; The event to listen for.</li>
+<li><p><em>param</em> <em><code>Function</code></em> &ndash; callback &ndash; The function to be called when the event is emitted.</p></li>
+<li><p><em>return</em> <em><code>EventToken</code></em> &ndash; Object which acts as unique identifier for added listener,
+to be passed to the <code>off</code> function to remove the added listener..</p></li>
+</ul>
+<h4 id="off-eventtoken"><code>off (eventToken)</code></h4>
 <p>Removes the listener identified by the <code>eventToken</code> parameter.</p>
-<div class="highlight"><pre class="highlight plaintext" tabindex="0"><code>* *param* *`string`* -- eventToken -- The event to listen for.
-</code></pre></div><h2 id="events-list">Events list</h2>
+
+<ul>
+<li><em>param</em> <em><code>string</code></em> &ndash; eventToken &ndash; The EventToken of the callback/listener to remove.</li>
+</ul>
+<h2 id="events-list">Events list</h2>
 
 <div class="table-container">
   <table>
