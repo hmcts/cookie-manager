@@ -23,7 +23,7 @@
       <meta property="og:type" content="object" />
       <meta property="og:url" content="https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/" />
 
-    
+
   </head>
 
   <body class="govuk-template__body">
@@ -716,14 +716,9 @@ represented in the `analytics&rsquo; category</li>
 based on the value of the <code>apm</code> category.</li>
 </ul>
 
-<script src="../javascripts/highlight.min.js"></script>
-
-<script>hljs.highlightAll();</script>
-
 <script src="../javascripts/cookie-manager.min.js"></script>
-
 <script>
-  const config = {
+  var config = {
     userPreferences: {
       cookieSecure: false
     },
@@ -731,10 +726,12 @@ based on the value of the <code>apm</code> category.</li>
       showWithPreferencesForm: true
     }
   }
-  cookieManager.init(config);
+  window.cookieManager.init(config);
 </script>
 
-            
+<script src="../javascripts/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+
           </main>
 
           <aside>
@@ -781,7 +778,7 @@ based on the value of the <code>apm</code> category.</li>
       </div>
     </div>
 
-    
+
     <script src="../javascripts/application.js"></script>
   </body>
 </html>
