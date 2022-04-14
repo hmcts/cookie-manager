@@ -61,7 +61,7 @@ export default class CookieHandler {
         cookieString += ';path=/;';
 
         document.cookie = cookieString;
-        console.debug(`Saved '${name}' cookie`);
+        console.debug(`Saved '${cookie.getName()}' cookie`);
     }
 
     static deleteCookie (cookie: Cookie) {
