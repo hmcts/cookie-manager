@@ -174,13 +174,13 @@ Dynatrace RUM working using @hmcts/cookie-manager</p>
 
 &lt;script&gt;
   window.cookieManager.on('UserPreferencesLoaded', (preferences) => {
-    const dataLayer = window.dataLayer || [];
+    var dataLayer = window.dataLayer || [];
     dataLayer.push({'event': 'Cookie Preferences', 'cookiePreferences': preferences});
   });
 
   window.cookieManager.on('UserPreferencesSaved', (preferences) => {
-    const dataLayer = window.dataLayer || [];
-    const dtrum = window.dtrum;
+    var dataLayer = window.dataLayer || [];
+    var dtrum = window.dtrum;
 
     dataLayer.push({'event': 'Cookie Preferences', 'cookiePreferences': preferences});
 
@@ -196,7 +196,7 @@ Dynatrace RUM working using @hmcts/cookie-manager</p>
   });
 
 
-  const config = {
+  var config = {
     userPreferences: {
       cookieName: '&lt;SERVICE-NAME&gt;-cookie-preferences',
     },
@@ -315,14 +315,14 @@ cookieManager.init(config);
              <button type="button" class="govuk-button cookie-banner-reject-button" data-module="govuk-button">
              Reject additional cookies
              </button>
-             <a class="govuk-link" href="#">View cookies</a>
+             <a class="govuk-link" href="/cookies">View cookies</a>
           </div>
        </div>
        <div class="govuk-cookie-banner__message govuk-width-container cookie-banner-accept-message" role="alert" hidden="">
           <div class="govuk-grid-row">
              <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-cookie-banner__content">
-                   <p class="govuk-body">You’ve accepted additional cookies. You can <a class="govuk-link" href="#">change your cookie settings</a> at any time.</p>
+                   <p class="govuk-body">You’ve accepted additional cookies. You can <a class="govuk-link" href="/cookies">change your cookie settings</a> at any time.</p>
                 </div>
              </div>
           </div>
@@ -336,7 +336,7 @@ cookieManager.init(config);
           <div class="govuk-grid-row">
              <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-cookie-banner__content">
-                   <p class="govuk-body">You’ve rejected additional cookies. You can <a class="govuk-link" href="#">change your cookie settings</a> at any time.</p>
+                   <p class="govuk-body">You’ve rejected additional cookies. You can <a class="govuk-link" href="/cookies">change your cookie settings</a> at any time.</p>
                 </div>
              </div>
           </div>
@@ -389,14 +389,14 @@ cookieManager.init(config);
          &lt;button type=&quot;button&quot; class=&quot;govuk-button cookie-banner-reject-button&quot; data-module=&quot;govuk-button&quot;&gt;
          Reject additional cookies
          &lt;/button&gt;
-         &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;View cookies&lt;/a&gt;
+         &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;View cookies&lt;/a&gt;
       &lt;/div&gt;
    &lt;/div&gt;
    &lt;div class=&quot;govuk-cookie-banner__message govuk-width-container cookie-banner-accept-message&quot; role=&quot;alert&quot; hidden=&quot;&quot;&gt;
       &lt;div class=&quot;govuk-grid-row&quot;&gt;
          &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
             &lt;div class=&quot;govuk-cookie-banner__content&quot;&gt;
-               &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+               &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
             &lt;/div&gt;
          &lt;/div&gt;
       &lt;/div&gt;
@@ -410,7 +410,7 @@ cookieManager.init(config);
       &lt;div class=&quot;govuk-grid-row&quot;&gt;
          &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
             &lt;div class=&quot;govuk-cookie-banner__content&quot;&gt;
-               &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+               &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
             &lt;/div&gt;
          &lt;/div&gt;
       &lt;/div&gt;
@@ -441,11 +441,11 @@ cookieManager.init(config);
 {% endset %}
 
 {% set acceptHtml %}
-  &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+  &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
 {% endset %}
 
 {% set rejectHtml %}
-  &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+  &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
 {% endset %}
 
 {{ govukCookieBanner({
@@ -470,7 +470,7 @@ cookieManager.init(config);
         },
         {
           text: "View cookies",
-          href: "#"
+          href: "/cookies"
         }
       ]
     },
@@ -721,7 +721,7 @@ based on the value of the <code>apm</code> category.</li>
 <script>
   var config = {
     userPreferences: {
-      cookieSecure: false
+      cookieExpiry: -1
     },
     cookieBanner: {
       showWithPreferencesForm: true

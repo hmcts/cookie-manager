@@ -395,7 +395,14 @@ the box with the cookie-manager library,</p>
 
 <script src="../javascripts/cookie-manager.min.js"></script>
 
-<script>window.cookieManager.init();</script>
+<script>
+  var config = {
+    userPreferences: {
+      cookieExpiry: -1
+    },
+  }
+  window.cookieManager.init(config);
+</script>
 
 <script src="../javascripts/highlight.min.js"></script>
 
