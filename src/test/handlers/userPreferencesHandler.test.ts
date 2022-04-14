@@ -105,7 +105,7 @@ describe('UserPreferences', () => {
             userPreferences.savePreferencesToCookie();
             expect(userPreferences.getPreferences).toHaveBeenCalled();
             expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/`);
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/;`);
         });
 
         test('Save multiple preferences to cookie', () => {
@@ -122,7 +122,7 @@ describe('UserPreferences', () => {
             userPreferences.savePreferencesToCookie();
             expect(userPreferences.getPreferences).toHaveBeenCalled();
             expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/`);
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/;`);
         });
     });
 
@@ -146,7 +146,7 @@ describe('UserPreferences', () => {
             const preferencesCookie = new Cookie(mockConfig.getUserPreferencesCookieName(), { 'non-essential': 'off' });
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            preferencesCookie.disable = jest.fn();
+            CookieHandler.deleteCookie = jest.fn();
             userPreferences.getPreferenceCookie = jest.fn();
             userPreferences._loadPreferenceDefaults = jest.fn();
 
@@ -154,7 +154,7 @@ describe('UserPreferences', () => {
             when(userPreferences._loadPreferenceDefaults).calledWith().mockReturnValue({ 'non-essential': false });
 
             expect(userPreferences._loadPreferencesFromCookie()).toStrictEqual({ 'non-essential': false });
-            expect(preferencesCookie.disable).toHaveBeenCalled();
+            expect(CookieHandler.deleteCookie).toHaveBeenCalledWith(preferencesCookie);
             expect(userPreferences._loadPreferenceDefaults).toHaveBeenCalled();
         });
 
@@ -162,7 +162,7 @@ describe('UserPreferences', () => {
             const preferencesCookie = new Cookie(mockConfig.getUserPreferencesCookieName(), JSON.stringify('malformedCookie'));
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            preferencesCookie.disable = jest.fn();
+            CookieHandler.deleteCookie = jest.fn();
             userPreferences.getPreferenceCookie = jest.fn();
             userPreferences._loadPreferenceDefaults = jest.fn();
 
@@ -170,7 +170,7 @@ describe('UserPreferences', () => {
             when(userPreferences._loadPreferenceDefaults).calledWith().mockReturnValue({ 'non-essential': false });
 
             expect(userPreferences._loadPreferencesFromCookie()).toStrictEqual({ 'non-essential': false });
-            expect(preferencesCookie.disable).toHaveBeenCalled();
+            expect(CookieHandler.deleteCookie).toHaveBeenCalledWith(preferencesCookie);
             expect(userPreferences._loadPreferenceDefaults).toHaveBeenCalled();
         });
 
@@ -181,7 +181,7 @@ describe('UserPreferences', () => {
             const preferencesCookie = new Cookie(mockConfig.getUserPreferencesCookieName(), JSON.stringify(preferences));
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            preferencesCookie.disable = jest.fn();
+            CookieHandler.deleteCookie = jest.fn();
             userPreferences.getPreferenceCookie = jest.fn();
             userPreferences._loadPreferenceDefaults = jest.fn();
 
@@ -193,7 +193,7 @@ describe('UserPreferences', () => {
             ]);
 
             expect(userPreferences._loadPreferencesFromCookie()).toStrictEqual(expectedPreferences);
-            expect(preferencesCookie.disable).toHaveBeenCalled();
+            expect(CookieHandler.deleteCookie).toHaveBeenCalledWith(preferencesCookie);
             expect(userPreferences._loadPreferenceDefaults).toHaveBeenCalled();
         });
     });

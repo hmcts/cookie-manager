@@ -11,6 +11,10 @@ export default class ManifestHandler {
     ) {}
 
     getCategoryByCookieName (cookieName: string): ManifestCategory {
+        if (cookieName === this.config.getUserPreferencesCookieName()) {
+            return new ManifestCategory('__cookie-manager', [], false);
+        }
+
         const category = this.getCategories().find(category => {
             return category.getCookies().some(cookie => {
                 switch (category.getMatchBy()) {

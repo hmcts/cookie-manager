@@ -10,24 +10,25 @@ import { IConfig } from './interfaces/Config';
 export default {
     init: function (providedConfig: IConfig): void {
         console.debug('CookieManager initializing...');
-        EventProcessor.emit('CookieManagerLoaded', ('loading'));
 
         const config = new Config(providedConfig);
         const manifestHandler = new ManifestHandler(config);
         const userPreferences = new UserPreferences(config, manifestHandler);
         const cookieHandler = new CookieHandler(config, manifestHandler, userPreferences);
-        EventProcessor.emit('CookieManagerLoaded', ('loaded'));
 
         userPreferences.processPreferences();
-        cookieHandler.processCookies();
 
-        if (Object.keys(this.config.getCookieBannerConfiguration())) {
+        if (Object.keys(config.getCookieBannerConfiguration())) {
             new CookieBannerHandler(config, userPreferences, cookieHandler).init();
         }
 
-        if (Object.keys(this.config.getPreferencesFormConfiguration())) {
+        if (Object.keys(config.getPreferencesFormConfiguration())) {
             new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
         }
+
+        EventProcessor.emit('CookieManagerLoaded');
+
+        cookieHandler.processCookies();
     },
     on: EventProcessor.on,
     off: EventProcessor.off

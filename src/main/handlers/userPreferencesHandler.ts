@@ -48,7 +48,7 @@ export default class UserPreferences {
         Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
 
         const preferencesCookie = new Cookie(this.config.getUserPreferencesCookieName(), cookieValue);
-        preferencesCookie.enable(this.config.getUserPreferencesCookieExpiry() * 24 * 60 * 60 * 1000, this.config.getUserPreferencesCookieSecure());
+        CookieHandler.saveCookie(preferencesCookie, this.config.getUserPreferencesCookieExpiry(), this.config.getUserPreferencesCookieSecure());
         EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
 
@@ -61,13 +61,13 @@ export default class UserPreferences {
             cookiePreferences = JSON.parse(preferenceCookie.getValue());
         } catch (e) {
             console.error(`Unable to parse user preference cookie "${preferenceCookie.getName()}" as JSON.`);
-            preferenceCookie.disable();
+            CookieHandler.deleteCookie(preferenceCookie);
             return this._loadPreferenceDefaults();
         }
 
         if (typeof cookiePreferences !== 'object') {
             console.debug('User preferences cookie is malformed, deleting old user preferences cookie.');
-            preferenceCookie.disable();
+            CookieHandler.deleteCookie(preferenceCookie);
             return this._loadPreferenceDefaults();
         }
 
@@ -75,7 +75,7 @@ export default class UserPreferences {
             .filter(category => category.isOptional())
             .some(category => !Object.keys(cookiePreferences).includes(category.getName()))) {
             console.debug('User preferences cookie is missing categories, deleting old user preferences cookie.');
-            preferenceCookie.disable();
+            CookieHandler.deleteCookie(preferenceCookie);
             return this._loadPreferenceDefaults();
         }
 

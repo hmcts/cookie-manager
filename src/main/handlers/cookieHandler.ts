@@ -19,21 +19,21 @@ export default class CookieHandler {
 
     _processNonConsentedCookies () {
         console.debug('Deleting non-consented cookies');
-        CookieHandler.getAllCookies().filter(cookie => {
-            const category = this.manifestHandler.getCategoryByCookieName(cookie.getName());
-            return category.getName() !== ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME &&
+        CookieHandler.getAllCookies()
+            .filter(cookie => {
+                const category = this.manifestHandler.getCategoryByCookieName(cookie.getName());
+                return category.getName() !== ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME &&
                     category.isOptional() &&
                     !this.userPreferences.getPreferences()[category.getName()];
-        }).forEach(cookie => cookie.disable());
+            })
+            .forEach(cookie => CookieHandler.deleteCookie(cookie));
     }
 
     _processUnCategorizedCookies () {
         console.debug('Deleting non-categorized cookies');
-
-        CookieHandler.getAllCookies().filter(cookie => {
-            const cookieCategory = this.manifestHandler.getCategoryByCookieName(cookie.getName());
-            return cookieCategory.getName() === ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME;
-        }).forEach(cookie => cookie.disable());
+        CookieHandler.getAllCookies()
+            .filter(cookie => this.manifestHandler.getCategoryByCookieName(cookie.getName()).getName() === ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME)
+            .forEach(cookie => CookieHandler.deleteCookie(cookie));
     }
 
     static getAllCookies (): Cookie[] {
@@ -46,7 +46,33 @@ export default class CookieHandler {
             });
     }
 
-    static getCookie (cookieName: string) {
-        return CookieHandler.getAllCookies().find(cookie => cookie.getName() === cookieName);
+    static getCookie (name: string) {
+        return CookieHandler.getAllCookies().find(cookie => cookie.getName() === name);
+    }
+
+    static saveCookie (cookie: Cookie, expiry?: number, secure?: boolean) {
+        const date = new Date();
+        date.setDate(date.getDate() + expiry);
+
+        let cookieString = cookie.getName() + '=';
+        cookieString += typeof cookie.getValue() === 'object' ? JSON.stringify(cookie.getValue()) : cookie.getValue();
+        cookieString += expiry ? ';expires=' + date.toUTCString() : '';
+        cookieString += secure ? ';secure' : '';
+        cookieString += ';path=/;';
+
+        document.cookie = cookieString;
+        console.debug(`Saved '${name}' cookie`);
+    }
+
+    static deleteCookie (cookie: Cookie) {
+        console.debug('Deleting cookie: ' + cookie.getName());
+
+        const hostname = window.location.hostname;
+        const upperDomain = hostname.substring(hostname.indexOf('.'));
+        const expires = new Date(-1).toUTCString();
+
+        [hostname, '.' + hostname, upperDomain, '.' + upperDomain].forEach(domain => {
+            document.cookie = cookie.getName() + '=;expires=' + expires + ';domain=' + domain + ';path=/;';
+        });
     }
 }

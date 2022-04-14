@@ -5,7 +5,7 @@ export default class Config {
         userPreferences: {
             cookieName: 'cookie-preferences',
             cookieExpiry: 365,
-            cookieSecure: true
+            cookieSecure: false
         },
         preferencesForm: {
             class: 'cookie-preferences-form'
