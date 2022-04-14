@@ -23,7 +23,7 @@
       <meta property="og:type" content="object" />
       <meta property="og:url" content="https://hmcts.github.io/cookie-manager/cookie-preferences-form/" />
 
-
+    
   </head>
 
   <body class="govuk-template__body">
@@ -361,32 +361,32 @@ the user&rsquo;s active cookie preferences.</p>
 <p>More info about the configuration options can be found
 in the <a href="/configuration-options/cookie-preferences-form/">configuration-options/cookie-preferences-form</a> section.</p>
 
-
-<script src="../javascripts/cookie-manager.min.js"></script>
-<script>
-  var config = {
-      userPreferences: {
-          cookieSecure: false
-      },
-      cookieManifest: [
-          {
-              categoryName: 'essential',
-              optional: false,
-              matchBy: 'exact',
-              cookies: [
-                  'cookie-preferences'
-              ]
-          }
-      ]
-  }
-  window.cookieManager.init(config);
-</script>
 <script src="../javascripts/highlight.min.js"></script>
+
 <script>hljs.highlightAll();</script>
 
+<script src="../javascripts/cookie-manager.min.js"></script>
 
+<script>
+  const config = {
+    userPreferences: {
+      cookieSecure: false
+    },
+    cookieManifest: [
+      {
+        categoryName: 'essential',
+        optional: false,
+        matchBy: 'exact',
+        cookies: [
+          'cookie-preferences'
+        ]
+      }
+    ]
+  }
+  cookieManager.init(config);
+</script>
 
-
+            
           </main>
 
           <aside>
@@ -433,7 +433,7 @@ in the <a href="/configuration-options/cookie-preferences-form/">configuration-o
       </div>
     </div>
 
-
+    
     <script src="../javascripts/application.js"></script>
   </body>
 </html>
