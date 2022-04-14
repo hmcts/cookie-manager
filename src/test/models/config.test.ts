@@ -1,5 +1,5 @@
 import Config from '../../main/models/config';
-import { IConfig } from '../../main/interfaces/Config';
+import { CookieManagerConfig } from '../../main/interfaces/Config';
 
 describe('Config', () => {
     const defaultConfig = {
@@ -43,7 +43,7 @@ describe('Config', () => {
     describe('getPreferenceCookieName', () => {
         test('Should get preference cookie name from config', () => {
             const preferenceCookieName = 'preference-cookie-test';
-            const testConfig: Partial<IConfig> = {
+            const testConfig: Partial<CookieManagerConfig> = {
                 userPreferences: {
                     cookieName: preferenceCookieName
                 }

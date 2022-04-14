@@ -4,11 +4,11 @@ import CookieHandler from './handlers/cookieHandler';
 import UserPreferences from './handlers/userPreferencesHandler';
 import CookieBannerHandler from './handlers/cookieBannerHandler';
 import PreferencesFormHandler from './handlers/preferencesFormHandler';
-import { EventProcessor } from './handlers/EventHandler';
-import { IConfig } from './interfaces/Config';
+import { EventProcessor } from './handlers/eventHandler';
+import { CookieManagerConfig } from './interfaces/Config';
 
-export default {
-    init: function (providedConfig: IConfig): void {
+const cookieManager = {
+    init: function (providedConfig: CookieManagerConfig): void {
         console.debug('CookieManager initializing...');
 
         const config = new Config(providedConfig);
@@ -33,3 +33,6 @@ export default {
     on: EventProcessor.on,
     off: EventProcessor.off
 };
+
+export default cookieManager;
+export type { CookieManagerConfig };

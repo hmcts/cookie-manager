@@ -1,4 +1,4 @@
-import { EventProcessor } from '../../main/handlers/EventHandler';
+import { EventProcessor } from '../../main/handlers/eventHandler';
 
 describe('EventProcessor', () => {
     describe('emit', () => {

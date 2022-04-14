@@ -1,4 +1,4 @@
-import { IConfig } from '../interfaces/Config';
+import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class Config {
     private readonly defaultConfig = {
@@ -39,9 +39,9 @@ export default class Config {
         }
     }
 
-    private activeConfig: IConfig = {};
+    private activeConfig: CookieManagerConfig = {};
 
-    constructor (config: Partial<IConfig>) {
+    constructor (config: Partial<CookieManagerConfig>) {
         if (config) {
             this.activeConfig.userPreferences = { ...this.defaultConfig.userPreferences, ...config.userPreferences };
             this.activeConfig.preferencesForm = config.preferencesForm ?? this.defaultConfig.preferencesForm;

@@ -1,6 +1,6 @@
 import Cookie from '../models/cookie';
 import CookieHandler from './cookieHandler';
-import { EventProcessor } from './EventHandler';
+import { EventProcessor } from './eventHandler';
 import Config from '../models/config';
 import ManifestHandler from './manifestHandler';
 

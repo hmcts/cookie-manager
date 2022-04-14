@@ -1,13 +1,13 @@
 export class EventProcessor {
      static _handlerMap = new Map();
 
-     static on (eventName: string, handler: Function) {
+     static on (eventName: string, callback: Function) {
          if (typeof eventName !== 'string') {
              console.error('Event not provided');
              return;
          }
 
-         if (typeof handler !== 'function') {
+         if (typeof callback !== 'function') {
              console.error('No callback function provided');
              return;
          }
@@ -19,7 +19,7 @@ export class EventProcessor {
              EventProcessor._handlerMap.set(eventName, new Map());
          }
 
-         EventProcessor._handlerMap.get(eventName).set(token, handler);
+         EventProcessor._handlerMap.get(eventName).set(token, callback);
          return { type: eventName, token };
      }
 

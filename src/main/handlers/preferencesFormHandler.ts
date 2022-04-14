@@ -1,4 +1,4 @@
-import { EventProcessor } from './EventHandler';
+import { EventProcessor } from './eventHandler';
 import Config from '../models/config';
 import UserPreferences from './userPreferencesHandler';
 import CookieHandler from './cookieHandler';
