@@ -1,45 +1,8 @@
 import Config from '../../main/models/config';
 import { CookieManagerConfig } from '../../main/interfaces/Config';
+import { defaultConfig } from '../common/mockConfig';
 
 describe('Config', () => {
-    const defaultConfig = {
-        userPreferences: {
-            cookieName: 'cookie-preferences',
-            cookieExpiry: 365,
-            cookieSecure: true
-        },
-        preferencesForm: {
-            class: 'cookie-preferences-form'
-        },
-        cookieBanner: {
-            class: 'cookie-banner',
-            showWithPreferencesForm: false,
-            actions: [
-                {
-                    name: 'accept',
-                    buttonClass: 'cookie-banner-accept-button',
-                    confirmationClass: 'cookie-banner-accept-message',
-                    consent: true
-                },
-                {
-                    name: 'reject',
-                    buttonClass: 'cookie-banner-reject-button',
-                    confirmationClass: 'cookie-banner-reject-message',
-                    consent: false
-                },
-                {
-                    name: 'hide',
-                    buttonClass: 'cookie-banner-hide-button'
-                }
-            ]
-        },
-        cookieManifest: [],
-        additionalOptions: {
-            deleteUndefinedCookies: true,
-            defaultConsent: false
-        }
-    };
-
     describe('getPreferenceCookieName', () => {
         test('Should get preference cookie name from config', () => {
             const preferenceCookieName = 'preference-cookie-test';
@@ -141,6 +104,42 @@ describe('Config', () => {
         test('Should delete not set in config, use default value', () => {
             const config = new Config({});
             expect(config.shouldDeleteUncategorized()).toBe(defaultConfig.additionalOptions.deleteUndefinedCookies);
+        });
+    });
+
+    describe('isCookieBannerDisabled', () => {
+        test('Should return value set in config', () => {
+            const testConfig: Partial<CookieManagerConfig> = {
+                additionalOptions: {
+                    disableCookieBanner: true
+                }
+            };
+            const config = new Config(testConfig);
+
+            expect(config.isCookieBannerDisabled()).toBe(true);
+        });
+
+        test('Should delete not set in config, use default value', () => {
+            const config = new Config({});
+            expect(config.isCookieBannerDisabled()).toBe(defaultConfig.additionalOptions.disableCookieBanner);
+        });
+    });
+
+    describe('isPreferencesFormDisabled', () => {
+        test('Should return value set in config', () => {
+            const testConfig: Partial<CookieManagerConfig> = {
+                additionalOptions: {
+                    disableCookiePreferencesForm: true
+                }
+            };
+            const config = new Config(testConfig);
+
+            expect(config.isPreferencesFormDisabled()).toBe(true);
+        });
+
+        test('Should delete not set in config, use default value', () => {
+            const config = new Config({});
+            expect(config.isPreferencesFormDisabled()).toBe(defaultConfig.additionalOptions.disableCookiePreferencesForm);
         });
     });
 

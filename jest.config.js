@@ -2,7 +2,6 @@ module.exports = {
     transform: {
         '^.+\\.ts?$': 'ts-jest'
     },
-    collectCoverage: false,
     testEnvironment: 'jsdom',
     coverageReporters: [['text']],
     coveragePathIgnorePatterns: [

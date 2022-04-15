@@ -1,7 +1,7 @@
 import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class Config {
-    private readonly defaultConfig = {
+    private readonly defaultConfig: CookieManagerConfig = {
         userPreferences: {
             cookieName: 'cookie-preferences',
             cookieExpiry: 365,
@@ -34,12 +34,14 @@ export default class Config {
         },
         cookieManifest: [],
         additionalOptions: {
+            disableCookieBanner: false,
+            disableCookiePreferencesForm: false,
             deleteUndefinedCookies: true,
             defaultConsent: false
         }
     }
 
-    private activeConfig: CookieManagerConfig = {};
+    private activeConfig = {} as CookieManagerConfig;
 
     constructor (config: Partial<CookieManagerConfig>) {
         if (config) {
@@ -82,6 +84,14 @@ export default class Config {
     }
 
     /* AdditionalOptions */
+    isCookieBannerDisabled () {
+        return this.activeConfig.additionalOptions.disableCookieBanner;
+    }
+
+    isPreferencesFormDisabled () {
+        return this.activeConfig.additionalOptions.disableCookiePreferencesForm;
+    }
+
     getDefaultConsent () {
         return this.activeConfig.additionalOptions.defaultConsent;
     }

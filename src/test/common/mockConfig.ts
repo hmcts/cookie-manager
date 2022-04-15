@@ -1,4 +1,4 @@
-const testConfig = {
+export const defaultConfig = {
     userPreferences: {
         cookieName: 'cookie-preferences',
         cookieExpiry: 365,
@@ -31,22 +31,20 @@ const testConfig = {
     },
     cookieManifest: [],
     additionalOptions: {
+        disableCookieBanner: false,
+        disableCookiePreferencesForm: false,
         deleteUndefinedCookies: true,
         defaultConsent: false
     }
 };
 
 export const MockConfig = () => ({
-    getUserPreferencesCookieName: jest.fn().mockReturnValue(testConfig.userPreferences.cookieName),
-    getUserPreferencesCookieExpiry: jest.fn().mockReturnValue(testConfig.userPreferences.cookieExpiry),
-    getUserPreferencesCookieSecure: jest.fn().mockReturnValue(testConfig.userPreferences.cookieSecure),
-
-    getPreferencesFormConfiguration: jest.fn().mockReturnValue(testConfig.preferencesForm),
-
-    getCookieBannerConfiguration: jest.fn().mockReturnValue(testConfig.cookieBanner),
-
-    getCookieManifest: jest.fn().mockReturnValue(testConfig.cookieManifest),
-
-    getDefaultConsent: jest.fn().mockReturnValue(testConfig.additionalOptions.defaultConsent),
-    shouldDeleteUncategorized: jest.fn().mockReturnValue(testConfig.additionalOptions.deleteUndefinedCookies)
+    getUserPreferencesCookieName: jest.fn().mockReturnValue(defaultConfig.userPreferences.cookieName),
+    getUserPreferencesCookieExpiry: jest.fn().mockReturnValue(defaultConfig.userPreferences.cookieExpiry),
+    getUserPreferencesCookieSecure: jest.fn().mockReturnValue(defaultConfig.userPreferences.cookieSecure),
+    getPreferencesFormConfiguration: jest.fn().mockReturnValue(defaultConfig.preferencesForm),
+    getCookieBannerConfiguration: jest.fn().mockReturnValue(defaultConfig.cookieBanner),
+    getCookieManifest: jest.fn().mockReturnValue(defaultConfig.cookieManifest),
+    getDefaultConsent: jest.fn().mockReturnValue(defaultConfig.additionalOptions.defaultConsent),
+    shouldDeleteUncategorized: jest.fn().mockReturnValue(defaultConfig.additionalOptions.deleteUndefinedCookies)
 });

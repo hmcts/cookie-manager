@@ -12,7 +12,7 @@ import { CookieManagerConfig } from './interfaces/Config';
  *
  * @param {CookieManagerConfig} providedConfig - Config for the library to use.
  */
-function init (providedConfig: CookieManagerConfig): void {
+function init (providedConfig: Partial<CookieManagerConfig>): void {
     console.debug('CookieManager initializing...');
 
     const config = new Config(providedConfig);
@@ -22,17 +22,17 @@ function init (providedConfig: CookieManagerConfig): void {
 
     userPreferences.processPreferences();
 
-    if (Object.keys(config.getCookieBannerConfiguration()).length) {
+    if (!config.isCookieBannerDisabled()) {
         new CookieBannerHandler(config, userPreferences, cookieHandler).init();
     }
 
-    if (Object.keys(config.getPreferencesFormConfiguration()).length) {
+    if (!config.isPreferencesFormDisabled()) {
         new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
     }
 
     EventProcessor.emit('CookieManagerLoaded');
     cookieHandler.processCookies();
-};
+}
 
 const on = EventProcessor.on;
 const off = EventProcessor.off;
