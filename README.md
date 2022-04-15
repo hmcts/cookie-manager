@@ -1,224 +1,163 @@
-# Cookie Manager
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Cookie Manager ·
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/hmcts/cookie-manager/actions/workflows/test.yml/badge.svg)](https://www.github.com/hmcts/cookie-manager)
 [![Known Vulnerabilities](https://snyk.io/test/github/hmcts/cookie-manager/badge.svg)](https://snyk.io/test/github/hmcts/cookie-manager)
+======
 
-Cookie Manager is a Javascript library for dealing with cookie compliance.
+@hmcts/cookie-manager is a JavaScript library for dealing with cookie compliance.
 
-It can handle removing cookies which the user does not consent to or those that are not defined in the manifest.
-It can also handle the storing of user preferences when it comes to cookies, and includes the functionality to display a banner when no
-preferences have been set.
+It provides a streamline way to define essential and non-essential cookies on a service,
+which then acts as a basis for user’s to provide consent for each different category of cookie.
 
-This repo is originally based on the fantastic work of the DVSA team and their Cookie Manager, [found here](https://github.com/dvsa/cookie-manager).
-This fork is modified to work with accept-reject style banners, and also those which have hide/dismiss functionality. Preferably to be used in conjuction with the [GDS Cookie Banner component](https://design-system.service.gov.uk/components/cookie-banner/).
+This library is intended to be used with the [GDS Cookie Banner component](https://design-system.service.gov.uk/components/cookie-banner/)
+though it can be configured to support a variety of multi-stage cookie banners of varying designs.
 
-## Installation
+**In-depth documentation on all configuration options, emitted events, configuration with common analytics
+libraries and more can be [found on the project's documentation site](https://hmcts.github.io/cookie-manager/).**
 
-NPM
+## Quick start
 
-```bash
-npm install --save @hmcts/cookie-manager
-```
+### Installing the library
+There are 2 main ways to start using the Cookie Manager library within your app:
 
-## Usage
+#### 1. Install with NPM (recommended)
 
-Include the `cookie-manager.js` script on your web pages:
+   We recommend [installing cookie-manager through Node's package
+manager (NPM) or Yarn](https://hmcts.github.io/cookie-manager/getting-started/install-using-nodejs/).
 
-```html
-<script src="./cookie-manager.js"></script>
-```
+#### 2. Install using compiled script
 
-Invoke the Cookie Manager by calling init() with a config:
+   You can also install cookie-manager by [serving our compiled JavaScript
+file](https://hmcts.github.io/cookie-manager/getting-started/install-using-script-tag/)
+(included on each [release](https://github.com/hmcts/cookie-manager/releases/latest)).
 
-```javascript
-cookieManager.init(configuration_object);
-```
+### Configuring and initializing the library for your service
+Once you've included the library within your app, you can begin
+configuring it for use within your service. See our documentation
+on [configuring and initializing](https://hmcts.github.io/cookie-manager/getting-started/configuring-the-library/index.html#configuring-and-initializing-the-library/),
+or learn more about the [configuration options](https://hmcts.github.io/cookie-manager/configuration-options/) available.
 
+## Features
 
-See `index.html` for more info on configuration
+### Cookie banner support
+By default, the Cookie Manager library is configured to display or hide a cookie banner configured
+within your service. Without any extra configuration, the library is configured out-of-the-box to work
+with the [template provided within our documentation](https://hmcts.github.io/cookie-manager/cookie-banner/#html-nunjucks-template).
 
-**Any consent requiring services should be set to 'explicit-consent' mode for use with this project.**
+In short, the library works by binding event listeners to the buttons defined for each action, with these
+[actions being specified within the config](https://hmcts.github.io/cookie-manager/configuration-options/cookie-banner/#action).
+Each action defines how consent should be affected, and what confirmation message should be shown, when the action's button is clicked. An example of 
+action is shown below:
 
-### Feature: Cookie Banner
-
-To disable this functionality, set the configuration value of `cookie-banner-id` to `false` or remove the definition.
-
-If you want functionality to display a cookie banner when user preferences have not been set (or expired)
-then build your cookie banner markup, and give the wrapping element an ID and match it with the configuration value
-`cookie-banner-id`. 
-
-This library will automatically bind to the accept and reject buttons nested within the banner element. 
-For matching these buttons to their respective action, both options must be a `button` element with the 
-data attribute `data-cm-action` set to `accept` or `reject`. 
-This will opt-in or opt-out respectively of any optional cookie categories defined in the configuration. 
-Furthermore, a call will be made to the respective callback (`cookie-banner-accept-callback` 
-or `cookie-banner-reject-callback`) if also set in the config.
-
-
-```html
-<header id="cookie_banner" hidden>
-    <h2>Tell us whether you accept cookies</h2>
-    <p>We use cookies to collect information about how you use GOV.UK.</p>
-    <p>We use this information to make the website work as well as possible and improve government services.</p>
-    <div class="govuk-button-group">
-        <button data-cm-action="accept">Accept analytics cookies</button>
-        <button data-cm-action="reject">Reject analytics cookies</button>
-        <a class="govuk-link" href="/">View cookies</a>
-    </div>
-    <button data-cm-action="hide">Hide this message</button>
-</header>
-```
-
-If the `cookie-banner-auto-hide` option is set to `true`, upon clicking either of the accept or reject buttons, the banner will automatically hide itself.
-If set to `false` the banner will stay visible, i.e. allowing for a confirmation message that cookie preference has been acknowledged.
-
-The library can also be binded to a hide/dismiss button for hiding the banner from the user. This button must be a
-nested element of `button` within the banner, with the data attribute `data-cm-action` set to `hide`.
-
-### Feature: User Preferences Saving
-
-To disable this functionality, set the configuration value of `preference-form-id` to `false` or remove the definition.
-
-If you want functionality to setup a user preference cookie, then you need to define a HTML form with an ID and match
-that to the configuration value `preference-form-id`. Upon initialisation, the library will look
-for the form when the DOM is ready, and bind to the `submit` event. When submitted, the library will collect the
-value of all radio buttons with the `checked` state. The name of the radio buttons **must**
-reflect the category name for cookies defined in your manifest. The values for the radio buttons must be `on` and `off`.
-
-```html
-<form id="cm-preference-form">
-    <fieldset>
-        <legend>Analytics:</legend>
-        <input type="radio" name="analytics" value="on" /> On <br/>
-        <input type="radio" name="analytics" value="off" checked /> Off <br/>
-    </fieldset>
-
-    <fieldset>
-        <legend>Application Performance Monitoring:</legend>
-        <input type="radio" name="apm" value="on" /> On <br/>
-        <input type="radio" name="apm" value="off" checked /> Off <br/>
-    </fieldset>
-
-    <input type="submit" value="Save Preferences"/>
-</form>
-```
-
-
-## Configuration
-
-Configuration is done when calling `init()` on the Cookie Manager object and is used to determine how you want the
-Cookie Manager to behave, and defines a manifest of cookies used on your site.
-
-Using this method, it allows developers to use the native configuration in their application and it should be as
-simple as serialising the top-level configuration object/array for Cookie Manager to JSON and putting the result into
-the init() function (either as a variable or directly):
-
-
-```javascript
-cm.init(
-    {
-        "delete-undefined-cookies": true,
-        "...": "..."
-    }
-);
-```
-
-### Configuration Schema
-
-###
 ```json
 {
-  "delete-undefined-cookies": true,
-  "user-preference-cookie-name": "cm-user-preferences",
-  "user-preference-cookie-secure": false,
-  "user-preference-saved-callback": false,
-  "user-preference-cookie-expiry-days": 365,
-  "preference-form-id": "cm-preference-form",
-  "preference-form-saved-callback" : false,
-  "set-checkboxes-in-preference-form": true,
-  "cookie-banner-id": "cm-cookie-banner",
-  "cookie-banner-visible-on-page-with-preference-form": false,
-  "cookie-banner-saved-callback": false,
-  "cookie-banner-accept-callback": false,
-  "cookie-banner-reject-callback": false,
-  "cookie-banner-auto-hide": true,
-  "cookie-manifest": [
-    {
-      "category-name": "essential",
-      "optional": false,
-      "cookies": [
-        "essential-cookie",
-        "another-essential-cookie",
-      ]
+  "name": "accept",
+  "buttonClass": "cookie-banner-accept-button",
+  "confirmationClass": "cookie-banner-accept-message",
+  "consent": true
+}
+```
+*This action specifies that on an element with the class `cookie-banner-accept-button` (within the cookie banner) being clicked, we
+consent to all optional cookie categories, and that any elements with the class `cookie-banner-accept-message`*  (within the cookie banner)
+should be shown.
+
+More information about how the cookie banner functionality and how it can be configured
+to support a variety of different action/message (stage-based) cookie banners can be [found
+within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-banner/).
+
+***Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
+initializing the library.***
+
+
+### Cookie preferences form support
+The Cookie Manager library is also, by default, setup to parse a cookie preference form which allows a user
+to set their cookie preferences in a fine-grained manner. The default configuration
+is built to work with the [template provided within our documentation](https://hmcts.github.io/cookie-manager/cookie-preferences-form/#html-nunjucks-template).
+
+The form layout needs to be configured for each different cookie category you are utilising within your service.
+This requires you to add another set of radio inputs, with the `name` attribute set to that of your cookie category,
+using `on`/`off` as their values for consent / reject respectively.
+
+More information about the cookie preferences form functionality and how it can be configured can be [found
+within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-preferences-form/).
+
+***Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
+initializing the library.***
+
+## Configuration
+Configuration of the library is done through a config provided to the exposed `init` function
+used when initializing the library. The default configuration is:
+```json
+{
+    "userPreferences": {
+        "cookieName": "cookie-preferences",
+        "cookieExpiry": 365,
+        "cookieSecure": false
     },
-    {
-      "category-name": "analytics",
-      "optional": true,
-      "cookies": [
-        "_ga",
-        "_gtm"
-      ]
+    "preferencesForm": {
+        "class": "cookie-preferences-form"
     },
-    {
-      "category-name": "apm",
-      "optional": true,
-      "cookies": [
-        "dtCookie",
-        "dtLatC",
-        "dtPC",
-        "dtSa",
-        "rxVisitor",
-        "rxvt"
-      ]
+    "cookieBanner": {
+        "class": "cookie-banner",
+        "showWithPreferencesForm": false,
+        "actions": [
+            {
+                "name": "accept",
+                "buttonClass": "cookie-banner-accept-button",
+                "confirmationClass": "cookie-banner-accept-message",
+                "consent": true
+            },
+            {
+                "name": "reject",
+                "buttonClass": "cookie-banner-reject-button",
+                "confirmationClass": "cookie-banner-reject-message",
+                "consent": false
+            },
+            {
+                "name": "hide",
+                "buttonClass": "cookie-banner-hide-button"
+            }
+        ]
+    },
+    "cookieManifest": [],
+    "additionalOptions": {
+        "deleteUndefinedCookies": true,
+        "defaultConsent": false
     }
-  ]
 }
 ```
 
-#### User Preference Settings
-| Option | Description | Default Value |
-| --- | --- | --- |
-| delete-undefined-cookies | Removes any cookies for site that are not defined in the cookie manifest | true |
-| user-preference-cookie-name | Name of cookie which stores cookie preferences | 'cm-user-preferences' |
-| user-preference-cookie-secure | Sets cookie to include ;secure | false |
-| user-preference-saved-callback | Callback function called when user preferences are saved. Calls with object containing consent status. | false (no callback function set) |
-| user-preference-cookie-expiry-days | Expiry time of cookie manager preference cookie (in days) | 365 |
+See our documentation to learn more about [configuring and initializing the library](https://hmcts.github.io/cookie-manager/getting-started/configuring-the-library/index.html#configuring-and-initializing-the-library/),
+or to view the other [configuration options](https://hmcts.github.io/cookie-manager/configuration-options/) available. 
+The provided templates/examples within the documentation are intended to require little extra
+configuration to get a basic cookie compliance solution working on your service.
 
-#### Preference Form Settings
-| Option | Description | Default |
-| --- | --- | --- |
-| preference-form-id | ID attribute on preference form element | false |
-| preference-form-saved-callback | Callback function called when user preference form is saved | false (no callback function set) |
-| set-checkboxes-in-preference-form | Sets radio buttons in form to be checked based on cookie consent | true |
-
-#### Cookie Banner Settings
-| Option | Description | Default |
-| --- | --- | --- |
-| cookie-banner-id | ID attribute on cookie banner wrapper element | false |
-| cookie-banner-visible-on-page-with-preference-form | Should cookie banner also display on page containing preference form | true |
-| cookie-banner-saved-callback | Callback function called when cookie banner is saved | false (no callback function set) |
-| cookie-banner-accept-callback | Callback function called when cookie banner accept is clicked | false (no callback function set) |
-| cookie-banner-reject-callback | Callback function called when cookie banner reject is clicked | false (no callback function set) |
-| cookie-banner-auto-hide | Should banner auto-hide after accept or reject is clicked. Disable to allow decision/confirm style banners | true |
-
-#### Cookie Manifest Settings
-| Option | Description |
-| --- | --- |
-| category-name | Name of the cookie category, i.e analytics |
-| optional | Is cookie category non-essential to site function and can be opted out from |
-| cookies | Array of cookie names included in category |
 
 ## Development
-### Unit tests
-The Unit Test will fail if the coverage is below 80%. To run the tests run `npm run test` or `npm run test-html`.
+### Building
 
-#### HTML
-Running `npm run test-html` will generate a nice html output for the unit tests and coverage in `/test` and `/coverage` respectivly.
+There are currently 2 seperate build options for this library
+- `build:package` - builds the `esm` version of the module, intended to be used with NodeJS based applications.
+Includes TS declarations / typings and JSDoc comments on exposed functions.
+- `build:browser` - builds the `umd` version of this module, intended for use directly within browsers (script tag).
+Builds a minified version of the library.
 
+Both builds use [rollup.js](https://github.com/rollup/rollup) and a number of plugins
+to compile, minify, and create declarations for the library.
+
+### Dependencies
+This project currently only uses dependencies for linting and building the project.
+
+## Testing
+To run the tests run `npm run test` or to see the coverage, `npm run test:coverage`.
+
+As of v1.0.0 of this library, there are over 110 unit tests with a coverage of around 95%.
+Manual testing has also been performed across most major browsers, including IE11.
+
+**Note: The unit tests will fail if coverage is found to be below 90%.**
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
 Please make sure to update tests as appropriate.
 
 ## License
