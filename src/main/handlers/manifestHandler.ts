@@ -1,5 +1,5 @@
-import ManifestCategory from '../models/manifestCategory';
 import Config from '../models/config';
+import { CookieCategory } from '../interfaces/CookieCategory';
 
 export default class ManifestHandler {
     static DEFAULTS = {
@@ -10,26 +10,29 @@ export default class ManifestHandler {
         private readonly config: Config
     ) {}
 
-    getCategoryByCookieName (cookieName: string): ManifestCategory {
+    getCategoryByCookieName (cookieName: string): CookieCategory {
         if (cookieName === this.config.getUserPreferencesCookieName()) {
-            return new ManifestCategory('__cookie-manager', [], false);
+            return { name: '__internal', optional: false };
         }
 
         const category = this.getCategories().filter(category => {
-            return category.getCookies().some(cookie => {
-                switch (category.getMatchBy()) {
-                case 'startsWith': return cookieName.startsWith(cookie);
-                case 'exact': return cookieName === cookie;
-                case 'includes': return cookieName.includes(cookie);
-                default: return false;
+            return category.cookies.some(cookie => {
+                switch (category.matchBy) {
+                case 'exact':
+                    return cookieName === cookie;
+                case 'includes':
+                    return cookieName.includes(cookie);
+                case 'startsWith':
+                default:
+                    return cookieName.startsWith(cookie);
                 }
             });
         })[0];
 
-        return category ?? new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
+        return category ?? { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
     }
 
-    getCategories (): ManifestCategory[] {
+    getCategories (): CookieCategory[] {
         return this.config.getCookieManifest()
             .filter(category => {
                 if (!category.categoryName || !Array.isArray(category.cookies)) {
@@ -39,6 +42,11 @@ export default class ManifestHandler {
                     return true;
                 }
             })
-            .map(category => new ManifestCategory(category.categoryName, category.cookies, category.optional, category.matchBy));
+            .map(category => ({
+                name: category.categoryName,
+                cookies: category.cookies,
+                optional: category.optional,
+                matchBy: category.matchBy
+            }));
     }
 }

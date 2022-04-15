@@ -1,11 +1,11 @@
 import { when } from 'jest-when';
 import UserPreferences from '../../main/handlers/userPreferencesHandler';
-import ManifestCategory from '../../main/models/manifestCategory';
 import CookieHandler from '../../main/handlers/cookieHandler';
 import { MockConfig } from '../common/mockConfig';
 import { MockManifestHandler } from '../common/mockManifestHandler';
 import { MockedCookieJar } from '../common/mockCookieJar';
 import { Cookie } from '../../main/interfaces/Cookie';
+import { CookieCategory } from '../../main/interfaces/CookieCategory';
 
 describe('UserPreferences', () => {
     let mockConfig;
@@ -137,7 +137,7 @@ describe('UserPreferences', () => {
             userPreferences.getPreferenceCookie = jest.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
-            when(mockManifestHandler.getCategories).calledWith().mockReturnValue([new ManifestCategory(categoryName)]);
+            when(mockManifestHandler.getCategories).calledWith().mockReturnValue([{ name: categoryName, optional: true }]);
 
             expect(userPreferences._loadPreferencesFromCookie()).toStrictEqual({ 'non-essential': false });
         });
@@ -188,8 +188,8 @@ describe('UserPreferences', () => {
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
             when(userPreferences._loadPreferenceDefaults).calledWith().mockReturnValue(expectedPreferences);
             when(mockManifestHandler.getCategories).calledWith().mockReturnValue([
-                new ManifestCategory('non-essential'),
-                new ManifestCategory('second-non-essential')
+                { name: 'non-essential', optional: true },
+                { name: 'second-non-essential', optional: true }
             ]);
 
             expect(userPreferences._loadPreferencesFromCookie()).toStrictEqual(expectedPreferences);
@@ -201,8 +201,8 @@ describe('UserPreferences', () => {
     describe('loadPreferenceDefaults', () => {
         test('Load default preferences as off', () => {
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
-            const manifestCategoryOne = new ManifestCategory('essential', [], false);
-            const manifestCategoryTwo = new ManifestCategory('non-essential', [], true);
+            const manifestCategoryOne: CookieCategory = { name: 'essential', optional: false };
+            const manifestCategoryTwo: CookieCategory = { name: 'non-essential', optional: true };
 
             when(mockConfig.getDefaultConsent).calledWith().mockReturnValue(false);
             when(mockManifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
@@ -214,8 +214,8 @@ describe('UserPreferences', () => {
 
         test('Load default preferences as on', () => {
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
-            const manifestCategoryOne = new ManifestCategory('essential', [], false);
-            const manifestCategoryTwo = new ManifestCategory('non-essential', [], true);
+            const manifestCategoryOne: CookieCategory = { name: 'essential', optional: false };
+            const manifestCategoryTwo: CookieCategory = { name: 'non-essential', optional: true };
 
             when(mockConfig.getDefaultConsent).calledWith().mockReturnValue(true);
             when(mockManifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);

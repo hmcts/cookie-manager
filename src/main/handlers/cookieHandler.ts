@@ -22,9 +22,9 @@ export default class CookieHandler {
         CookieHandler.getAllCookies()
             .filter(cookie => {
                 const category = this.manifestHandler.getCategoryByCookieName(cookie.name);
-                return category.getName() !== ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME &&
-                    category.isOptional() &&
-                    !this.userPreferences.getPreferences()[category.getName()];
+                return category.name !== ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME &&
+                    category.optional &&
+                    !this.userPreferences.getPreferences()[category.name];
             })
             .forEach(cookie => CookieHandler.deleteCookie(cookie));
     }
@@ -32,7 +32,7 @@ export default class CookieHandler {
     _processUnCategorizedCookies () {
         console.debug('Deleting non-categorized cookies');
         CookieHandler.getAllCookies()
-            .filter(cookie => this.manifestHandler.getCategoryByCookieName(cookie.name).getName() === ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME)
+            .filter(cookie => this.manifestHandler.getCategoryByCookieName(cookie.name).name === ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME)
             .forEach(cookie => CookieHandler.deleteCookie(cookie));
     }
 

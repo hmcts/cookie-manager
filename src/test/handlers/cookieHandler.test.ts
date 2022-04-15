@@ -1,13 +1,13 @@
 import { when } from 'jest-when';
 import CookieHandler from '../../main/handlers/cookieHandler';
 import { deleteAllCookies } from '../common/common';
-import ManifestCategory from '../../main/models/manifestCategory';
 import { MockConfig } from '../common/mockConfig';
 import { MockUserPreferences } from '../common/mockUserPreferences';
 import ManifestHandler from '../../main/handlers/manifestHandler';
 import { MockManifestHandler } from '../common/mockManifestHandler';
 import { MockedCookieJar } from '../common/mockCookieJar';
 import { Cookie } from '../../main/interfaces/Cookie';
+import { CookieCategory } from '../../main/interfaces/CookieCategory';
 
 describe('CookieHandler', () => {
     let mockCookieJar;
@@ -20,9 +20,9 @@ describe('CookieHandler', () => {
     const cookieThree: Cookie = { name: 'third-non-essential-cookie', value: 'cookie-value' };
     const cookieFour: Cookie = { name: 'fourth-non-essential-cookie', value: 'cookie-value' };
 
-    const essentialCategory = new ManifestCategory('essential', [cookieOne.name], false);
-    const nonEssentialCategory = new ManifestCategory('non-essential', [cookieTwo.name, cookieThree.name]);
-    const SecondNonEssentialCategory = new ManifestCategory('another-non-essential', [cookieFour.name]);
+    const essentialCategory: CookieCategory = { name: 'essential', cookies: [cookieOne.name], optional: false };
+    const nonEssentialCategory: CookieCategory = { name: 'non-essential', cookies: [cookieTwo.name, cookieThree.name], optional: true };
+    const SecondNonEssentialCategory: CookieCategory = { name: 'another-non-essential', cookies: [cookieFour.name], optional: true };
 
     beforeEach(() => {
         deleteAllCookies();
@@ -218,8 +218,8 @@ describe('CookieHandler', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
             when(mockUserPreferences.getPreferences).mockReturnValue({
-                [nonEssentialCategory.getName()]: false,
-                [SecondNonEssentialCategory.getName()]: false
+                [nonEssentialCategory.name]: false,
+                [SecondNonEssentialCategory.name]: false
             });
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
@@ -238,8 +238,8 @@ describe('CookieHandler', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
             when(mockUserPreferences.getPreferences).mockReturnValue({
-                [nonEssentialCategory.getName()]: true,
-                [SecondNonEssentialCategory.getName()]: true
+                [nonEssentialCategory.name]: true,
+                [SecondNonEssentialCategory.name]: true
             });
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
@@ -256,8 +256,8 @@ describe('CookieHandler', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
             when(mockUserPreferences.getPreferences).mockReturnValue({
-                [nonEssentialCategory.getName()]: false,
-                [SecondNonEssentialCategory.getName()]: true
+                [nonEssentialCategory.name]: false,
+                [SecondNonEssentialCategory.name]: true
             });
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
@@ -279,7 +279,7 @@ describe('CookieHandler', () => {
         test('Single uncategorized cookie should be deleted', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
             const unCategorizedCookie: Cookie = { name: 'random-cookie', value: 'value' };
-            const unCategorizedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
+            const unCategorizedCategory: CookieCategory = { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
 
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.name).mockReturnValue(unCategorizedCategory);
@@ -297,8 +297,8 @@ describe('CookieHandler', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
             const unCategorizedCookie: Cookie = { name: 'random-cookie', value: 'value' };
             const unCategorizedCookieTwo: Cookie = { name: 'random-cookie-two', value: 'value' };
-            const manifestCategory = new ManifestCategory('non-essential', ['categorized-cookie']);
-            const unCategorizedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
+            const manifestCategory = { name: 'non-essential', cookies: ['categorized-cookie'], optional: true };
+            const unCategorizedCategory: CookieCategory = { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
 
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(manifestCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.name).mockReturnValue(unCategorizedCategory);

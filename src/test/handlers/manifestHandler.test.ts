@@ -1,7 +1,7 @@
 import { when } from 'jest-when';
-import ManifestCategory from '../../main/models/manifestCategory';
 import ManifestHandler from '../../main/handlers/manifestHandler';
 import { MockConfig } from '../common/mockConfig';
+import { CookieCategory } from '../../main/interfaces/CookieCategory';
 
 describe('ManifestHandler', () => {
     const cookieManifest = [
@@ -36,12 +36,12 @@ describe('ManifestHandler', () => {
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 }
             ];
-            const expectedCategories = [
-                new ManifestCategory(
-                    'essential',
-                    ['first-essential-cookie', 'second-essential-cookie'],
-                    false
-                )
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'essential',
+                    optional: false,
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
+                }
             ];
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -69,23 +69,25 @@ describe('ManifestHandler', () => {
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 }
             ];
-            const expectedCategories = [
-                new ManifestCategory(
-                    'essential',
-                    ['first-essential-cookie', 'second-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'another-essential',
-                    ['third-essential-cookie', 'fourth-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'non-essential',
-                    ['first-non-essential-cookie', 'second-non-essential-cookie'],
-                    true
-                )
+
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'essential',
+                    optional: false,
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
+                },
+                {
+                    name: 'another-essential',
+                    optional: false,
+                    cookies: ['third-essential-cookie', 'fourth-essential-cookie']
+                },
+                {
+                    name: 'non-essential',
+                    optional: true,
+                    cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
+                }
             ];
+
             const manifestHandler = new ManifestHandler(mockConfig);
 
             when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
@@ -107,17 +109,17 @@ describe('ManifestHandler', () => {
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 }
             ];
-            const expectedCategories = [
-                new ManifestCategory(
-                    'essential',
-                    ['first-essential-cookie', 'second-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'non-essential',
-                    ['first-non-essential-cookie', 'second-non-essential-cookie'],
-                    true
-                )
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'essential',
+                    optional: false,
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
+                },
+                {
+                    name: 'non-essential',
+                    optional: true,
+                    cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
+                }
             ];
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -146,22 +148,22 @@ describe('ManifestHandler', () => {
                 }
             ];
 
-            const expectedCategories = [
-                new ManifestCategory(
-                    'essential',
-                    ['first-essential-cookie', 'second-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'non-essential',
-                    ['first-non-essential-cookie', 'second-non-essential-cookie'],
-                    true
-                ),
-                new ManifestCategory(
-                    'another-non-essential',
-                    ['third-non-essential-cookie', 'fourth-non-essential-cookie'],
-                    true
-                )
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'essential',
+                    optional: false,
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
+                },
+                {
+                    name: 'non-essential',
+                    optional: true,
+                    cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
+                },
+                {
+                    name: 'another-non-essential',
+                    optional: true,
+                    cookies: ['third-non-essential-cookie', 'fourth-non-essential-cookie']
+                }
             ];
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -194,27 +196,27 @@ describe('ManifestHandler', () => {
                     cookies: ['third-non-essential-cookie', 'fourth-non-essential-cookie']
                 }
             ];
-            const expectedCategories = [
-                new ManifestCategory(
-                    'essential',
-                    ['first-essential-cookie', 'second-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'another-essential',
-                    ['third-essential-cookie', 'fourth-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'non-essential',
-                    ['first-non-essential-cookie', 'second-non-essential-cookie'],
-                    true
-                ),
-                new ManifestCategory(
-                    'another-non-essential',
-                    ['third-non-essential-cookie', 'fourth-non-essential-cookie'],
-                    true
-                )
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'essential',
+                    optional: false,
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
+                },
+                {
+                    name: 'another-essential',
+                    optional: false,
+                    cookies: ['third-essential-cookie', 'fourth-essential-cookie']
+                },
+                {
+                    name: 'non-essential',
+                    optional: true,
+                    cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
+                },
+                {
+                    name: 'another-non-essential',
+                    optional: true,
+                    cookies: ['third-non-essential-cookie', 'fourth-non-essential-cookie']
+                }
             ];
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -240,12 +242,12 @@ describe('ManifestHandler', () => {
                     cookies: ['third-essential-cookie', 'fourth-essential-cookie']
                 }
             ];
-            const expectedCategories = [
-                new ManifestCategory(
-                    'another-essential',
-                    ['essential-cookie'],
-                    false
-                )
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'another-essential',
+                    optional: false,
+                    cookies: ['essential-cookie']
+                }
             ];
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -273,22 +275,22 @@ describe('ManifestHandler', () => {
                     cookies: ['non-essential-cookie-two']
                 }
             ];
-            const expectedCategories = [
-                new ManifestCategory(
-                    'essential',
-                    ['first-essential-cookie', 'second-essential-cookie'],
-                    false
-                ),
-                new ManifestCategory(
-                    'non-essential',
-                    ['non-essential-cookie'],
-                    true
-                ),
-                new ManifestCategory(
-                    'non-essential',
-                    ['non-essential-cookie-two'],
-                    true
-                )
+            const expectedCategories: CookieCategory[] = [
+                {
+                    name: 'essential',
+                    optional: false,
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
+                },
+                {
+                    name: 'non-essential',
+                    optional: true,
+                    cookies: ['non-essential-cookie']
+                },
+                {
+                    name: 'non-essential',
+                    optional: true,
+                    cookies: ['non-essential-cookie-two']
+                }
             ];
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -305,7 +307,7 @@ describe('ManifestHandler', () => {
         });
 
         test('Get un-categorized category when cookie does not exist in manifest', () => {
-            const expectedCategory = new ManifestCategory('un-categorized');
+            const expectedCategory = { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
             const nonManifestCookie = 'non-manifest-cookie';
             const manifestHandler = new ManifestHandler(mockConfig);
 
@@ -316,7 +318,7 @@ describe('ManifestHandler', () => {
         });
 
         test('Get category for essential cookie', () => {
-            const expectedCategory = new ManifestCategory('essential', ['first-essential-cookie', 'second-essential-cookie'], false);
+            const expectedCategory: CookieCategory = { name: 'essential', cookies: ['first-essential-cookie', 'second-essential-cookie'], optional: false };
             const manifestHandler = new ManifestHandler(mockConfig);
 
             when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
@@ -326,7 +328,7 @@ describe('ManifestHandler', () => {
         });
 
         test('Get category for optional cookie', () => {
-            const expectedCategory = new ManifestCategory('non-essential', ['first-non-essential-cookie', 'second-non-essential-cookie']);
+            const expectedCategory: CookieCategory = { name: 'non-essential', cookies: ['first-non-essential-cookie', 'second-non-essential-cookie'], optional: true };
             const manifestHandler = new ManifestHandler(mockConfig);
 
             when(mockConfig.getCookieManifest).calledWith().mockReturnValue(cookieManifest);
@@ -337,7 +339,7 @@ describe('ManifestHandler', () => {
 
         describe('Get category for cookies by exact match', () => {
             test('Should return category for cookies that does exactly match', () => {
-                const expectedCategory = new ManifestCategory('essential', ['first-essential-cookie', 'second-essential-cookie'], false, 'exact');
+                const expectedCategory: CookieCategory = { name: 'essential', cookies: ['first-essential-cookie', 'second-essential-cookie'], optional: false, matchBy: 'exact' };
                 const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
@@ -353,7 +355,7 @@ describe('ManifestHandler', () => {
             });
 
             test('Should return un-categorized category for cookie that does not exactly match', () => {
-                const expectedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
+                const expectedCategory = { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
                 const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
@@ -371,7 +373,7 @@ describe('ManifestHandler', () => {
 
         describe('Get category for cookies by includes match', () => {
             test('Should return category for cookies that does includes match', () => {
-                const expectedCategory = new ManifestCategory('essential', ['essential', 'test'], false, 'includes');
+                const expectedCategory: CookieCategory = { name: 'essential', cookies: ['essential', 'test'], optional: false, matchBy: 'includes' };
                 const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
@@ -387,7 +389,7 @@ describe('ManifestHandler', () => {
             });
 
             test('Should return un-categorized category for cookie that does not includes match', () => {
-                const expectedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
+                const expectedCategory = { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
                 const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
@@ -405,23 +407,23 @@ describe('ManifestHandler', () => {
 
         describe('Get category for cookies by startsWith match', () => {
             test('Should return category for cookies that does startsWith match', () => {
-                const expectedCategory = new ManifestCategory('essential', ['test-cookie', 'cookies'], false, 'startsWith');
+                const expectedCategory: CookieCategory = { name: 'essential', cookies: ['first-essential-cookie', 'second-essential-cookie'], optional: false, matchBy: 'startsWith' };
                 const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',
                     matchBy: 'startsWith',
                     optional: false,
-                    cookies: ['test-cookie', 'cookies']
+                    cookies: ['first-essential-cookie', 'second-essential-cookie']
                 }];
 
                 when(mockConfig.getCookieManifest).mockReturnValue(mockCookieManifest);
 
-                expect(manifestHandler.getCategoryByCookieName('test-cookie-one')).toEqual(expectedCategory);
+                expect(manifestHandler.getCategoryByCookieName('second-essential-cookie')).toEqual(expectedCategory);
                 expect(mockConfig.getCookieManifest).toHaveBeenCalled();
             });
 
             test('Should return un-categorized category for cookie that does not startsWith match', () => {
-                const expectedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
+                const expectedCategory = { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
                 const manifestHandler = new ManifestHandler(mockConfig);
                 const mockCookieManifest = [{
                     categoryName: 'essential',

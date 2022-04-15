@@ -72,8 +72,8 @@ export default class UserPreferences {
         }
 
         if (this.manifestHandler.getCategories()
-            .filter(category => category.isOptional())
-            .some(category => !Object.keys(cookiePreferences).includes(category.getName()))) {
+            .filter(category => category.optional)
+            .some(category => !Object.keys(cookiePreferences).includes(category.name))) {
             console.debug('User preferences cookie is missing categories, deleting old user preferences cookie.');
             CookieHandler.deleteCookie(preferenceCookie);
             return this._loadPreferenceDefaults();
@@ -92,10 +92,10 @@ export default class UserPreferences {
         const preferences = {};
         const cookiePreferences = {};
         this.manifestHandler.getCategories()
-            .filter(category => category.isOptional())
+            .filter(category => category.optional)
             .forEach(category => {
-                preferences[category.getName()] = this.config.getDefaultConsent();
-                cookiePreferences[category.getName()] = this.config.getDefaultConsent() ? 'on' : 'off';
+                preferences[category.name] = this.config.getDefaultConsent();
+                cookiePreferences[category.name] = this.config.getDefaultConsent() ? 'on' : 'off';
             });
 
         EventProcessor.emit('UserPreferencesLoaded', (cookiePreferences));
