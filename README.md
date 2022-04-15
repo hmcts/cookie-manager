@@ -61,7 +61,7 @@ action is shown below:
 consent to all optional cookie categories, and that any elements with the class `cookie-banner-accept-message`*  (within the cookie banner)
 should be shown.
 
-More information about how the cookie banner functionality and how it can be configured
+More information about the cookie banner's functionality and how it can be configured
 to support a variety of different action/message (stage-based) cookie banners can be [found
 within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-banner/).
 
@@ -78,10 +78,10 @@ The form layout needs to be configured for each different cookie category you ar
 This requires you to add another set of radio inputs, with the `name` attribute set to that of your cookie category,
 using `on`/`off` as their values for consent / reject respectively.
 
-More information about the cookie preferences form functionality and how it can be configured can be [found
+More information about the cookie preferences form functionality and it's configuration can be [found
 within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-preferences-form/).
 
-***Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
+***Note: To disable the cookie preferences form functionality, set the value of configuration property `preferencesForm` to `false` when
 initializing the library.***
 
 ## Configuration
