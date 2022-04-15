@@ -99,7 +99,7 @@ initializing the library.**
 
 ### Emitting events and callbacks
 When an important event occurs within @hmcts/cookie-manger, an event is emitted by the library. 
-Utilising the exported on and off functions from the library, you can easily add callbacks to each event which fires. 
+Utilising the exported `on` and `off` [functions](https://hmcts.github.io/cookie-manager/listenining-to-cookie-manager-events/#listener-functions) from the library, you can easily add callbacks to each event which fires. 
 This could be used to disable a third party analytics package, conditionally change the DOM etc.
 
 ```js
