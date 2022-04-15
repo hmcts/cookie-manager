@@ -1,8 +1,8 @@
-import Cookie from '../models/cookie';
 import CookieHandler from './cookieHandler';
 import { EventProcessor } from './eventHandler';
 import Config from '../models/config';
 import ManifestHandler from './manifestHandler';
+import { Cookie } from '../interfaces/Cookie';
 
 export default class UserPreferences {
     private preferences: { [key: string]: boolean };
@@ -47,7 +47,7 @@ export default class UserPreferences {
 
         Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
 
-        const preferencesCookie = new Cookie(this.config.getUserPreferencesCookieName(), cookieValue);
+        const preferencesCookie: Cookie = { name: this.config.getUserPreferencesCookieName(), value: cookieValue };
         CookieHandler.saveCookie(preferencesCookie, this.config.getUserPreferencesCookieExpiry(), this.config.getUserPreferencesCookieSecure());
         EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
@@ -58,9 +58,9 @@ export default class UserPreferences {
 
         try {
             console.debug('Loading preferences from cookie');
-            cookiePreferences = JSON.parse(preferenceCookie.getValue());
+            cookiePreferences = JSON.parse(preferenceCookie.value);
         } catch (e) {
-            console.error(`Unable to parse user preference cookie "${preferenceCookie.getName()}" as JSON.`);
+            console.error(`Unable to parse user preference cookie "${preferenceCookie.name}" as JSON.`);
             CookieHandler.deleteCookie(preferenceCookie);
             return this._loadPreferenceDefaults();
         }

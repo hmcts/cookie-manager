@@ -2,12 +2,12 @@ import { when } from 'jest-when';
 import CookieHandler from '../../main/handlers/cookieHandler';
 import { deleteAllCookies } from '../common/common';
 import ManifestCategory from '../../main/models/manifestCategory';
-import Cookie from '../../main/models/cookie';
 import { MockConfig } from '../common/mockConfig';
 import { MockUserPreferences } from '../common/mockUserPreferences';
 import ManifestHandler from '../../main/handlers/manifestHandler';
 import { MockManifestHandler } from '../common/mockManifestHandler';
 import { MockedCookieJar } from '../common/mockCookieJar';
+import { Cookie } from '../../main/interfaces/Cookie';
 
 describe('CookieHandler', () => {
     let mockCookieJar;
@@ -15,14 +15,14 @@ describe('CookieHandler', () => {
     let mockUserPreferences;
     let mockManifestHandler;
 
-    const cookieOne = new Cookie('essential-cookie', 'cookie-value');
-    const cookieTwo = new Cookie('first-non-essential-cookie', 'cookie-value');
-    const cookieThree = new Cookie('third-non-essential-cookie', 'cookie-value');
-    const cookieFour = new Cookie('fourth-non-essential-cookie', 'cookie-value');
+    const cookieOne: Cookie = { name: 'essential-cookie', value: 'cookie-value' };
+    const cookieTwo: Cookie = { name: 'first-non-essential-cookie', value: 'cookie-value' };
+    const cookieThree: Cookie = { name: 'third-non-essential-cookie', value: 'cookie-value' };
+    const cookieFour: Cookie = { name: 'fourth-non-essential-cookie', value: 'cookie-value' };
 
-    const essentialCategory = new ManifestCategory('essential', [cookieOne.getName()], false);
-    const nonEssentialCategory = new ManifestCategory('non-essential', [cookieTwo.getName(), cookieThree.getName()]);
-    const SecondNonEssentialCategory = new ManifestCategory('another-non-essential', [cookieFour.getName()]);
+    const essentialCategory = new ManifestCategory('essential', [cookieOne.name], false);
+    const nonEssentialCategory = new ManifestCategory('non-essential', [cookieTwo.name, cookieThree.name]);
+    const SecondNonEssentialCategory = new ManifestCategory('another-non-essential', [cookieFour.name]);
 
     beforeEach(() => {
         deleteAllCookies();
@@ -38,21 +38,21 @@ describe('CookieHandler', () => {
         });
 
         test('Get single cookie', () => {
-            document.cookie = `${cookieOne.getName()}=${cookieOne.getValue()};path=/`;
+            document.cookie = `${cookieOne.name}=${cookieOne.value};path=/`;
 
             expect(CookieHandler.getAllCookies()).toStrictEqual([cookieOne]);
         });
 
         test('Get multiple cookies', () => {
             const expectedCookies = [cookieOne, cookieTwo, cookieThree];
-            let expectedDocumentCookies = `${cookieOne.getName()}=${cookieOne.getValue()}; `;
-            expectedDocumentCookies += `${cookieTwo.getName()}=${cookieTwo.getValue()}; `;
-            expectedDocumentCookies += `${cookieThree.getName()}=${cookieThree.getValue()}`;
+            let expectedDocumentCookies = `${cookieOne.name}=${cookieOne.value}; `;
+            expectedDocumentCookies += `${cookieTwo.name}=${cookieTwo.value}; `;
+            expectedDocumentCookies += `${cookieThree.name}=${cookieThree.value}`;
 
-            document.cookie = `${cookieOne.getName()}=${cookieOne.getValue()};path=/`;
-            document.cookie = `${cookieTwo.getName()}=${cookieTwo.getValue()};path=/`;
-            document.cookie = `${cookieThree.getName()}=${cookieThree.getValue()};path=/`;
-            document.cookie = `${cookieOne.getName()}=${cookieOne.getValue()};path=/`;
+            document.cookie = `${cookieOne.name}=${cookieOne.value};path=/`;
+            document.cookie = `${cookieTwo.name}=${cookieTwo.value};path=/`;
+            document.cookie = `${cookieThree.name}=${cookieThree.value};path=/`;
+            document.cookie = `${cookieOne.name}=${cookieOne.value};path=/`;
 
             expect(document.cookie).toBe(expectedDocumentCookies);
 
@@ -65,7 +65,7 @@ describe('CookieHandler', () => {
             const spy = jest.spyOn(CookieHandler, 'getAllCookies');
             spy.mockReturnValue([cookieOne]);
 
-            expect(CookieHandler.getCookie(cookieOne.getName())).toBe(cookieOne);
+            expect(CookieHandler.getCookie(cookieOne.name)).toBe(cookieOne);
             spy.mockRestore();
         });
 
@@ -73,7 +73,7 @@ describe('CookieHandler', () => {
             const spy = jest.spyOn(CookieHandler, 'getAllCookies');
             spy.mockReturnValue([cookieOne, cookieTwo, cookieThree]);
 
-            expect(CookieHandler.getCookie(cookieTwo.getName())).toBe(cookieTwo);
+            expect(CookieHandler.getCookie(cookieTwo.name)).toBe(cookieTwo);
             spy.mockRestore();
         });
     });
@@ -85,7 +85,7 @@ describe('CookieHandler', () => {
         const cookieClearDate = new Date(-1).toUTCString();
 
         test('Should delete cookie on current domain', () => {
-            const cookie = new Cookie(cookieName, cookieValue);
+            const cookie = { name: cookieName, value: cookieValue };
             document.cookie = `${cookieName}=${cookieValue};${cookiePath}`;
             expect(document.cookie).toBe(`${cookieName}=${cookieValue}`);
 
@@ -97,7 +97,7 @@ describe('CookieHandler', () => {
         });
 
         test('Should delete cookie on dot domain', () => {
-            const cookie = new Cookie(cookieName, cookieValue);
+            const cookie = { name: cookieName, value: cookieValue };
             document.cookie = `${cookieName}=${cookieValue};${cookiePath};domain=.localhost;`;
             expect(document.cookie).toBe(`${cookieName}=${cookieValue}`);
 
@@ -117,7 +117,7 @@ describe('CookieHandler', () => {
         test('When cookie does not exist in browser, enabling cookie creates cookie', () => {
             expect(document.cookie).toBe('');
 
-            const cookie = new Cookie(cookieName, cookieValue);
+            const cookie = { name: cookieName, value: cookieValue };
             CookieHandler.saveCookie(cookie);
 
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};${cookiePath}`);
@@ -129,7 +129,7 @@ describe('CookieHandler', () => {
             expect(document.cookie).toBe(`${cookieName}=${cookieValue}`);
             const newCookieValue = 'new-test-value';
 
-            const cookie = new Cookie(cookieName, newCookieValue);
+            const cookie = { name: cookieName, value: newCookieValue };
             CookieHandler.saveCookie(cookie);
 
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${newCookieValue};${cookiePath}`);
@@ -137,7 +137,7 @@ describe('CookieHandler', () => {
         });
 
         test('Cookie with primitive for value is created correctly', () => {
-            const cookie = new Cookie(cookieName, cookieValue);
+            const cookie = { name: cookieName, value: cookieValue };
             CookieHandler.saveCookie(cookie);
 
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};${cookiePath}`);
@@ -148,7 +148,7 @@ describe('CookieHandler', () => {
             const cookieJSONValue = { testObject: false };
             const expectedCookieValue = JSON.stringify(cookieJSONValue);
 
-            const cookie = new Cookie(cookieName, cookieJSONValue);
+            const cookie = { name: cookieName, value: cookieJSONValue };
             CookieHandler.saveCookie(cookie);
 
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${expectedCookieValue};${cookiePath}`);
@@ -159,7 +159,7 @@ describe('CookieHandler', () => {
             const date = new Date();
             date.setDate(date.getDate() + 7);
 
-            const cookie = new Cookie(cookieName, cookieValue);
+            const cookie = { name: cookieName, value: cookieValue };
             CookieHandler.saveCookie(cookie, 7);
 
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};expires=${date.toUTCString()};${cookiePath}`);
@@ -170,7 +170,7 @@ describe('CookieHandler', () => {
             const date = new Date();
             date.setDate(date.getDate() + 7);
 
-            const cookie = new Cookie(cookieName, cookieValue);
+            const cookie = { name: cookieName, value: cookieValue };
             CookieHandler.saveCookie(cookie, 7, true);
 
             expect(mockCookieJar.set).toHaveBeenCalledWith(`${cookieName}=${cookieValue};expires=${date.toUTCString()};secure;${cookiePath}`);
@@ -221,9 +221,9 @@ describe('CookieHandler', () => {
                 [nonEssentialCategory.getName()]: false,
                 [SecondNonEssentialCategory.getName()]: false
             });
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.getName()).mockReturnValue(essentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.getName()).mockReturnValue(nonEssentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.getName()).mockReturnValue(SecondNonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.name).mockReturnValue(SecondNonEssentialCategory);
             CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, cookieTwo, cookieFour]);
             CookieHandler.deleteCookie = jest.fn();
 
@@ -241,9 +241,9 @@ describe('CookieHandler', () => {
                 [nonEssentialCategory.getName()]: true,
                 [SecondNonEssentialCategory.getName()]: true
             });
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.getName()).mockReturnValue(essentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.getName()).mockReturnValue(nonEssentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.getName()).mockReturnValue(SecondNonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.name).mockReturnValue(SecondNonEssentialCategory);
             CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, cookieTwo, cookieFour]);
             CookieHandler.deleteCookie = jest.fn();
 
@@ -259,10 +259,10 @@ describe('CookieHandler', () => {
                 [nonEssentialCategory.getName()]: false,
                 [SecondNonEssentialCategory.getName()]: true
             });
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.getName()).mockReturnValue(essentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.getName()).mockReturnValue(nonEssentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieThree.getName()).mockReturnValue(nonEssentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.getName()).mockReturnValue(SecondNonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieThree.name).mockReturnValue(nonEssentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.name).mockReturnValue(SecondNonEssentialCategory);
             CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, cookieTwo, cookieThree, cookieFour]);
             CookieHandler.deleteCookie = jest.fn();
 
@@ -278,11 +278,11 @@ describe('CookieHandler', () => {
     describe('processUnCategorizedCookies', () => {
         test('Single uncategorized cookie should be deleted', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
-            const unCategorizedCookie = new Cookie('random-cookie', 'value');
+            const unCategorizedCookie: Cookie = { name: 'random-cookie', value: 'value' };
             const unCategorizedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
 
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.getName()).mockReturnValue(essentialCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.getName()).mockReturnValue(unCategorizedCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.name).mockReturnValue(unCategorizedCategory);
             CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, unCategorizedCookie]);
             CookieHandler.deleteCookie = jest.fn();
 
@@ -295,14 +295,14 @@ describe('CookieHandler', () => {
 
         test('Multiple uncategorized cookies should be deleted', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
-            const unCategorizedCookie = new Cookie('random-cookie', 'value');
-            const unCategorizedCookieTwo = new Cookie('random-cookie-two', 'value');
+            const unCategorizedCookie: Cookie = { name: 'random-cookie', value: 'value' };
+            const unCategorizedCookieTwo: Cookie = { name: 'random-cookie-two', value: 'value' };
             const manifestCategory = new ManifestCategory('non-essential', ['categorized-cookie']);
             const unCategorizedCategory = new ManifestCategory(ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME);
 
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.getName()).mockReturnValue(manifestCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.getName()).mockReturnValue(unCategorizedCategory);
-            when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookieTwo.getName()).mockReturnValue(unCategorizedCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(manifestCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.name).mockReturnValue(unCategorizedCategory);
+            when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookieTwo.name).mockReturnValue(unCategorizedCategory);
             CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, unCategorizedCookie, unCategorizedCookieTwo]);
             CookieHandler.deleteCookie = jest.fn();
 
