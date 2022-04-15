@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-    <title>Quick setup / Google Analytics and Dynatrace RUM - @hmcts/cookie-manager</title>
+    <title>Example setup - Google Analytics and Dynatrace RUM - @hmcts/cookie-manager</title>
 
     <link href="../stylesheets/manifest.css" rel="stylesheet" />
 
@@ -14,12 +14,12 @@
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:domain" content="hmcts.github.io" />
       <meta name="twitter:image" content="https://hmcts.github.io/cookie-manager/images/govuk-large.png" />
-      <meta name="twitter:title" content="Quick setup / Google Analytics and Dynatrace RUM - @hmcts/cookie-manager" />
+      <meta name="twitter:title" content="Example setup - Google Analytics and Dynatrace RUM - @hmcts/cookie-manager" />
       <meta name="twitter:url" content="https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/" />
 
       <meta property="og:image" content="https://hmcts.github.io/cookie-manager/images/govuk-large.png" />
       <meta property="og:site_name" content="@hmcts/cookie-manager" />
-      <meta property="og:title" content="Quick setup / Google Analytics and Dynatrace RUM" />
+      <meta property="og:title" content="Example setup - Google Analytics and Dynatrace RUM" />
       <meta property="og:type" content="object" />
       <meta property="og:url" content="https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/" />
 
@@ -133,7 +133,7 @@
     <a href="../listenining-to-cookie-manager-events/index.html"><span>Events and listeners</span></a>
   </li>
   <li>
-    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Quick setup / Google Analytics and Dynatrace RUM</span></a>
+    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Example setup - Google Analytics and Dynatrace RUM</span></a>
   </li>
 </ul>
 
@@ -144,7 +144,7 @@
 
         <div class="app-pane__content toc-open-disabled">
           <main id="content" class="technical-documentation" data-module="anchored-headings">
-            <h1 id="quick-setup-google-analytics-and-dynatrace-rum">Quick setup / Google Analytics and Dynatrace RUM</h1>
+            <h1 id="example-setup-google-analytics-and-dynatrace-rum">Example setup - Google Analytics and Dynatrace RUM</h1>
 <h2 id="quick-setup">Quick setup</h2>
 <p>Follow these steps to quickly get Google Analytics (through Google Tag Manager) and
 Dynatrace RUM working using @hmcts/cookie-manager</p>
@@ -435,6 +435,8 @@ cookieManager.init(config);
       <div class="highlight">
         <pre class="highlight plaintext" tabindex="0">
           <code>
+{% from "govuk/components/cookie-banner/macro.njk" import govukCookieBanner %}
+
 {% set html %}
   &lt;p class=&quot;govuk-body&quot;&gt;We use some essential cookies to make this service work.&lt;/p&gt;
   &lt;p class=&quot;govuk-body&quot;&gt;We’d like to set additional cookies so we can remember your settings, understand how people use the service and to improve government services.&lt;/p&gt;
@@ -644,6 +646,9 @@ cookieManager.init(config);
       <div class="highlight">
         <pre class="highlight plaintext" tabindex="0">
           <code>
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 &lt;form class="cookie-preferences-form"&gt;
   {{ govukRadios({
     classes: 'govuk-radios',

@@ -133,7 +133,7 @@
     <a href="../listenining-to-cookie-manager-events/index.html"><span>Events and listeners</span></a>
   </li>
   <li>
-    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Quick setup / Google Analytics and Dynatrace RUM</span></a>
+    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Example setup - Google Analytics and Dynatrace RUM</span></a>
   </li>
 </ul>
 
@@ -145,6 +145,23 @@
         <div class="app-pane__content toc-open-disabled">
           <main id="content" class="technical-documentation" data-module="anchored-headings">
             <h1 id="cookie-preferences-form">Cookie preferences form</h1>
+<h3 id="how-the-cookie-preferences-form-is-handled">How the cookie preferences form is handled</h3>
+<p>The Cookie Manager library is also, by default, setup to parse a cookie preference form which allows a user
+to set their cookie preferences in a fine-grained manner. The default configuration
+is built to work with the <a href="/cookie-preferences-form/#html-nunjucks-template">template provided below</a>.</p>
+<p>In short, on the form submission event:</p>
+
+<ol>
+<li>The radio groups within the form are parsed.</li>
+<li>Each selected option is matched to a cookie category (based on the radio element&rsquo;s <code>name</code> attribute).</li>
+<li>The consent value for the selected option is derived from the radio element&rsquo;s <code>value</code> attribute, which should be either <code>on</code> or <code>off</code>.</li>
+<li>The selected options are then set as user&rsquo;s active cookie preferences.</li>
+</ol>
+<p>The form layout needs to be configured for each different cookie category you are utilising within your service.
+This requires you to add another set of radio inputs, with the <code>name</code> attribute set to that of your cookie category,
+using <code>on</code>/<code>off</code> as their values for consent / reject respectively.</p>
+<p>More information about the cookie preferences form functionality and it&rsquo;s configuration can be <a href="/configuration-options/cookie-preferences-form/">found
+within the cookie preferences form configuration options</a>.</p>
 <h3 id="html-nunjucks-template">HTML / Nunjucks template</h3>
 <p>Here is an example of a cookie preferences form (utilising the GOV.UK Frontend &lsquo;Radios&rsquo; component).
 Code has been provided for both HTML and Nunjucks on how this can be used to create a cookie preferneces form
@@ -286,6 +303,9 @@ for use with @hmcts/cookie-manager.
       <div class="highlight">
         <pre class="highlight plaintext" tabindex="0">
           <code>
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 &lt;form class="cookie-preferences-form"&gt;
   {{ govukRadios({
     classes: 'govuk-radios',
@@ -344,22 +364,21 @@ for use with @hmcts/cookie-manager.
   </div>
 </div>
 <p></br></p>
-<h3 id="how-the-cookie-preferences-form-is-handled-by-hmcts-cookie-manager">How the cookie preferences form is handled by @hmcts/cookie-manager</h3>
-<p>The default config for the cookie banner is shown below:</p>
+<h3 id="default-configuration">Default configuration</h3>
+<p>The default config for the cookie preferences form is shown below:</p>
 <div class="highlight"><pre class="highlight javascript" tabindex="0"><code><span class="p">{</span>
   <span class="nl">preferencesForm</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">class</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cookie-preferences-form</span><span class="dl">'</span>
   <span class="p">}</span>
 <span class="p">}</span>
-</code></pre></div><p>When the cookie preferences form can be found within the DOM, it will be targeted using the <code>class</code>
-option from the config.</p>
-<p>The preferences form needs to be configured so that each radio button
-has the <code>name</code> attribute set to that of its relevant category, with the <code>value</code> attribute set to
-<code>on</code> or <code>off</code> to consent or reject the cookies of that category respectively.</p>
-<p>On the form submission event, the selected radio options will be parsed and then made
-the user&rsquo;s active cookie preferences.</p>
-<p>More info about the configuration options can be found
-in the <a href="/configuration-options/cookie-preferences-form/">configuration-options/cookie-preferences-form</a> section.</p>
+</code></pre></div><p>You can see the class in this config used on the preferences form <code>&lt;form&gt;</code> element on the template above.</p>
+<p>Using this default config with the above template should set up a cookie preferences form that is correctly
+targeted by the Cookie Manager library, but further configuration to the HTML is required for each
+additional category, as explained in the &lsquo;<a href="/cookie-preferences-form/#how-the-cookie-preferences-form-is-handled">how the cookie preferences form is handled</a>&rsquo;
+section at the top of this page.</p>
+<p></br>
+<strong><em>Note: To disable the cookie preferences form functionality, set the value of configuration property <code>preferencesForm</code> to <code>false</code> when
+initializing the library.</em></strong></p>
 
 <script src="../javascripts/highlight.min.js"></script>
 

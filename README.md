@@ -46,8 +46,12 @@ with the [template provided within our documentation](https://hmcts.github.io/co
 
 In short, the library works by binding event listeners to the buttons defined for each action, with these
 [actions being specified within the config](https://hmcts.github.io/cookie-manager/configuration-options/cookie-banner/#action).
-Each action defines how consent should be affected, and what confirmation message should be shown, when the action's button is clicked. An example of 
-action is shown below:
+Each action defines:
+
+- How consent should be affected
+- What confirmation message should be shown
+
+#### An example action of an action and how it works:
 
 ```json
 {
@@ -57,22 +61,31 @@ action is shown below:
   "consent": true
 }
 ```
-*This action specifies that on an element with the class `cookie-banner-accept-button` (within the cookie banner) being clicked, we
-consent to all optional cookie categories, and that any elements with the class `cookie-banner-accept-message`*  (within the cookie banner)
-should be shown.
+This action specifies that upon an element with the class `cookie-banner-accept-button` (within the cookie banner) being clicked:
+
+1. We consent to all optional cookie categories.
+2. Any elements with the class `cookie-banner-accept-message` (within the cookie banner) should be shown.
+3. A `CookieBannerAction` event is then emitted with the activated action's name (in this case, 'accept') being passed to any listening callbacks.
 
 More information about how the cookie banner functionality and how it can be configured
 to support a variety of different action/message (stage-based) cookie banners can be [found
 within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-banner/).
 
-***Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
-initializing the library.***
+**Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
+initializing the library.**
 
 
 ### Cookie preferences form support
 The Cookie Manager library is also, by default, setup to parse a cookie preference form which allows a user
 to set their cookie preferences in a fine-grained manner. The default configuration
 is built to work with the [template provided within our documentation](https://hmcts.github.io/cookie-manager/cookie-preferences-form/#html-nunjucks-template).
+
+In short, on the form submission event:
+
+1. The radio groups within the form are parsed.
+2. Each selected option is matched to a cookie category (based on the radio element's `name` attribute).
+3. The consent value for the selected option is derived from the radio element's `value` attribute, which should be either `on` or `off`.
+4. The selected options are then set as user's active cookie preferences.
 
 The form layout needs to be configured for each different cookie category you are utilising within your service.
 This requires you to add another set of radio inputs, with the `name` attribute set to that of your cookie category,
@@ -81,8 +94,28 @@ using `on`/`off` as their values for consent / reject respectively.
 More information about the cookie preferences form functionality and how it can be configured can be [found
 within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-preferences-form/).
 
-***Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
-initializing the library.***
+**Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
+initializing the library.**
+
+### Emitting events and callbacks
+When an important event occurs within @hmcts/cookie-manger, an event is emitted by the library. 
+Utilising the exported on and off functions from the library, you can easily add callbacks to each event which fires. 
+This could be used to disable a third party analytics package, conditionally change the DOM etc.
+
+```js
+import cookieManager from '@hmcts/cookie-manager';
+
+const someEventCallback = function (eventData) { ... };
+cookieManager.on('<EVENT-NAME-HERE>', someEventCallback);
+```
+
+More information about the built-in event processor / emitter can be [found
+within the project's documentation](https://hmcts.github.io/cookie-manager/listenining-to-cookie-manager-events/index.html#events-and-listeners).
+
+A list of the events fired by the Cookie Manager library can also be [found here](https://hmcts.github.io/cookie-manager/listenining-to-cookie-manager-events/#events-list).
+
+You can also see an example of this used to enable / disable Google Analytics (through GTM) and 
+Dynatrace RUM based on user preferences [here within the docs](https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/#1-add-the-library-and-some-event-listeners).
 
 ## Configuration
 Configuration of the library is done through a config provided to the exposed `init` function

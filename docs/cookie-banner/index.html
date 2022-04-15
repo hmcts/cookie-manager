@@ -133,7 +133,7 @@
     <a href="../listenining-to-cookie-manager-events/index.html"><span>Events and listeners</span></a>
   </li>
   <li>
-    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Quick setup / Google Analytics and Dynatrace RUM</span></a>
+    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Example setup - Google Analytics and Dynatrace RUM</span></a>
   </li>
 </ul>
 
@@ -145,6 +145,35 @@
         <div class="app-pane__content toc-open-disabled">
           <main id="content" class="technical-documentation" data-module="anchored-headings">
             <h1 id="cookie-banner">Cookie banner</h1>
+<h3 id="how-the-cookie-banner-is-handled">How the cookie banner is handled</h3>
+<p>By default, the Cookie Manager library is configured to display or hide a cookie banner setup
+within your service. Without any extra configuration, the library is configured out-of-the-box to work
+with the <a href="/cookie-banner/#html-nunjucks-template">template listed below</a>.</p>
+<p>In short, the library works by binding event listeners to the button defined within each action, with these
+<a href="/configuration-options/cookie-banner/#action">actions being specified within the config</a>.</p>
+<p>Each action defines:</p>
+
+<ul>
+<li>How consent should be affected</li>
+<li>What confirmation message should be shown</li>
+</ul>
+<h4 id="an-example-action-of-an-action-and-how-it-works">An example action of an action and how it works:</h4>
+<div class="highlight"><pre class="highlight javascript" tabindex="0"><code><span class="p">{</span>
+    <span class="nl">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">accept</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">buttonClass</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cookie-banner-accept-button</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">confirmationClass</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cookie-banner-accept-message</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">consent</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</code></pre></div><p>This action specifies that upon an element with the class <code>cookie-banner-accept-button</code> (within the cookie banner) being clicked:</p>
+
+<ol>
+<li>We consent to all optional cookie categories.</li>
+<li>Any elements with the class <code>cookie-banner-accept-message</code> (within the cookie banner) should be shown.</li>
+<li>A <code>CookieBannerAction</code> event is then emitted with the activated action&rsquo;s name (in this case, &lsquo;accept&rsquo;) being passed to any listening callbacks.</li>
+</ol>
+<p>More information about the cookie banner&rsquo;s functionality and how it can be configured
+to support a variety of different action/message (stage-based) cookie banners can be <a href="/configuration-options/cookie-banner/">found
+within the cookie banner configuration options</a>.</p>
 <h3 id="html-nunjucks-template">HTML / Nunjucks template</h3>
 <p>Here is an example of a cookie banner (utilising the GOV.UK Frontend &lsquo;Cookie Banner&rsquo; component).
 Code has been provided for both HTML and Nunjucks.
@@ -290,17 +319,19 @@ Code has been provided for both HTML and Nunjucks.
       <div class="highlight">
         <pre class="highlight plaintext" tabindex="0">
           <code>
+{% from "govuk/components/cookie-banner/macro.njk" import govukCookieBanner %}
+
 {% set html %}
-  <p class="govuk-body">We use some essential cookies to make this service work.</p>
-  <p class="govuk-body">We’d also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+  &lt;p class=&quot;govuk-body&quot;&gt;We use some essential cookies to make this service work.&lt;/p&gt;
+  &lt;p class=&quot;govuk-body&quot;&gt;We’d also like to use analytics cookies so we can understand how you use the service and make improvements.&lt;/p&gt;
 {% endset %}
 
 {% set acceptHtml %}
-  <p class="govuk-body">You’ve accepted analytics cookies. You can <a class="govuk-link" href="#">change your cookie settings</a> at any time.</p>
+  &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted analytics cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
 {% endset %}
 
 {% set rejectHtml %}
-  <p class="govuk-body">You’ve rejected analytics cookies. You can <a class="govuk-link" href="#">change your cookie settings</a> at any time.</p>
+  &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected analytics cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;#&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
 {% endset %}
 
 {{ govukCookieBanner({
@@ -362,8 +393,8 @@ Code has been provided for both HTML and Nunjucks.
   </div>
 </div>
 <p></br></p>
-<h3 id="how-the-cookie-banner-is-handled-by-hmcts-cookie-manager">How the cookie banner is handled by @hmcts/cookie-manager</h3>
-<p>The default config for the cookie banner is shown below:</p>
+<h3 id="default-configuration">Default configuration</h3>
+<p>The default config for the cookie banner is:</p>
 <div class="highlight"><pre class="highlight javascript" tabindex="0"><code><span class="p">{</span>
   <span class="nl">cookieBanner</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">class</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cookie-banner</span><span class="dl">'</span><span class="p">,</span>
@@ -387,11 +418,12 @@ Code has been provided for both HTML and Nunjucks.
     <span class="p">]</span>
   <span class="p">}</span>
 <span class="p">}</span>
-</code></pre></div><p>You can see the classes in this config used on the messages and buttons on the included code examples.
-Using this default config with the above code examples should set up a cookie banner that works out of
+</code></pre></div><p>You can see the classes in this config used on the messages and buttons on the template above.</p>
+<p>Using this default config with the above template should set up a cookie banner that works out of
 the box with the cookie-manager library,</p>
-<p>More info about the configuration options can be found in the
-<a href="/configuration-options/cookie-banner/">configuration-options/cookie-banner</a> section</p>
+<p></br>
+<strong><em>Note: To disable the cookie banner functionality, set the value of configuration property <code>cookieBanner</code> to <code>false</code> when
+initializing the library.</em></strong></p>
 
 <script src="../javascripts/cookie-manager.min.js"></script>
 
