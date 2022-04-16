@@ -145,7 +145,7 @@ export class ConfigHandler {
     }
 
     mergeConfigurations (providedConfig: Partial<CookieManagerConfig>): CookieManagerConfig {
-        const finalConfig = Object.create(ConfigHandler.defaultConfig);
+        const finalConfig = { ...ConfigHandler.defaultConfig };
 
         if (Object.keys(providedConfig).length) {
             finalConfig.userPreferences = { ...ConfigHandler.defaultConfig.userPreferences, ...providedConfig.userPreferences };

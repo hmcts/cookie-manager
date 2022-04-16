@@ -1,17 +1,17 @@
 import ManifestHandler from './manifestHandler';
 import UserPreferences from './userPreferencesHandler';
-import Config from '../models/config';
 import { Cookie } from '../interfaces/Cookie';
+import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class CookieHandler {
     constructor (
-        private readonly config: Config,
+        private readonly config: CookieManagerConfig,
         private readonly manifestHandler: ManifestHandler,
         private readonly userPreferences: UserPreferences
     ) {}
 
     processCookies () {
-        if (this.config.shouldDeleteUncategorized()) {
+        if (this.config.additionalOptions.deleteUndefinedCookies) {
             this._processUnCategorizedCookies();
         }
         this._processNonConsentedCookies();

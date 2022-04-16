@@ -1,14 +1,14 @@
 import CookieHandler from './cookieHandler';
 import { EventProcessor } from './eventHandler';
-import Config from '../models/config';
 import ManifestHandler from './manifestHandler';
 import { Cookie } from '../interfaces/Cookie';
+import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class UserPreferences {
     private preferences: { [key: string]: boolean };
 
     constructor (
-        private readonly config: Config,
+        private readonly config: CookieManagerConfig,
         private readonly manifestHandler: ManifestHandler
     ) {}
 
@@ -38,7 +38,7 @@ export default class UserPreferences {
     };
 
     getPreferenceCookie () {
-        return CookieHandler.getCookie(this.config.getUserPreferencesCookieName());
+        return CookieHandler.getCookie(this.config.userPreferences.cookieName);
     };
 
     savePreferencesToCookie () {
@@ -47,8 +47,8 @@ export default class UserPreferences {
 
         Object.keys(preferences).forEach(key => { cookieValue[key] = preferences[key] ? 'on' : 'off'; });
 
-        const preferencesCookie: Cookie = { name: this.config.getUserPreferencesCookieName(), value: cookieValue };
-        CookieHandler.saveCookie(preferencesCookie, this.config.getUserPreferencesCookieExpiry(), this.config.getUserPreferencesCookieSecure());
+        const preferencesCookie: Cookie = { name: this.config.userPreferences.cookieName, value: cookieValue };
+        CookieHandler.saveCookie(preferencesCookie, this.config.userPreferences.cookieExpiry, this.config.userPreferences.cookieSecure);
         EventProcessor.emit('UserPreferencesSaved', (cookieValue));
     };
 
@@ -94,8 +94,8 @@ export default class UserPreferences {
         this.manifestHandler.getCategories()
             .filter(category => category.optional)
             .forEach(category => {
-                preferences[category.name] = this.config.getDefaultConsent();
-                cookiePreferences[category.name] = this.config.getDefaultConsent() ? 'on' : 'off';
+                preferences[category.name] = this.config.additionalOptions.defaultConsent;
+                cookiePreferences[category.name] = this.config.additionalOptions.defaultConsent ? 'on' : 'off';
             });
 
         EventProcessor.emit('UserPreferencesLoaded', (cookiePreferences));

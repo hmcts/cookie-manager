@@ -13,7 +13,6 @@ export default [
             }),
             terser({
                 compress: {
-                    booleans_as_integers: true,
                     pure_getters: true,
                     passes: 2
                 },

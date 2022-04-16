@@ -1,11 +1,11 @@
 import { EventProcessor } from './eventHandler';
-import Config from '../models/config';
 import UserPreferences from './userPreferencesHandler';
 import CookieHandler from './cookieHandler';
+import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class CookieBannerHandler {
     constructor (
-        private readonly config: Config,
+        private readonly config: CookieManagerConfig,
         private readonly userPreferencesHandler: UserPreferences,
         private readonly cookieHandler: CookieHandler
     ) {}
@@ -21,9 +21,7 @@ export default class CookieBannerHandler {
 
         if (!this._getBannerNode()) return;
 
-        if (document.getElementsByClassName(this.config.getPreferencesFormConfiguration().class)[0] &&
-            !this.config.getCookieBannerConfiguration().showWithPreferencesForm
-        ) return;
+        if (document.getElementsByClassName(this.config.preferencesForm.class)[0] && !this.config.cookieBanner.showWithPreferencesForm) return;
 
         this._setupEventListeners();
         this._getBannerNode().hidden = false;
@@ -31,7 +29,7 @@ export default class CookieBannerHandler {
     }
 
     _setupEventListeners () {
-        const actions = this.config.getCookieBannerConfiguration()?.actions || [];
+        const actions = this.config.cookieBanner.actions || [];
 
         actions.forEach(action => {
             for (const button of this._getBannerNode().querySelectorAll('.' + action.buttonClass)) {
@@ -77,6 +75,6 @@ export default class CookieBannerHandler {
     }
 
     _getBannerNode (): HTMLDivElement {
-        return document.querySelector('.' + this.config.getCookieBannerConfiguration()?.class);
+        return document.querySelector('.' + this.config.cookieBanner.class);
     };
 }

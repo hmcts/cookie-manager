@@ -1,5 +1,5 @@
-import Config from '../models/config';
 import { CookieCategory } from '../interfaces/CookieCategory';
+import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class ManifestHandler {
     static DEFAULTS = {
@@ -7,12 +7,12 @@ export default class ManifestHandler {
     }
 
     constructor (
-        private readonly config: Config
+        private readonly config: CookieManagerConfig
     ) {}
 
     getCategoryByCookieName (cookieName: string): CookieCategory {
-        if (cookieName === this.config.getUserPreferencesCookieName()) {
-            return { name: '__internal', optional: false };
+        if (cookieName === this.config.userPreferences.cookieName) {
+            return { name: '__internal', cookies: [cookieName], optional: false, matchBy: 'exact' };
         }
 
         const category = this.getCategories().filter(category => {
@@ -29,24 +29,16 @@ export default class ManifestHandler {
             });
         })[0];
 
-        return category ?? { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, optional: true };
+        return category ?? { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, cookies: [cookieName], optional: true, matchBy: 'exact' };
     }
 
     getCategories (): CookieCategory[] {
-        return this.config.getCookieManifest()
-            .filter(category => {
-                if (!category.categoryName || !Array.isArray(category.cookies)) {
-                    console.debug('Malformed cookie manifest category, ignoring.');
-                    return false;
-                } else {
-                    return true;
-                }
-            })
+        return this.config.cookieManifest
             .map(category => ({
                 name: category.categoryName,
                 cookies: category.cookies,
-                optional: category.optional,
-                matchBy: category.matchBy
+                optional: category.optional ?? true,
+                matchBy: category.matchBy ?? 'startsWith'
             }));
     }
 }

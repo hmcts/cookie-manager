@@ -1,11 +1,11 @@
 import { EventProcessor } from './eventHandler';
-import Config from '../models/config';
 import UserPreferences from './userPreferencesHandler';
 import CookieHandler from './cookieHandler';
+import { CookieManagerConfig } from '../interfaces/Config';
 
 export default class PreferencesFormHandler {
     constructor (
-        private readonly config: Config,
+        private readonly config: CookieManagerConfig,
         private readonly userPreferencesHandler: UserPreferences,
         private readonly cookieHandler: CookieHandler
     ) {}
@@ -27,7 +27,7 @@ export default class PreferencesFormHandler {
     }
 
     _getPreferencesForm () {
-        return document.getElementsByClassName(this.config.getPreferencesFormConfiguration().class)[0];
+        return document.getElementsByClassName(this.config.preferencesForm.class)[0];
     }
 
     _setupEventListeners () {

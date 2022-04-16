@@ -1,28 +1,29 @@
 import { when } from 'jest-when';
 import UserPreferences from '../../main/handlers/userPreferencesHandler';
 import CookieHandler from '../../main/handlers/cookieHandler';
-import { MockConfig } from '../common/mockConfig';
 import { MockManifestHandler } from '../common/mockManifestHandler';
 import { MockedCookieJar } from '../common/mockCookieJar';
 import { Cookie } from '../../main/interfaces/Cookie';
 import { CookieCategory } from '../../main/interfaces/CookieCategory';
+import { ConfigHandler } from '../../main/handlers/configHandler';
+import { CookieManagerConfig } from '../../main/interfaces/Config';
 
 describe('UserPreferences', () => {
-    let mockConfig;
+    let mockConfig: CookieManagerConfig;
     let mockCookieJar;
     let mockManifestHandler;
 
     const expiryMilliseconds = 365 * 24 * 60 * 60 * 1000;
 
     beforeEach(() => {
-        mockConfig = MockConfig();
+        mockConfig = Object.create(ConfigHandler.defaultConfig);
         mockCookieJar = MockedCookieJar();
         mockManifestHandler = MockManifestHandler();
     });
 
     describe('processPreferences', () => {
         test('Should load preferences from cookie when preference cookie is present', () => {
-            const preferenceCookie: Cookie = { name: mockConfig.getUserPreferencesCookieName(), value: { 'non-essential': true } };
+            const preferenceCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: { 'non-essential': true } };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
             userPreferences.getPreferenceCookie = jest.fn();
@@ -80,14 +81,13 @@ describe('UserPreferences', () => {
 
     test('getPreferenceCookie', () => {
         const preferences = { essential: true };
-        const expectedPreferenceCookie: Cookie = { name: mockConfig.getUserPreferencesCookieName(), value: preferences };
+        const expectedPreferenceCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: preferences };
         const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
         CookieHandler.getCookie = jest.fn().mockReturnValue(expectedPreferenceCookie);
 
         expect(userPreferences.getPreferenceCookie()).toBe(expectedPreferenceCookie);
-        expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-        expect(CookieHandler.getCookie).toHaveBeenCalledWith(mockConfig.getUserPreferencesCookieName());
+        expect(CookieHandler.getCookie).toHaveBeenCalledWith(mockConfig.userPreferences.cookieName);
     });
 
     describe('savePreferencesToCookie', () => {
@@ -100,12 +100,10 @@ describe('UserPreferences', () => {
             userPreferences.getPreferences = jest.fn();
 
             when(userPreferences.getPreferences).mockReturnValue(preferences);
-            when(mockConfig.getUserPreferencesCookieName).mockReturnValue(mockConfig.getUserPreferencesCookieName());
 
             userPreferences.savePreferencesToCookie();
             expect(userPreferences.getPreferences).toHaveBeenCalled();
-            expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/;`);
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.userPreferences.cookieName}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};path=/;`);
         });
 
         test('Save multiple preferences to cookie', () => {
@@ -117,12 +115,10 @@ describe('UserPreferences', () => {
             userPreferences.getPreferences = jest.fn();
 
             when(userPreferences.getPreferences).mockReturnValue(preferences);
-            when(mockConfig.getUserPreferencesCookieName).mockReturnValue(mockConfig.getUserPreferencesCookieName());
 
             userPreferences.savePreferencesToCookie();
             expect(userPreferences.getPreferences).toHaveBeenCalled();
-            expect(mockConfig.getUserPreferencesCookieName).toHaveBeenCalled();
-            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.getUserPreferencesCookieName()}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};secure;path=/;`);
+            expect(mockCookieJar.set).toHaveBeenCalledWith(`${mockConfig.userPreferences.cookieName}=${JSON.stringify(expectedCookiePreferences)};expires=${expiryDate};path=/;`);
         });
     });
 
@@ -131,7 +127,7 @@ describe('UserPreferences', () => {
             const categoryName = 'non-essential';
             const preferences = { [categoryName]: 'off' };
 
-            const preferencesCookie: Cookie = { name: mockConfig.getUserPreferencesCookieName(), value: JSON.stringify(preferences) };
+            const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: JSON.stringify(preferences) };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
             userPreferences.getPreferenceCookie = jest.fn();
@@ -143,7 +139,7 @@ describe('UserPreferences', () => {
         });
 
         test('Handle JSON parse of cookie failure', () => {
-            const preferencesCookie: Cookie = { name: mockConfig.getUserPreferencesCookieName(), value: { 'non-essential': 'off' } };
+            const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: { 'non-essential': 'off' } };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
             CookieHandler.deleteCookie = jest.fn();
@@ -159,7 +155,7 @@ describe('UserPreferences', () => {
         });
 
         test('Handle malformed cookie failure', () => {
-            const preferencesCookie: Cookie = { name: mockConfig.getUserPreferencesCookieName(), value: JSON.stringify('malformedCookie') };
+            const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: JSON.stringify('malformedCookie') };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
             CookieHandler.deleteCookie = jest.fn();
@@ -178,7 +174,7 @@ describe('UserPreferences', () => {
             const preferences = { 'non-essential': 'off' };
             const expectedPreferences = { 'non-essential': false, 'second-non-essential': false };
 
-            const preferencesCookie: Cookie = { name: mockConfig.getUserPreferencesCookieName(), value: JSON.stringify(preferences) };
+            const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: JSON.stringify(preferences) };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
             CookieHandler.deleteCookie = jest.fn();
@@ -204,11 +200,10 @@ describe('UserPreferences', () => {
             const manifestCategoryOne: CookieCategory = { name: 'essential', optional: false };
             const manifestCategoryTwo: CookieCategory = { name: 'non-essential', optional: true };
 
-            when(mockConfig.getDefaultConsent).calledWith().mockReturnValue(false);
+            mockConfig.additionalOptions.defaultConsent = false;
             when(mockManifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
 
             expect(userPreferences._loadPreferenceDefaults()).toStrictEqual({ 'non-essential': false });
-            expect(mockConfig.getDefaultConsent).toHaveBeenCalled();
             expect(mockManifestHandler.getCategories).toHaveBeenCalled();
         });
 
@@ -217,11 +212,10 @@ describe('UserPreferences', () => {
             const manifestCategoryOne: CookieCategory = { name: 'essential', optional: false };
             const manifestCategoryTwo: CookieCategory = { name: 'non-essential', optional: true };
 
-            when(mockConfig.getDefaultConsent).calledWith().mockReturnValue(true);
+            mockConfig.additionalOptions.defaultConsent = true;
             when(mockManifestHandler.getCategories).calledWith().mockReturnValue([manifestCategoryOne, manifestCategoryTwo]);
 
             expect(userPreferences._loadPreferenceDefaults()).toStrictEqual({ 'non-essential': true });
-            expect(mockConfig.getDefaultConsent).toHaveBeenCalled();
             expect(mockManifestHandler.getCategories).toHaveBeenCalled();
         });
     });

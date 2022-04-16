@@ -14,7 +14,7 @@ import { ConfigHandler } from './handlers/configHandler';
  */
 function init (providedConfig: Partial<CookieManagerConfig>): void {
     console.debug('CookieManager initializing...');
-    let config;
+    let config: CookieManagerConfig;
 
     try {
         config = new ConfigHandler().mergeConfigurations(providedConfig);
@@ -30,11 +30,11 @@ function init (providedConfig: Partial<CookieManagerConfig>): void {
 
     userPreferences.processPreferences();
 
-    if (!config.isCookieBannerDisabled()) {
+    if (!config.additionalOptions.disableCookieBanner) {
         new CookieBannerHandler(config, userPreferences, cookieHandler).init();
     }
 
-    if (!config.isPreferencesFormDisabled()) {
+    if (!config.additionalOptions.disableCookiePreferencesForm) {
         new PreferencesFormHandler(config, userPreferences, cookieHandler).init();
     }
 

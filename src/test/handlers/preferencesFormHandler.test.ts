@@ -1,18 +1,19 @@
 import PreferencesFormHandler from '../../main/handlers/preferencesFormHandler';
-import { MockConfig } from '../common/mockConfig';
 import { MockUserPreferences } from '../common/mockUserPreferences';
 import { loadHTMLFromFile, wipeDocument } from '../common/common';
 import { when } from 'jest-when';
+import { ConfigHandler } from '../../main/handlers/configHandler';
+import { CookieManagerConfig } from '../../main/interfaces/Config';
 
 describe('PreferencesFormHandler', () => {
-    let mockConfig;
+    let mockConfig: CookieManagerConfig;
     let mockUserPreferences;
     let mockCookieHandler;
     const PREFERENCES_FORM_CLASS = 'cookie-preferences-form';
     const getPreferencesForm = () => document.querySelector('.' + PREFERENCES_FORM_CLASS);
 
     beforeEach(() => {
-        mockConfig = MockConfig();
+        mockConfig = Object.create(ConfigHandler.defaultConfig);
         mockUserPreferences = MockUserPreferences();
         mockCookieHandler = {
             processCookies: jest.fn()
@@ -83,16 +84,7 @@ describe('PreferencesFormHandler', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(preferencesFormHandler._getPreferencesForm()).toBe(expectedElement);
-            expect(mockConfig.getPreferencesFormConfiguration).toHaveBeenCalled();
             expect(expectedElement).not.toBe(null);
-        });
-
-        test('Get undefined when preferences form is configured incorrectly', () => {
-            when(mockConfig.getPreferencesFormConfiguration).mockReturnValue('some-incorrect-id');
-            const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
-
-            expect(preferencesFormHandler._getPreferencesForm()).toBe(undefined);
-            expect(mockConfig.getPreferencesFormConfiguration).toHaveBeenCalled();
         });
 
         test('Get undefined when preferences form does not exist in DOM', () => {
@@ -101,7 +93,6 @@ describe('PreferencesFormHandler', () => {
             const preferencesFormHandler = new PreferencesFormHandler(mockConfig, mockUserPreferences, mockCookieHandler);
 
             expect(preferencesFormHandler._getPreferencesForm()).toBe(undefined);
-            expect(mockConfig.getPreferencesFormConfiguration).toHaveBeenCalled();
         });
     });
 

@@ -1,17 +1,18 @@
 import { when } from 'jest-when';
 import CookieHandler from '../../main/handlers/cookieHandler';
 import { deleteAllCookies } from '../common/common';
-import { MockConfig } from '../common/mockConfig';
 import { MockUserPreferences } from '../common/mockUserPreferences';
 import ManifestHandler from '../../main/handlers/manifestHandler';
 import { MockManifestHandler } from '../common/mockManifestHandler';
 import { MockedCookieJar } from '../common/mockCookieJar';
 import { Cookie } from '../../main/interfaces/Cookie';
 import { CookieCategory } from '../../main/interfaces/CookieCategory';
+import { CookieManagerConfig } from '../../main/interfaces/Config';
+import { ConfigHandler } from '../../main/handlers/configHandler';
 
 describe('CookieHandler', () => {
     let mockCookieJar;
-    let mockConfig;
+    let mockConfig: CookieManagerConfig;
     let mockUserPreferences;
     let mockManifestHandler;
 
@@ -27,7 +28,7 @@ describe('CookieHandler', () => {
     beforeEach(() => {
         deleteAllCookies();
         mockCookieJar = MockedCookieJar();
-        mockConfig = MockConfig();
+        mockConfig = Object.create(ConfigHandler.defaultConfig);
         mockUserPreferences = MockUserPreferences();
         mockManifestHandler = MockManifestHandler();
     });
@@ -181,7 +182,7 @@ describe('CookieHandler', () => {
         test('_processUnCategorizedCookies should not be called if delete uncategorized cookies is false', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
-            when(mockConfig.shouldDeleteUncategorized).mockReturnValue(false);
+            mockConfig.additionalOptions.deleteUndefinedCookies = false;
             cookieHandler._processUnCategorizedCookies = jest.fn();
             cookieHandler._processNonConsentedCookies = jest.fn();
             cookieHandler.processCookies();
@@ -193,7 +194,7 @@ describe('CookieHandler', () => {
         test('_processUnCategorizedCookies should be called if delete uncategorized cookies is true', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
-            when(mockConfig.shouldDeleteUncategorized).mockReturnValue(true);
+            mockConfig.additionalOptions.deleteUndefinedCookies = true;
             cookieHandler._processUnCategorizedCookies = jest.fn();
             cookieHandler._processNonConsentedCookies = jest.fn();
             cookieHandler.processCookies();

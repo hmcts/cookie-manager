@@ -5,7 +5,7 @@ import cleanup from 'rollup-plugin-cleanup';
 export default [
     {
         input: 'src/main/cookieManager.ts',
-        output: [{ file: './dist/index.js', format: 'esm' }],
+        output: [{ file: './dist/cookie-manager.js', format: 'esm' }],
         plugins: [
             typescript({ tsconfig: './tsconfig.json' }),
             cleanup({ comments: ['jsdoc'] })
@@ -13,7 +13,7 @@ export default [
     },
     {
         input: './dist/typings/cookieManager.d.ts',
-        output: [{ file: 'dist/index.d.ts', format: 'es' }],
+        output: [{ file: 'dist/cookie-manager.d.ts', format: 'es' }],
         plugins: [dts()]
     }
 ];

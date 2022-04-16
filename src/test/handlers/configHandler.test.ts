@@ -12,10 +12,10 @@ describe('ConfigHandler', function () {
         test('Valid configuration', () => {
             const configHandler = new ConfigHandler();
 
-            const userPreferencesConfig: UserPreferences = {
+            const userPreferencesConfig: Partial<UserPreferences> = {
                 cookieName: 'cookie',
                 cookieExpiry: 365,
-                cookieSecure: true
+                cookieSecure: false
             };
 
             expect(() => configHandler.validateUserPreferencesConfig(userPreferencesConfig)).not.toThrow();
@@ -233,7 +233,7 @@ describe('ConfigHandler', function () {
             const configHandler = new ConfigHandler();
             configHandler.validateConfig = jest.fn();
 
-            expect(configHandler.mergeConfigurations({} as CookieManagerConfig)).toBe(ConfigHandler.defaultConfig);
+            expect(configHandler.mergeConfigurations({} as CookieManagerConfig)).toStrictEqual(ConfigHandler.defaultConfig);
             expect(configHandler.validateConfig).not.toHaveBeenCalled();
         });
 
