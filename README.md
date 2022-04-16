@@ -71,9 +71,6 @@ More information about how the cookie banner functionality and how it can be con
 to support a variety of different action/message (stage-based) cookie banners can be [found
 within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-banner/).
 
-**Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
-initializing the library.**
-
 
 ### Cookie preferences form support
 The Cookie Manager library is also, by default, setup to parse a cookie preference form which allows a user
@@ -93,9 +90,6 @@ using `on`/`off` as their values for consent / reject respectively.
 
 More information about the cookie preferences form functionality and how it can be configured can be [found
 within the docs](https://hmcts.github.io/cookie-manager/configuration-options/cookie-preferences-form/).
-
-**Note: To disable the cookie banner functionality, set the value of configuration property `cookieBanner` to `false` when
-initializing the library.**
 
 ### Emitting events and callbacks
 When an important event occurs within @hmcts/cookie-manger, an event is emitted by the library. 
@@ -154,8 +148,10 @@ used when initializing the library. The default configuration is:
     },
     "cookieManifest": [],
     "additionalOptions": {
-        "deleteUndefinedCookies": true,
-        "defaultConsent": false
+       "defaultConsent": false,
+       "deleteUndefinedCookies": false,
+       "disableCookieBanner": false,
+       "disableCookiePreferencesForm": false
     }
 }
 ```
@@ -165,6 +161,9 @@ or to view the other [configuration options](https://hmcts.github.io/cookie-mana
 The provided templates/examples within the documentation are intended to require little extra
 configuration to get a basic cookie compliance solution working on your service.
 
+**Note: Cookie Manager will attempt to validate the config passed to it on initialization. 
+If any malformed, missing properties etc. are supplied, the library will be disabled until it is resolved. 
+A warning will be printed in the console alerting of the problematic property.**
 
 ## Development
 ### Building

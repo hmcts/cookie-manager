@@ -255,7 +255,7 @@ Code has been provided for both HTML and Nunjucks.
     <div class="app-example__code">
       <pre data-module="app-copy" tabindex="0">
         <code>
-&lt;div class=&quot;govuk-cookie-banner cookie-banner&quot; data-nosnippet=&quot;&quot; role=&quot;region&quot; aria-label=&quot;Cookies on [name of service]&quot;&gt;
+&lt;div class=&quot;govuk-cookie-banner cookie-banner&quot; data-nosnippet=&quot;&quot; role=&quot;region&quot; aria-label=&quot;Cookies on [name of service]&quot; hidden&gt;
    &lt;div class=&quot;govuk-cookie-banner__message govuk-width-container cookie-banner-message&quot;&gt;
       &lt;div class=&quot;govuk-grid-row&quot;&gt;
          &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
@@ -393,6 +393,15 @@ Code has been provided for both HTML and Nunjucks.
   </div>
 </div>
 <p></br></p>
+
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    It is important to ensure the cookie banner is has the `hidden` attribute when the
+DOM / page is first loaded. The Cookie Manager library will un-hide the banner when appropriate.
+  </strong>
+</div>
 <h3 id="default-configuration">Default configuration</h3>
 <p>The default config for the cookie banner is:</p>
 <div class="highlight"><pre class="highlight javascript" tabindex="0"><code><span class="p">{</span>
@@ -422,8 +431,8 @@ Code has been provided for both HTML and Nunjucks.
 <p>Using this default config with the above template should set up a cookie banner that works out of
 the box with the cookie-manager library,</p>
 <p></br>
-<strong><em>Note: To disable the cookie banner functionality, set the value of configuration property <code>cookieBanner</code> to <code>false</code> when
-initializing the library.</em></strong></p>
+<strong><em>Note: To disable the cookie banner functionality, set the value of configuration property
+<code>disableCookieBanner</code> within config category <code>additionalOptions</code> to <code>true</code> when initializing the library.</em></strong></p>
 
 <script src="../javascripts/cookie-manager.min.js"></script>
 

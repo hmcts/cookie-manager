@@ -371,7 +371,7 @@ cookieManager.init(config);
     <div class="app-example__code">
       <pre data-module="app-copy" tabindex="0">
         <code>
-&lt;div class=&quot;govuk-cookie-banner cookie-banner&quot; data-nosnippet=&quot;&quot; role=&quot;region&quot; aria-label=&quot;Cookies on [name of service]&quot;&gt;
+&lt;div class=&quot;govuk-cookie-banner cookie-banner&quot; data-nosnippet=&quot;&quot; role=&quot;region&quot; aria-label=&quot;Cookies on [name of service]&quot; hidden&gt;
    &lt;div class=&quot;govuk-cookie-banner__message govuk-width-container cookie-banner-message&quot;&gt;
       &lt;div class=&quot;govuk-grid-row&quot;&gt;
          &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
@@ -716,10 +716,71 @@ which will activate the callbacks we added. These callbacks will</p>
 <li>Adds a variable to the Google Tag Manager (GTM) datalayer which represents
 the current cookie preferences. This datalayer variable can be used within GTM
 to enable/disable any Google Analytics based tags. The analytics preference is
-represented in the `analytics&rsquo; category</li>
+represented in the <code>analytics</code> category</li>
 <li>Tell Dynatrace to enable/disable it&rsquo;s remote user monitoring (RUM) functionality,
 based on the value of the <code>apm</code> category.</li>
 </ul>
+<h2 id="5-configuring-google-analytics-gtm-and-dynatrace">5. Configuring Google Analytics / GTM and Dynatrace.</h2>
+
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    All tracking platforms/services/libraries used with @hmcts/cookie-manager need
+to be configured to be `opt-in` rather than `opt-out`. Even if the library deletes the
+tracking cookies, it can still lead to tracking without consent.
+  </strong>
+</div>
+<h3 id="google-analytics-through-gtm">Google Analytics through GTM</h3>
+
+<ol>
+<li><p>Ensure that you have configured your site and included the Google Tag Manager script for
+your app within your page. A guide on this can be <a href="https://support.google.com/tagmanager/answer/6103696?hl=en">found here</a>.</p></li>
+<li><p>With GTM configured and the above event listeners / callbacks added, whenever the user&rsquo;s preferences
+are saved or loaded, an event is added to the GTM datalayer.</p></li>
+<li><p>Next we need to add a variable into GTM, we need to use the Data Layer variable (version 2).</p>
+
+<ul>
+<li>We need to first set our default value to <code>off</code>, as we don&rsquo;t want to auto-consent for users.</li>
+<li>Next we set the <code>Data Layer Variable Name</code> to <code>cookiePreferences.analytics</code>. We&rsquo;ve named our
+cookie preferences as <code>cookiePreferences</code> within the datalayer (set within the callback),
+and we&rsquo;re interested in the value the <code>analytics</code> sub-property.</li>
+<li>Lastly we just need to name and save our variable, I suggest <code>Analytics Preferences</code>.
+</br></br>
+This is how it should look:
+<img src="../images/gtm-datalayer-variable.png" /></li>
+</ul></li>
+<li><p>Following the addition of the variable, we need to add a custom trigger event which will
+fire whenever any event is fired and the <code>cookiePreferences.analytics</code> / <code>Analytics Preferences</code>
+variable we added is set to <code>off</code>.</p>
+
+<ul>
+<li>We need to set the &lsquo;Event name&rsquo; field to <code>*</code> and enable RegEx matching</li>
+<li>Select <code>Some Custom Events</code> for the field &lsquo;This trigger fires on&rsquo;</li>
+<li>Set &lsquo;Fire this trigger when an Event occurs and all of these conditions are true&rsquo; to
+<code>Analytics Preferences</code> (the variable from the previous step), <code>contains</code>
+then <code>off</code>.</li>
+<li>Name it <code>Analytics off</code> and hit save.
+</br></br>
+This is how it should look:
+<img src="../images/gtm-analytics-trigger.png" /></li>
+</ul></li>
+<li><p>Lastly you just need to add this as an &lsquo;Exception&rsquo; trigger on each of your Google Analytics
+based tags, this should look like:</p>
+
+<ul>
+<li><img src="../images/gtm-tag-exception.png" /></li>
+</ul></li>
+</ol>
+<h3 id="dynatrace-rum">Dynatrace RUM</h3>
+
+<ol>
+<li>To configure Dynatrace RUM, we need to setup the RUM script to be injected through OneAgent.</li>
+<li>After setting up the script to be injected, we need to setup Dynatrace to respect cookie
+opt-in, this can be done through the &lsquo;Advanced settings&rsquo; for an application within Dynatrace.</li>
+</ol>
+<p>It should look like this:</p>
+<p><img src="../images/dt-rum-opt-in.png" /></p>
 
 <script src="../javascripts/cookie-manager.min.js"></script>
 

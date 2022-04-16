@@ -147,13 +147,53 @@
             <h1 id="configuration-options">Configuration options</h1>
 
 <ul>
-<li><a href="user-preferences/">&lsquo;User preferences&rsquo; config options</a></li>
-<li><a href="cookie-banner/">&lsquo;Cookie banner&rsquo; config options</a></li>
-<li><a href="cookie-preferences-form/">&lsquo;Preferences form&rsquo; config options</a></li>
-<li><a href="cookie-manifest/">&lsquo;Cookie manifest&rsquo; config options</a></li>
-<li><a href="additional-options/">Additional config options</a></li>
+<li><a href="/configuration-options/user-preferences/">&lsquo;User preferences&rsquo; config options</a></li>
+<li><a href="/configuration-options/cookie-banner/">&lsquo;Cookie banner&rsquo; config options</a></li>
+<li><a href="/configuration-options/cookie-preferences-form/">&lsquo;Preferences form&rsquo; config options</a></li>
+<li><a href="/configuration-options/cookie-manifest/">&lsquo;Cookie manifest&rsquo; config options</a></li>
+<li><a href="/configuration-options/additional-options/">Additional config options</a></li>
 </ul>
-
+<h2 id="default-configuration">Default configuration</h2>
+<div class="highlight"><pre class="highlight json" tabindex="0"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"userPreferences"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"cookieName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-preferences"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"cookieExpiry"</span><span class="p">:</span><span class="w"> </span><span class="mi">365</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"cookieSecure"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"preferencesForm"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-preferences-form"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"cookieBanner"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-banner"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"showWithPreferencesForm"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"actions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"accept"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"buttonClass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-banner-accept-button"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"confirmationClass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-banner-accept-message"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reject"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"buttonClass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-banner-reject-button"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"confirmationClass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-banner-reject-message"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"consent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hide"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"buttonClass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cookie-banner-hide-button"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"cookieManifest"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+    </span><span class="nl">"additionalOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+       </span><span class="nl">"defaultConsent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+       </span><span class="nl">"deleteUndefinedCookies"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+       </span><span class="nl">"disableCookieBanner"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+       </span><span class="nl">"disableCookiePreferencesForm"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
             
           </main>
 

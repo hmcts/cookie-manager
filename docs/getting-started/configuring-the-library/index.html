@@ -210,7 +210,17 @@ it is broken up into categories where the cookies listed are specified as essent
 <li><code>additionalOptions</code> -
 This section is used for non-recommended (or dangerous) configuration options, it is rarely needed.</li>
 </ul>
-<p>More about the configuring the library can be found within the <a href="/configuration-options/">configuration options</a> section</p>
+<p>More about the configuring the library can be found within the <a href="/configuration-options/">configuration options</a> section.</p>
+
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    Cookie Manager will attempt to validate the config passed to it on initialization.
+If any malformed, missing properties etc. are supplied, the library will be disabled until it is resolved.
+A warning will be printed in the console alerting of the problematic property.
+  </strong>
+</div>
 <h2 id="initializing">Initializing</h2>
 
 <div data-module="app-tabs">
@@ -261,6 +271,12 @@ cookieManager.init(config);
   </div>
 </div>
 <p></br></p>
+<h4 id="init-config"><code>init (config)</code></h4>
+<p>Initializes the @hmcts-cookie/manager library using the provided config.</p>
+
+<ul>
+<li><em>param</em> <em><code>CookieManagerConfig</code></em> &ndash; config &ndash; Configuration object for the library to use., see <a href="/configuration-options/">configuration options</a></li>
+</ul>
 
 <script src="../../javascripts/highlight.min.js"></script>
 
