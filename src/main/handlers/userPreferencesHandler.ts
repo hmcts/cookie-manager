@@ -92,7 +92,7 @@ export default class UserPreferences {
         const preferences = {};
         const cookiePreferences = {};
         this.manifestHandler.getCategories()
-            .filter(category => category.optional)
+            .filter(category => category.optional ?? true)
             .forEach(category => {
                 preferences[category.name] = this.config.additionalOptions.defaultConsent;
                 cookiePreferences[category.name] = this.config.additionalOptions.defaultConsent ? 'on' : 'off';

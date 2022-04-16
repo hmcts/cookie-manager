@@ -40,6 +40,7 @@ describe('ManifestHandler', () => {
                 {
                     name: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 }
             ];
@@ -55,16 +56,19 @@ describe('ManifestHandler', () => {
                 {
                     categoryName: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 },
                 {
                     categoryName: 'another-essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['third-essential-cookie', 'fourth-essential-cookie']
                 },
                 {
                     categoryName: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 }
             ];
@@ -73,16 +77,19 @@ describe('ManifestHandler', () => {
                 {
                     name: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 },
                 {
                     name: 'another-essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['third-essential-cookie', 'fourth-essential-cookie']
                 },
                 {
                     name: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 }
             ];
@@ -111,11 +118,13 @@ describe('ManifestHandler', () => {
                 {
                     name: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 },
                 {
                     name: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 }
             ];
@@ -149,16 +158,19 @@ describe('ManifestHandler', () => {
                 {
                     name: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 },
                 {
                     name: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 },
                 {
                     name: 'another-non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['third-non-essential-cookie', 'fourth-non-essential-cookie']
                 }
             ];
@@ -196,21 +208,25 @@ describe('ManifestHandler', () => {
                 {
                     name: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 },
                 {
                     name: 'another-essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['third-essential-cookie', 'fourth-essential-cookie']
                 },
                 {
                     name: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['first-non-essential-cookie', 'second-non-essential-cookie']
                 },
                 {
                     name: 'another-non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['third-non-essential-cookie', 'fourth-non-essential-cookie']
                 }
             ];
@@ -243,16 +259,19 @@ describe('ManifestHandler', () => {
                 {
                     name: 'essential',
                     optional: false,
+                    matchBy: 'startsWith',
                     cookies: ['first-essential-cookie', 'second-essential-cookie']
                 },
                 {
                     name: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['non-essential-cookie']
                 },
                 {
                     name: 'non-essential',
                     optional: true,
+                    matchBy: 'startsWith',
                     cookies: ['non-essential-cookie-two']
                 }
             ];
@@ -276,7 +295,12 @@ describe('ManifestHandler', () => {
         });
 
         test('Get category for essential cookie', () => {
-            const expectedCategory: CookieCategory = { name: 'essential', cookies: ['first-essential-cookie', 'second-essential-cookie'], optional: false };
+            const expectedCategory: CookieCategory = {
+                name: 'essential',
+                cookies: ['first-essential-cookie', 'second-essential-cookie'],
+                optional: false,
+                matchBy: 'startsWith'
+            };
             const manifestHandler = new ManifestHandler(mockConfig);
 
             mockConfig.cookieManifest = cookieManifest;
@@ -285,7 +309,12 @@ describe('ManifestHandler', () => {
         });
 
         test('Get category for optional cookie', () => {
-            const expectedCategory: CookieCategory = { name: 'non-essential', cookies: ['first-non-essential-cookie', 'second-non-essential-cookie'], optional: true };
+            const expectedCategory: CookieCategory = {
+                name: 'non-essential',
+                cookies: ['first-non-essential-cookie', 'second-non-essential-cookie'],
+                optional: true,
+                matchBy: 'startsWith'
+            };
             const manifestHandler = new ManifestHandler(mockConfig);
 
             mockConfig.cookieManifest = cookieManifest;

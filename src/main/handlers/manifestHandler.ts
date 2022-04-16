@@ -12,11 +12,11 @@ export default class ManifestHandler {
 
     getCategoryByCookieName (cookieName: string): CookieCategory {
         if (cookieName === this.config.userPreferences.cookieName) {
-            return { name: '__internal', cookies: [cookieName], optional: false, matchBy: 'exact' };
+            return { name: '__internal', optional: false, matchBy: 'exact' };
         }
 
-        const category = this.getCategories().filter(category => {
-            return category.cookies.some(cookie => {
+        return this.getCategories().filter(category =>
+            category.cookies.some(cookie => {
                 switch (category.matchBy) {
                 case 'exact':
                     return cookieName === cookie;
@@ -26,10 +26,10 @@ export default class ManifestHandler {
                 default:
                     return cookieName.startsWith(cookie);
                 }
-            });
-        })[0];
-
-        return category ?? { name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME, cookies: [cookieName], optional: true, matchBy: 'exact' };
+            }))[0] ?? {
+            name: ManifestHandler.DEFAULTS.UNDEFINED_CATEGORY_NAME,
+            optional: true
+        };
     }
 
     getCategories (): CookieCategory[] {
