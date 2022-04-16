@@ -5,6 +5,7 @@ import Config from '../main/models/config';
 import CookieBannerHandler from '../main/handlers/cookieBannerHandler';
 import PreferencesFormHandler from '../main/handlers/preferencesFormHandler';
 import cookieManager from '../main/cookieManager';
+import { ConfigHandler } from '../main/handlers/configHandler';
 
 jest.mock('../main/handlers/manifestHandler');
 jest.mock('../main/handlers/cookieHandler');
@@ -79,6 +80,22 @@ describe('cookieManager', function () {
             expect(CookieBannerHandler.prototype.init).toHaveBeenCalled();
             expect(PreferencesFormHandler.prototype.init).not.toHaveBeenCalled();
             expect(CookieHandler.prototype.processCookies).toHaveBeenCalled();
+        });
+
+        test('Should disable if invalid/malformed config', () => {
+            const configHandlerSpy = jest.spyOn(ConfigHandler.prototype, 'mergeConfigurations')
+                .mockImplementation(() => { throw new Error('Invalid config'); });
+
+            cookieManager.init({});
+
+            expect(configHandlerSpy).toHaveBeenCalled();
+            expect(ManifestHandler).not.toHaveBeenCalled();
+            expect(UserPreferences).not.toHaveBeenCalled();
+            expect(CookieHandler).not.toHaveBeenCalled();
+            expect(UserPreferences.prototype.processPreferences).not.toHaveBeenCalled();
+            expect(CookieBannerHandler.prototype.init).not.toHaveBeenCalled();
+            expect(PreferencesFormHandler.prototype.init).not.toHaveBeenCalled();
+            expect(CookieHandler.prototype.processCookies).not.toHaveBeenCalled();
         });
     });
 });

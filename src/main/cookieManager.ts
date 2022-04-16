@@ -1,4 +1,3 @@
-import Config from './models/config';
 import ManifestHandler from './handlers/manifestHandler';
 import CookieHandler from './handlers/cookieHandler';
 import UserPreferences from './handlers/userPreferencesHandler';
@@ -6,6 +5,7 @@ import CookieBannerHandler from './handlers/cookieBannerHandler';
 import PreferencesFormHandler from './handlers/preferencesFormHandler';
 import { EventProcessor } from './handlers/eventHandler';
 import { CookieManagerConfig } from './interfaces/Config';
+import { ConfigHandler } from './handlers/configHandler';
 
 /**
  * Initializes the @hmcts-cookie/manager library using the provided config.
@@ -14,8 +14,16 @@ import { CookieManagerConfig } from './interfaces/Config';
  */
 function init (providedConfig: Partial<CookieManagerConfig>): void {
     console.debug('CookieManager initializing...');
+    let config;
 
-    const config = new Config(providedConfig);
+    try {
+        config = new ConfigHandler().mergeConfigurations(providedConfig);
+    } catch (e) {
+        console.error(e);
+        console.error('Invalid config supplied to CookieManager, disabling...');
+        return;
+    }
+
     const manifestHandler = new ManifestHandler(config);
     const userPreferences = new UserPreferences(config, manifestHandler);
     const cookieHandler = new CookieHandler(config, manifestHandler, userPreferences);
