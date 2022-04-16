@@ -8,9 +8,10 @@ Cookie Manager ·
 
 It provides a streamline way to define essential and non-essential cookies on a service,
 which then acts as a basis for user’s to provide consent for each different category of cookie.
+The minified script is just under 4KB (after GZIP) and supports IE11 / ES5 by default.
 
 This library is intended to be used with the [GDS Cookie Banner component](https://design-system.service.gov.uk/components/cookie-banner/)
-though it can be configured to support a variety of multi-stage cookie banners of varying designs.
+though it can be configured to support a variety of multi-stage cookie banners of varying designs. 
 
 **In-depth documentation on all configuration options, emitted events, configuration with common analytics
 libraries and more can be [found on the project's documentation site](https://hmcts.github.io/cookie-manager/).**
