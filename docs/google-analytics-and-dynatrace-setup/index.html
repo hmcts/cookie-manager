@@ -765,11 +765,29 @@ then <code>off</code>.</li>
 This is how it should look:
 <img src="../images/gtm-analytics-trigger.png" /></li>
 </ul></li>
-<li><p>Lastly you just need to add this as an &lsquo;Exception&rsquo; trigger on each of your Google Analytics
+<li><p>You now need to add this as an &lsquo;Exception&rsquo; trigger on each of your Google Analytics
 based tags, this should look like:</p>
 
 <ul>
 <li><img src="../images/gtm-tag-exception.png" /></li>
+</ul></li>
+<li><p>To ensure that &lsquo;page view&rsquo; events are fired correctly after the user has accepted
+cookies, you need to add a second trigger which listens for the user updating their cookie
+preferences. We need to add another custom trigger event with the following settings</p>
+
+<ul>
+<li>&lsquo;Event name&rsquo; set to <code>Cookie Preferences</code>.</li>
+<li>&lsquo;This trigger fires on&rsquo; set to <code>All custom events</code></li>
+<li>Name it <code>Cookie preferences</code> and save it.
+</br></br>
+This should look like:</li>
+<li><img src="../images/gtm-preferences-update-trigger.png" /></li>
+</ul></li>
+<li><p>You now just need to add this as trigger to your Google Analytics
+page view tag, this should look like:</p>
+
+<ul>
+<li><img src="../images/gtm-pageview-triggers.png" /></li>
 </ul></li>
 </ol>
 <h3 id="dynatrace-rum">Dynatrace RUM</h3>
