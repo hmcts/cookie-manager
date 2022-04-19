@@ -181,6 +181,11 @@ to compile, minify, and create declarations for the library.
 ### Dependencies
 This project currently only uses dependencies for linting and building the project.
 
+### Using within your project
+Follow the setup guide on installing and initializing the module within NodeJS,
+this project provides type declarations built in, so for projects using TypeScript,
+you should see typings support.
+
 ## Testing
 To run the tests run `npm run test` or to see the coverage, `npm run test:coverage`.
 
