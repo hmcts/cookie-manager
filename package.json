@@ -32,8 +32,8 @@
   "files": [
     "package.json",
     "*.md",
-    "dist/index.js",
-    "dist/index.d.ts"
+    "dist/cookie-manager.js",
+    "dist/cookie-manager.d.ts"
   ],
   "license": "MIT",
   "devDependencies": {
