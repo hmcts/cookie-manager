@@ -148,7 +148,7 @@
 <h3 id="how-the-cookie-preferences-form-is-handled">How the cookie preferences form is handled</h3>
 <p>The Cookie Manager library is also, by default, setup to parse a cookie preference form which allows a user
 to set their cookie preferences in a fine-grained manner. The default configuration
-is built to work with the <a href="/cookie-preferences-form/#html-nunjucks-template">template provided below</a>.</p>
+is built to work with the <a href="#html-nunjucks-template">template provided below</a>.</p>
 <p>In short, on the form submission event:</p>
 
 <ol>
@@ -160,7 +160,7 @@ is built to work with the <a href="/cookie-preferences-form/#html-nunjucks-templ
 <p>The form layout needs to be configured for each different cookie category you are utilising within your service.
 This requires you to add another set of radio inputs, with the <code>name</code> attribute set to that of your cookie category,
 using <code>on</code>/<code>off</code> as their values for consent / reject respectively.</p>
-<p>More information about the cookie preferences form functionality and it&rsquo;s configuration can be <a href="/configuration-options/cookie-preferences-form/">found
+<p>More information about the cookie preferences form functionality and it&rsquo;s configuration can be <a href="../configuration-options/cookie-preferences-form/">found
 within the cookie preferences form configuration options</a>.</p>
 <h3 id="html-nunjucks-template">HTML / Nunjucks template</h3>
 <p>Here is an example of a cookie preferences form (utilising the GOV.UK Frontend &lsquo;Radios&rsquo; component).
@@ -374,7 +374,7 @@ for use with @hmcts/cookie-manager.
 </code></pre></div><p>You can see the class in this config used on the preferences form <code>&lt;form&gt;</code> element on the template above.</p>
 <p>Using this default config with the above template should set up a cookie preferences form that is correctly
 targeted by the Cookie Manager library, but further configuration to the HTML is required for each
-additional category, as explained in the &lsquo;<a href="/cookie-preferences-form/#how-the-cookie-preferences-form-is-handled">how the cookie preferences form is handled</a>&rsquo;
+additional category, as explained in the &lsquo;<a href="#how-the-cookie-preferences-form-is-handled">how the cookie preferences form is handled</a>&rsquo;
 section at the top of this page.</p>
 <p></br>
 <strong><em>Note: To disable the cookie preferences form functionality, set the value of configuration property
