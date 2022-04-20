@@ -1,32 +1,58 @@
 {
   "name": "@hmcts/cookie-manager",
-  "version": "0.0.5",
-  "description": "Cookie Manager is a Javascript library for dealing with cookie compliance.",
-  "main": "cookie-manager.js",
+  "description": "@hmcts/cookie-manager is a JavaScript library for handling and managing a services cookies.",
+  "version": "1.0.0",
+  "main": "./dist/cookie-manager.js",
+  "types": "./dist/cookie-manager.d.ts",
   "scripts": {
-    "test": "nyc --check-coverage --lines 80 --reporter=text mocha",
-    "test-html": "nyc --check-coverage --lines 80 --reporter=html mocha --reporter mocha-simple-html-reporter --reporter-options output=test/index.html"
+    "build:package": "rollup -c rollup.package.config.js",
+    "build:browser": "rollup -c rollup.browser.config.js",
+    "test": "jest --silent",
+    "test:coverage": "jest --coverage --silent",
+    "lint": "eslint",
+    "prepare": "rimraf ./dist ./package && npm run build:package"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
+  "author": "HM Courts and Tribunals",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hmcts/cookie-manager.git"
   },
-  "author": "HM Courts and Tribunals",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/hmcts/cookie-manager/issues"
   },
-  "homepage": "https://github.com/hmcts/cookie-manager#readme",
+  "homepage": "https://github.com/hmcts/cookie-manager",
+  "keywords": [
+    "cookie",
+    "manager",
+    "hmcts"
+  ],
+  "files": [
+    "package.json",
+    "*.md",
+    "dist/cookie-manager.js",
+    "dist/cookie-manager.d.ts"
+  ],
+  "license": "MIT",
   "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-spies": "^1.0.0",
-    "jsdom": "^16.1.0",
-    "jsdom-global": "^3.0.2",
-    "mocha": "^7.0.1",
-    "mocha-simple-html-reporter": "^1.1.0",
-    "nyc": "^15.0.0"
+    "@rollup/plugin-typescript": "^8.3.1",
+    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-jest": "^26.1.3",
+    "jest": "^27.5.1",
+    "jest-when": "^3.5.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.70.1",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-dts": "^4.2.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-jest": "^27.1.4",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.3"
   }
 }
