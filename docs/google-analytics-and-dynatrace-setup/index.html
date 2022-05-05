@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en" class="govuk-template no-js">
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <title>Example setup - Google Analytics and Dynatrace RUM - @hmcts/cookie-manager</title>
+
+    <link href="../stylesheets/manifest.css" rel="stylesheet" />
+
+    <link rel="canonical" href="https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/">
+
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:domain" content="hmcts.github.io" />
+      <meta name="twitter:image" content="https://hmcts.github.io/cookie-manager/images/govuk-large.png" />
+      <meta name="twitter:title" content="Example setup - Google Analytics and Dynatrace RUM - @hmcts/cookie-manager" />
+      <meta name="twitter:url" content="https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/" />
+
+      <meta property="og:image" content="https://hmcts.github.io/cookie-manager/images/govuk-large.png" />
+      <meta property="og:site_name" content="@hmcts/cookie-manager" />
+      <meta property="og:title" content="Example setup - Google Analytics and Dynatrace RUM" />
+      <meta property="og:type" content="object" />
+      <meta property="og:url" content="https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/" />
+
+    
+  </head>
+
+  <body class="govuk-template__body">
+    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+
+    <div class="app-pane">
+      <div class="app-pane__header toc-open-disabled">
+        <a href="#content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+
+        <header class="govuk-header app-header" role="banner" data-module="govuk-header">
+  <div class="govuk-header__container govuk-header__container--full-width">
+    <div class="govuk-header__logo">
+      <a href="https://github.com/hmcts/cookie-manager" class="govuk-header__link govuk-header__link--homepage">
+        <span class="govuk-header__product-name">
+          @hmcts/cookie-manager
+        </span>
+      </a>
+    </div>
+    <div class="govuk-header__content">
+      <nav class="govuk-header__navigation govuk-header__navigation--end" aria-label="Menu">
+        <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu">Menu</button>
+        <ul id="navigation" class="govuk-header__navigation-list">
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="https://hmcts.github.io/cookie-manager/">Documentation</a>
+            </li>
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="https://github.com/hmcts/cookie-manager">GitHub</a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+      </div>
+
+        <div id="toc-heading" class="toc-show fixedsticky">
+          <button type="button" class="toc-show__label js-toc-show" aria-controls="toc">
+            Table of contents <span class="toc-show__icon"></span>
+          </button>
+        </div>
+
+      <div class="app-pane__body" data-module="in-page-navigation">
+          <div class="app-pane__toc">
+            <div class="toc" data-module="table-of-contents" tabindex="-1" aria-label="Table of contents" role="dialog">
+              <div class="search" data-module="search" data-path-to-site-root="../">
+  <form action="https://www.google.co.uk/search" method="get" role="search" class="search__form govuk-!-margin-bottom-4">
+    <input type="hidden" name="as_sitesearch" value="https://hmcts.github.io/cookie-manager"/>
+    <label class="govuk-label search__label" for="search" aria-hidden="true">
+      Search (via Google)
+    </label>
+    <input
+      type="text"
+      id="search" name="q"
+      class="govuk-input govuk-!-margin-bottom-0 search__input"
+      aria-controls="search-results"
+      placeholder="Search">
+    <button type="submit" class="search__button">Search</button>
+  </form>
+</div>
+
+              <button type="button" class="toc__close js-toc-close" aria-controls="toc" aria-label="Hide table of contents"></button>
+              <nav id="toc" class="js-toc-list toc__list" aria-labelledby="toc-heading" data-module="collapsible-navigation">
+                      <ul>
+  <li>
+    <a href="../index.html"><span>@hmcts/cookie-manager</span></a>
+  </li>
+<li><a href="../getting-started/index.html"><span>Getting started</span></a>
+<ul>
+  <li>
+    <a href="../getting-started/install-using-nodejs/index.html"><span>Install using Node.js (NPM)</span></a>
+  </li>
+  <li>
+    <a href="../getting-started/install-using-script-tag/index.html"><span>Install using precompiled script / script tag</span></a>
+  </li>
+  <li>
+    <a href="../getting-started/configuring-the-library/index.html"><span>Configuring and initializing the library</span></a>
+  </li>
+</ul>
+</li>
+<li><a href="../configuration-options/index.html"><span>Configuration options</span></a>
+<ul>
+  <li>
+    <a href="../configuration-options/user-preferences/index.html"><span>User preferences configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/cookie-banner/index.html"><span>Cookie banner configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/cookie-preferences-form/index.html"><span>Preferences form configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/cookie-manifest/index.html"><span>Cookie manifest configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/additional-options/index.html"><span>Additional configuration options</span></a>
+  </li>
+</ul>
+</li>
+  <li>
+    <a href="../cookie-banner/index.html"><span>Cookie banner</span></a>
+  </li>
+  <li>
+    <a href="../cookie-preferences-form/index.html"><span>Cookie preferences form</span></a>
+  </li>
+  <li>
+    <a href="../listenining-to-cookie-manager-events/index.html"><span>Events and listeners</span></a>
+  </li>
+  <li>
+    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Example setup - Google Analytics and Dynatrace RUM</span></a>
+  </li>
+</ul>
+
+
+              </nav>
+            </div>
+          </div>
+
+        <div class="app-pane__content toc-open-disabled">
+          <main id="content" class="technical-documentation" data-module="anchored-headings">
+            <h1 id="example-setup-google-analytics-and-dynatrace-rum">Example setup - Google Analytics and Dynatrace RUM</h1>
+<h2 id="quick-setup">Quick setup</h2>
+<p>Follow these steps to quickly get Google Analytics (through Google Tag Manager) and
+Dynatrace RUM working using @hmcts/cookie-manager</p>
+<h2 id="1-add-the-library-and-some-event-listeners">1. Add the library and some event listeners</h2>
+
+<div data-module="app-tabs">
+  <ul class="app-tabs" role="tablist">
+    <li class="app-tabs__item js-tabs__item js-tabs__item--open" role="presentation">
+      <a href="#html-script" role="tab" aria-controls="html-script" aria-expanded="false">
+         HTML / Script
+      </a>
+    </li>
+
+    <li class="app-tabs__item js-tabs__item app-tabs__item--current" role="presentation">
+      <a href="#nodejs" role="tab" aria-controls="nodejs" aria-expanded="true">
+         NodeJS
+      </a>
+    </li>
+  </ul>
+
+
+  <div class="app-tabs__container js-tabs__container app-tabs__container--hidden" id="html-script" role="tabpanel" aria-hidden="true">
+    <div class="app-example__code">
+      <pre data-module="app-copy" tabindex="0">
+         <code>
+&lt;script src=&quot;/javascript/cookie-manager-&lt;VERSION-NUMBER&gt;.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  window.cookieManager.on('UserPreferencesLoaded', (preferences) => {
+    var dataLayer = window.dataLayer || [];
+    dataLayer.push({'event': 'Cookie Preferences', 'cookiePreferences': preferences});
+  });
+
+  window.cookieManager.on('UserPreferencesSaved', (preferences) => {
+    var dataLayer = window.dataLayer || [];
+    var dtrum = window.dtrum;
+
+    dataLayer.push({'event': 'Cookie Preferences', 'cookiePreferences': preferences});
+
+    if(dtrum !== undefined) {
+      if(preferences.apm === 'on') {
+        dtrum.enable();
+        dtrum.enableSessionReplay();
+      } else {
+        dtrum.disableSessionReplay();
+        dtrum.disable();
+      }
+    }
+  });
+
+
+  var config = {
+    userPreferences: {
+      cookieName: '&lt;SERVICE-NAME&gt;-cookie-preferences',
+    },
+    cookieManifest: [
+      {
+        categoryName: 'analytics',
+        cookies: [
+          '_ga',
+          '_gid',
+          '_gat_UA-'
+        ]
+      },
+      {
+        categoryName: 'apm',
+        cookies: [
+          'dtCookie',
+          'dtLatC',
+          'dtPC',
+          'dtSa',
+          'rxVisitor',
+          'rxvt'
+        ]
+      }
+    ]
+  };
+
+  window.cookieManager.init(config);
+&lt;/script&gt;
+</code>
+</pre>
+   </div>
+  </div>
+
+
+  <div class="app-tabs__container js-tabs__container" id="nodejs" role="tabpanel" aria-hidden="false">
+    <div>
+      <pre data-module="app-copy" tabindex="0">
+         <code>
+import cookieManager from '@hmcts/cookie-manager';
+
+cookieManager.on('UserPreferencesLoaded', (preferences) => {
+  const dataLayer = window.dataLayer || [];
+  dataLayer.push({'event': 'Cookie Preferences', 'cookiePreferences': preferences});
+});
+
+cookieManager.on('UserPreferencesSaved', (preferences) => {
+  const dataLayer = window.dataLayer || [];
+  const dtrum = window.dtrum;
+
+  dataLayer.push({'event': 'Cookie Preferences', 'cookiePreferences': preferences});
+
+  if(dtrum !== undefined) {
+    if(preferences.apm === 'on') {
+      dtrum.enable();
+      dtrum.enableSessionReplay();
+    } else {
+      dtrum.disableSessionReplay();
+      dtrum.disable();
+    }
+  }
+});
+
+const config = {
+  userPreferences: {
+    cookieName: '&lt;SERVICE-NAME&gt;-cookie-preferences',
+  },
+  cookieManifest: [
+    {
+      categoryName: 'analytics',
+      cookies: [
+        '_ga',
+        '_gid',
+        '_gat_UA-'
+      ]
+    },
+    {
+      categoryName: 'apm',
+      cookies: [
+        'dtCookie',
+        'dtLatC',
+        'dtPC',
+        'dtSa',
+        'rxVisitor',
+        'rxvt'
+      ]
+    }
+  ]
+};
+
+cookieManager.init(config);
+</code>
+</pre>
+   </div>
+  </div>
+</div>
+<p></br></p>
+<h2 id="2-add-the-cookie-banner-to-your-pages">2. Add the cookie banner to your pages</h2>
+
+<div class="app-example-wrapper" id="default-cookie-banner-example" data-module="app-tabs">
+  <div class="app-example">
+    <div class="govuk-cookie-banner cookie-banner" data-nosnippet="" role="region" aria-label="Cookies on [name of service]">
+       <div class="govuk-cookie-banner__message govuk-width-container cookie-banner-message">
+          <div class="govuk-grid-row">
+             <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on [name of service]</h2>
+                <div class="govuk-cookie-banner__content">
+                   <p class="govuk-body">We use some essential cookies to make this service work.</p>
+                   <p class="govuk-body">We’d like to set additional cookies so we can remember your settings, understand how people use the service and to improve government services.</p>
+                </div>
+             </div>
+          </div>
+          <div class="govuk-button-group">
+             <button type="button" class="govuk-button cookie-banner-accept-button" data-module="govuk-button">
+             Accept additional cookies
+             </button>
+             <button type="button" class="govuk-button cookie-banner-reject-button" data-module="govuk-button">
+             Reject additional cookies
+             </button>
+             <a class="govuk-link" href="/cookies">View cookies</a>
+          </div>
+       </div>
+       <div class="govuk-cookie-banner__message govuk-width-container cookie-banner-accept-message" role="alert" hidden="">
+          <div class="govuk-grid-row">
+             <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-cookie-banner__content">
+                   <p class="govuk-body">You’ve accepted additional cookies. You can <a class="govuk-link" href="/cookies">change your cookie settings</a> at any time.</p>
+                </div>
+             </div>
+          </div>
+          <div class="govuk-button-group">
+             <button class="govuk-button cookie-banner-hide-button" data-module="govuk-button">
+             Hide this message
+             </button>
+          </div>
+       </div>
+       <div class="govuk-cookie-banner__message govuk-width-container cookie-banner-reject-message" role="alert" hidden="">
+          <div class="govuk-grid-row">
+             <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-cookie-banner__content">
+                   <p class="govuk-body">You’ve rejected additional cookies. You can <a class="govuk-link" href="/cookies">change your cookie settings</a> at any time.</p>
+                </div>
+             </div>
+          </div>
+          <div class="govuk-button-group">
+             <button class="govuk-button cookie-banner-hide-button" data-module="govuk-button">
+             Hide this message
+             </button>
+          </div>
+       </div>
+    </div>
+  </div>
+
+  <ul class="app-tabs" role="tablist">
+    <li class="app-tabs__item js-tabs__item" role="presentation">
+      <a href="#html" role="tab" aria-controls="html" aria-expanded="false">
+         HTML
+      </a>
+    </li>
+
+    <li class="app-tabs__item js-tabs__item app-tabs__item--current" role="presentation">
+      <a href="#nunjucks" role="tab" aria-controls="nunjucks" aria-expanded="true">
+         Nunjucks
+      </a>
+    </li>
+  </ul>
+
+  <div
+    class="app-tabs__container js-tabs__container"
+    id="html"
+    role="tabpanel"
+    aria-hidden="false">
+    <div class="app-example__code">
+      <pre data-module="app-copy" tabindex="0">
+        <code>
+&lt;div class=&quot;govuk-cookie-banner cookie-banner&quot; data-nosnippet=&quot;&quot; role=&quot;region&quot; aria-label=&quot;Cookies on [name of service]&quot; hidden&gt;
+   &lt;div class=&quot;govuk-cookie-banner__message govuk-width-container cookie-banner-message&quot;&gt;
+      &lt;div class=&quot;govuk-grid-row&quot;&gt;
+         &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
+            &lt;h2 class=&quot;govuk-cookie-banner__heading govuk-heading-m&quot;&gt;Cookies on [name of service]&lt;/h2&gt;
+            &lt;div class=&quot;govuk-cookie-banner__content&quot;&gt;
+               &lt;p class=&quot;govuk-body&quot;&gt;We use some essential cookies to make this service work.&lt;/p&gt;
+               &lt;p class=&quot;govuk-body&quot;&gt;We’d like to set additional cookies so we can remember your settings, understand how people use the service and to improve government services.&lt;/p&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;govuk-button-group&quot;&gt;
+         &lt;button type=&quot;button&quot; class=&quot;govuk-button cookie-banner-accept-button&quot; data-module=&quot;govuk-button&quot;&gt;
+         Accept additional cookies
+         &lt;/button&gt;
+         &lt;button type=&quot;button&quot; class=&quot;govuk-button cookie-banner-reject-button&quot; data-module=&quot;govuk-button&quot;&gt;
+         Reject additional cookies
+         &lt;/button&gt;
+         &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;View cookies&lt;/a&gt;
+      &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;div class=&quot;govuk-cookie-banner__message govuk-width-container cookie-banner-accept-message&quot; role=&quot;alert&quot; hidden=&quot;&quot;&gt;
+      &lt;div class=&quot;govuk-grid-row&quot;&gt;
+         &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
+            &lt;div class=&quot;govuk-cookie-banner__content&quot;&gt;
+               &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;govuk-button-group&quot;&gt;
+         &lt;button class=&quot;govuk-button cookie-banner-hide-button&quot; data-module=&quot;govuk-button&quot;&gt;
+         Hide this message
+         &lt;/button&gt;
+      &lt;/div&gt;
+   &lt;/div&gt;
+   &lt;div class=&quot;govuk-cookie-banner__message govuk-width-container cookie-banner-reject-message&quot; role=&quot;alert&quot; hidden=&quot;&quot;&gt;
+      &lt;div class=&quot;govuk-grid-row&quot;&gt;
+         &lt;div class=&quot;govuk-grid-column-two-thirds&quot;&gt;
+            &lt;div class=&quot;govuk-cookie-banner__content&quot;&gt;
+               &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;govuk-button-group&quot;&gt;
+         &lt;button class=&quot;govuk-button cookie-banner-hide-button&quot; data-module=&quot;govuk-button&quot;&gt;
+         Hide this message
+         &lt;/button&gt;
+      &lt;/div&gt;
+   &lt;/div&gt;
+&lt;/div&gt;
+</code>
+</pre>
+    </div>
+  </div>
+
+  <div
+    class="app-tabs__container js-tabs__container app-tabs__container--hidden"
+    id="nunjucks"
+    role="tabpanel"
+    aria-hidden="true">
+    <div class="govuk-details__text">
+      <div class="highlight">
+        <pre class="highlight plaintext" tabindex="0">
+          <code>
+{% from "govuk/components/cookie-banner/macro.njk" import govukCookieBanner %}
+
+{% set html %}
+  &lt;p class=&quot;govuk-body&quot;&gt;We use some essential cookies to make this service work.&lt;/p&gt;
+  &lt;p class=&quot;govuk-body&quot;&gt;We’d like to set additional cookies so we can remember your settings, understand how people use the service and to improve government services.&lt;/p&gt;
+{% endset %}
+
+{% set acceptHtml %}
+  &lt;p class=&quot;govuk-body&quot;&gt;You’ve accepted additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+{% endset %}
+
+{% set rejectHtml %}
+  &lt;p class=&quot;govuk-body&quot;&gt;You’ve rejected additional cookies. You can &lt;a class=&quot;govuk-link&quot; href=&quot;/cookies&quot;&gt;change your cookie settings&lt;/a&gt; at any time.&lt;/p&gt;
+{% endset %}
+
+{{ govukCookieBanner({
+  classes: 'cookie-banner',
+  ariaLabel: "Cookies on [name of service]",
+  hidden: true,
+  messages: [
+    {
+      classes: 'cookie-banner-message',
+      headingText: "Cookies on [name of service]",
+      html: html,
+      actions: [
+        {
+          classes: 'cookie-banner-accept-button',
+          text: "Accept additional cookies",
+          type: "button"
+        },
+        {
+          classes: 'cookie-banner-reject-button',
+          text: "Reject additional cookies",
+          type: "button"
+        },
+        {
+          text: "View cookies",
+          href: "/cookies"
+        }
+      ]
+    },
+    {
+      classes: 'cookie-banner-accept-message',
+      html: acceptHtml,
+      role: "alert",
+      hidden: true,
+      actions: [
+        {
+          classes: 'cookie-banner-hide-button',
+          text: "Hide this message"
+        }
+      ]
+    },
+    {
+      classes: 'cookie-banner-reject-message',
+      html: rejectHtml,
+      role: "alert",
+      hidden: true,
+      actions: [
+        {
+          classes: 'cookie-banner-hide-button',
+          text: "Hide this message"
+        }
+      ]
+    }
+  ]
+}) }}
+</code>
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+<p></br></p>
+<h2 id="3-add-the-preferences-form-to-your-cookies-page">3. Add the preferences form to your cookies page</h2>
+
+<div class="app-example-wrapper" id="default-cookie-banner-example" data-module="app-tabs">
+  <div class="app-example">
+    <form class="cookie-preferences-form">
+       <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Allow cookies that measure website use?
+             </legend>
+             <div class="govuk-radios govuk-radios" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="analytics" name="analytics" type="radio" value="on">
+                   <label class="govuk-label govuk-radios__label" for="analytics">
+                   Use cookies that measure my website use
+                   </label>
+                </div>
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off" checked="">
+                   <label class="govuk-label govuk-radios__label" for="analytics-2">
+                   Do not use cookies that measure my website use
+                   </label>
+                </div>
+             </div>
+          </fieldset>
+       </div>
+       <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Allow cookies that measure website application performance monitoring?
+             </legend>
+             <div class="govuk-radios govuk-radios" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="apm" name="apm" type="radio" value="on">
+                   <label class="govuk-label govuk-radios__label" for="apm">
+                   Use cookies that measure website application performance monitoring
+                   </label>
+                </div>
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="apm-2" name="apm" type="radio" value="off" checked="">
+                   <label class="govuk-label govuk-radios__label" for="apm-2">
+                   Do not use cookies that measure website application performance monitoring
+                   </label>
+                </div>
+             </div>
+          </fieldset>
+       </div>
+       <button class="govuk-button" data-module="govuk-button">
+       Save
+       </button>
+    </form>
+  </div>
+
+  <ul class="app-tabs" role="tablist">
+    <li class="app-tabs__item js-tabs__item" role="presentation">
+      <a href="#html" role="tab" aria-controls="html" aria-expanded="false">
+         HTML
+      </a>
+    </li>
+
+    <li class="app-tabs__item js-tabs__item app-tabs__item--current" role="presentation">
+      <a href="#nunjucks" role="tab" aria-controls="nunjucks" aria-expanded="true">
+         Nunjucks
+      </a>
+    </li>
+  </ul>
+
+
+  <div
+    class="app-tabs__container js-tabs__container"
+    id="html"
+    role="tabpanel"
+    aria-hidden="false">
+    <div class="app-example__code">
+      <pre data-module="app-copy" tabindex="0">
+        <code>
+&lt;form class="cookie-preferences-form"&gt;
+   &lt;div class="govuk-form-group"&gt;
+      &lt;fieldset class="govuk-fieldset"&gt;
+         &lt;legend class="govuk-fieldset__legend govuk-fieldset__legend--s"&gt;
+            Allow cookies that measure website use?
+         &lt;/legend&gt;
+         &lt;div class="govuk-radios govuk-radios" data-module="govuk-radios"&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="analytics" name="analytics" type="radio" value="on"&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="analytics"&gt;
+               Use cookies that measure my website use
+               &lt;/label&gt;
+            &lt;/div&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off" checked=""&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="analytics-2"&gt;
+               Do not use cookies that measure my website use
+               &lt;/label&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/fieldset&gt;
+   &lt;/div&gt;
+   &lt;div class="govuk-form-group"&gt;
+      &lt;fieldset class="govuk-fieldset"&gt;
+         &lt;legend class="govuk-fieldset__legend govuk-fieldset__legend--s"&gt;
+            Allow cookies that measure website application performance monitoring?
+         &lt;/legend&gt;
+         &lt;div class="govuk-radios govuk-radios" data-module="govuk-radios"&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="apm" name="apm" type="radio" value="on"&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="apm"&gt;
+               Use cookies that measure website application performance monitoring
+               &lt;/label&gt;
+            &lt;/div&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="apm-2" name="apm" type="radio" value="off" checked=""&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="apm-2"&gt;
+               Do not use cookies that measure website application performance monitoring
+               &lt;/label&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/fieldset&gt;
+   &lt;/div&gt;
+   &lt;button class="govuk-button" data-module="govuk-button"&gt;
+   Save
+   &lt;/button&gt;
+&lt;/form&gt;
+        </code>
+      </pre>
+    </div>
+  </div>
+
+  <div
+    class="app-tabs__container js-tabs__container app-tabs__container--hidden"
+    id="nunjucks"
+    role="tabpanel"
+    aria-hidden="true">
+    <div class="govuk-details__text">
+      <div class="highlight">
+        <pre class="highlight plaintext" tabindex="0">
+          <code>
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+&lt;form class="cookie-preferences-form"&gt;
+  {{ govukRadios({
+    classes: 'govuk-radios',
+    idPrefix: 'analytics',
+    name: 'analytics',
+    fieldset: {
+      legend: {
+        text: "Allow cookies that measure website use?",
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: [
+      {
+        value: 'on',
+        text: 'Use cookies that measure my website use'
+      },
+      {
+        value: 'off',
+        text: 'Do not use cookies that measure my website use',
+        checked: true
+      }
+    ]
+  }) }}
+
+  {{ govukRadios({
+    classes: 'govuk-radios',
+    idPrefix: 'apm',
+    name: 'apm',
+    fieldset: {
+      legend: {
+        text: "Allow cookies that measure website application performance monitoring?",
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: [
+      {
+        value: 'on',
+        text: 'Use cookies that measure website application performance monitoring'
+      },
+      {
+        value: 'off',
+        text: 'Do not use cookies that measure website application performance monitoring',
+        checked: true
+      }
+    ]
+  }) }}
+
+  {{ govukButton({
+    text: 'Save'
+  }) }}
+&lt;/form&gt;
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+<p></br></p>
+<h2 id="4-round-up">4. Round-up</h2>
+<p>Now when the user updates their cookie preferences, or their preferences are loaded
+from the preferences cookie (when the page is first loaded), an event is fired
+which will activate the callbacks we added. These callbacks will</p>
+
+<ul>
+<li>Adds a variable to the Google Tag Manager (GTM) datalayer which represents
+the current cookie preferences. This datalayer variable can be used within GTM
+to enable/disable any Google Analytics based tags. The analytics preference is
+represented in the <code>analytics</code> category</li>
+<li>Tell Dynatrace to enable/disable it&rsquo;s remote user monitoring (RUM) functionality,
+based on the value of the <code>apm</code> category.</li>
+</ul>
+<h2 id="5-configuring-google-analytics-gtm-and-dynatrace">5. Configuring Google Analytics / GTM and Dynatrace.</h2>
+
+<div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    All tracking platforms/services/libraries used with @hmcts/cookie-manager need
+to be configured to be `opt-in` rather than `opt-out`. Even if the library deletes the
+tracking cookies, it can still lead to tracking without consent.
+  </strong>
+</div>
+<h3 id="google-analytics-through-gtm">Google Analytics through GTM</h3>
+
+<ol>
+<li><p>Ensure that you have configured your site and included the Google Tag Manager script for
+your app within your page. A guide on this can be <a href="https://support.google.com/tagmanager/answer/6103696?hl=en">found here</a>.</p></li>
+<li><p>With GTM configured and the above event listeners / callbacks added, whenever the user&rsquo;s preferences
+are saved or loaded, an event is added to the GTM datalayer.</p></li>
+<li><p>Next we need to add a variable into GTM, we need to use the Data Layer variable (version 2).</p>
+
+<ul>
+<li>We need to first set our default value to <code>off</code>, as we don&rsquo;t want to auto-consent for users.</li>
+<li>Next we set the <code>Data Layer Variable Name</code> to <code>cookiePreferences.analytics</code>. We&rsquo;ve named our
+cookie preferences as <code>cookiePreferences</code> within the datalayer (set within the callback),
+and we&rsquo;re interested in the value the <code>analytics</code> sub-property.</li>
+<li>Lastly we just need to name and save our variable, I suggest <code>Analytics Preferences</code>.
+</br></br>
+This is how it should look:
+<img src="../images/gtm-datalayer-variable.png" /></li>
+</ul></li>
+<li><p>Following the addition of the variable, we need to add a custom trigger event which will
+fire whenever any event is fired and the <code>cookiePreferences.analytics</code> / <code>Analytics Preferences</code>
+variable we added is set to <code>off</code>.</p>
+
+<ul>
+<li>We need to set the &lsquo;Event name&rsquo; field to <code>*</code> and enable RegEx matching</li>
+<li>Select <code>Some Custom Events</code> for the field &lsquo;This trigger fires on&rsquo;</li>
+<li>Set &lsquo;Fire this trigger when an Event occurs and all of these conditions are true&rsquo; to
+<code>Analytics Preferences</code> (the variable from the previous step), <code>contains</code>
+then <code>off</code>.</li>
+<li>Name it <code>Analytics off</code> and hit save.
+</br></br>
+This is how it should look:
+<img src="../images/gtm-analytics-trigger.png" /></li>
+</ul></li>
+<li><p>You now need to add this as an &lsquo;Exception&rsquo; trigger on each of your Google Analytics
+based tags, this should look like:</p>
+
+<ul>
+<li><img src="../images/gtm-tag-exception.png" /></li>
+</ul></li>
+<li><p>To ensure that &lsquo;page view&rsquo; events are fired correctly after the user has accepted
+cookies, you need to add a second trigger which listens for the user updating their cookie
+preferences. We need to add another custom trigger event with the following settings</p>
+
+<ul>
+<li>&lsquo;Event name&rsquo; set to <code>Cookie Preferences</code>.</li>
+<li>&lsquo;This trigger fires on&rsquo; set to <code>All custom events</code></li>
+<li>Name it <code>Cookie preferences</code> and save it.
+</br></br>
+This should look like:</li>
+<li><img src="../images/gtm-preferences-update-trigger.png" /></li>
+</ul></li>
+<li><p>You now just need to add this as trigger to your Google Analytics
+page view tag and set the tag to &lsquo;Tag firing options&rsquo; within the &lsquo;Advanced tag options&rsquo; to <code>Once per page</code>.
+The triggers should look like:</p>
+
+<ul>
+<li><img src="../images/gtm-pageview-triggers.png" /></li>
+</ul></li>
+</ol>
+<h3 id="dynatrace-rum">Dynatrace RUM</h3>
+
+<ol>
+<li>To configure Dynatrace RUM, we need to setup the RUM script to be injected through OneAgent.</li>
+<li>After setting up the script to be injected, we need to setup Dynatrace to respect cookie
+opt-in, this can be done through the &lsquo;Advanced settings&rsquo; for an application within Dynatrace.</li>
+</ol>
+<p>It should look like this:</p>
+<p><img src="../images/dt-rum-opt-in.png" /></p>
+
+<script src="../javascripts/cookie-manager.min.js"></script>
+
+<script>
+  var config = {
+    userPreferences: {
+      cookieExpiry: -1
+    },
+    cookieBanner: {
+      showWithPreferencesForm: true
+    }
+  }
+  window.cookieManager.init(config);
+</script>
+
+<script src="../javascripts/highlight.min.js"></script>
+
+<script>hljs.highlightAll();</script>
+
+            
+          </main>
+
+          <aside>
+          </aside>
+
+          <footer class="govuk-footer app-footer" role="contentinfo">
+  <div class="govuk-footer__meta">
+    <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+
+
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        class="govuk-footer__licence-logo"
+        xmlns="http://www.w3.org/2000/svg"
+        viewbox="0 0 483.2 195.7"
+        height="17"
+        width="41"
+      >
+        <path
+          fill="currentColor"
+          d="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145"
+        />
+      </svg>
+      <span class="govuk-footer__licence-description">
+        All content is available under the
+        <a
+          class="govuk-footer__link"
+          href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+          rel="license"
+        >Open Government Licence v3.0</a>, except where otherwise stated
+      </span>
+    </div>
+    <div class="govuk-footer__meta-item">
+      <a
+        class="govuk-footer__link govuk-footer__copyright-logo"
+        href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+      >© Crown copyright</a>
+    </div>
+  </div>
+</footer>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <script src="../javascripts/application.js"></script>
+  </body>
+</html>

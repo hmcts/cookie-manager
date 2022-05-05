@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en" class="govuk-template no-js">
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <title>Cookie preferences form - @hmcts/cookie-manager</title>
+
+    <link href="../stylesheets/manifest.css" rel="stylesheet" />
+
+    <link rel="canonical" href="https://hmcts.github.io/cookie-manager/cookie-preferences-form/">
+
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:domain" content="hmcts.github.io" />
+      <meta name="twitter:image" content="https://hmcts.github.io/cookie-manager/images/govuk-large.png" />
+      <meta name="twitter:title" content="Cookie preferences form - @hmcts/cookie-manager" />
+      <meta name="twitter:url" content="https://hmcts.github.io/cookie-manager/cookie-preferences-form/" />
+
+      <meta property="og:image" content="https://hmcts.github.io/cookie-manager/images/govuk-large.png" />
+      <meta property="og:site_name" content="@hmcts/cookie-manager" />
+      <meta property="og:title" content="Cookie preferences form" />
+      <meta property="og:type" content="object" />
+      <meta property="og:url" content="https://hmcts.github.io/cookie-manager/cookie-preferences-form/" />
+
+    
+  </head>
+
+  <body class="govuk-template__body">
+    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+
+    <div class="app-pane">
+      <div class="app-pane__header toc-open-disabled">
+        <a href="#content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+
+        <header class="govuk-header app-header" role="banner" data-module="govuk-header">
+  <div class="govuk-header__container govuk-header__container--full-width">
+    <div class="govuk-header__logo">
+      <a href="https://github.com/hmcts/cookie-manager" class="govuk-header__link govuk-header__link--homepage">
+        <span class="govuk-header__product-name">
+          @hmcts/cookie-manager
+        </span>
+      </a>
+    </div>
+    <div class="govuk-header__content">
+      <nav class="govuk-header__navigation govuk-header__navigation--end" aria-label="Menu">
+        <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu">Menu</button>
+        <ul id="navigation" class="govuk-header__navigation-list">
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="https://hmcts.github.io/cookie-manager/">Documentation</a>
+            </li>
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="https://github.com/hmcts/cookie-manager">GitHub</a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+      </div>
+
+        <div id="toc-heading" class="toc-show fixedsticky">
+          <button type="button" class="toc-show__label js-toc-show" aria-controls="toc">
+            Table of contents <span class="toc-show__icon"></span>
+          </button>
+        </div>
+
+      <div class="app-pane__body" data-module="in-page-navigation">
+          <div class="app-pane__toc">
+            <div class="toc" data-module="table-of-contents" tabindex="-1" aria-label="Table of contents" role="dialog">
+              <div class="search" data-module="search" data-path-to-site-root="../">
+  <form action="https://www.google.co.uk/search" method="get" role="search" class="search__form govuk-!-margin-bottom-4">
+    <input type="hidden" name="as_sitesearch" value="https://hmcts.github.io/cookie-manager"/>
+    <label class="govuk-label search__label" for="search" aria-hidden="true">
+      Search (via Google)
+    </label>
+    <input
+      type="text"
+      id="search" name="q"
+      class="govuk-input govuk-!-margin-bottom-0 search__input"
+      aria-controls="search-results"
+      placeholder="Search">
+    <button type="submit" class="search__button">Search</button>
+  </form>
+</div>
+
+              <button type="button" class="toc__close js-toc-close" aria-controls="toc" aria-label="Hide table of contents"></button>
+              <nav id="toc" class="js-toc-list toc__list" aria-labelledby="toc-heading" data-module="collapsible-navigation">
+                      <ul>
+  <li>
+    <a href="../index.html"><span>@hmcts/cookie-manager</span></a>
+  </li>
+<li><a href="../getting-started/index.html"><span>Getting started</span></a>
+<ul>
+  <li>
+    <a href="../getting-started/install-using-nodejs/index.html"><span>Install using Node.js (NPM)</span></a>
+  </li>
+  <li>
+    <a href="../getting-started/install-using-script-tag/index.html"><span>Install using precompiled script / script tag</span></a>
+  </li>
+  <li>
+    <a href="../getting-started/configuring-the-library/index.html"><span>Configuring and initializing the library</span></a>
+  </li>
+</ul>
+</li>
+<li><a href="../configuration-options/index.html"><span>Configuration options</span></a>
+<ul>
+  <li>
+    <a href="../configuration-options/user-preferences/index.html"><span>User preferences configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/cookie-banner/index.html"><span>Cookie banner configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/cookie-preferences-form/index.html"><span>Preferences form configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/cookie-manifest/index.html"><span>Cookie manifest configuration options</span></a>
+  </li>
+  <li>
+    <a href="../configuration-options/additional-options/index.html"><span>Additional configuration options</span></a>
+  </li>
+</ul>
+</li>
+  <li>
+    <a href="../cookie-banner/index.html"><span>Cookie banner</span></a>
+  </li>
+  <li>
+    <a href="../cookie-preferences-form/index.html"><span>Cookie preferences form</span></a>
+  </li>
+  <li>
+    <a href="../listenining-to-cookie-manager-events/index.html"><span>Events and listeners</span></a>
+  </li>
+  <li>
+    <a href="../google-analytics-and-dynatrace-setup/index.html"><span>Example setup - Google Analytics and Dynatrace RUM</span></a>
+  </li>
+</ul>
+
+
+              </nav>
+            </div>
+          </div>
+
+        <div class="app-pane__content toc-open-disabled">
+          <main id="content" class="technical-documentation" data-module="anchored-headings">
+            <h1 id="cookie-preferences-form">Cookie preferences form</h1>
+<h3 id="how-the-cookie-preferences-form-is-handled">How the cookie preferences form is handled</h3>
+<p>The Cookie Manager library is also, by default, setup to parse a cookie preference form which allows a user
+to set their cookie preferences in a fine-grained manner. The default configuration
+is built to work with the <a href="#html-nunjucks-template">template provided below</a>.</p>
+<p>In short, on the form submission event:</p>
+
+<ol>
+<li>The radio groups within the form are parsed.</li>
+<li>Each selected option is matched to a cookie category (based on the radio element&rsquo;s <code>name</code> attribute).</li>
+<li>The consent value for the selected option is derived from the radio element&rsquo;s <code>value</code> attribute, which should be either <code>on</code> or <code>off</code>.</li>
+<li>The selected options are then set as user&rsquo;s active cookie preferences.</li>
+</ol>
+<p>The form layout needs to be configured for each different cookie category you are utilising within your service.
+This requires you to add another set of radio inputs, with the <code>name</code> attribute set to that of your cookie category,
+using <code>on</code>/<code>off</code> as their values for consent / reject respectively.</p>
+<p>More information about the cookie preferences form functionality and it&rsquo;s configuration can be <a href="../configuration-options/cookie-preferences-form/">found
+within the cookie preferences form configuration options</a>.</p>
+<h3 id="html-nunjucks-template">HTML / Nunjucks template</h3>
+<p>Here is an example of a cookie preferences form (utilising the GOV.UK Frontend &lsquo;Radios&rsquo; component).
+Code has been provided for both HTML and Nunjucks on how this can be used to create a cookie preferneces form
+for use with @hmcts/cookie-manager.
+<a href="https://design-system.service.gov.uk/components/radios/">See the GOV.UK Frontend Design System for more about this component</a></p>
+
+<div class="app-example-wrapper" id="default-cookie-banner-example" data-module="app-tabs">
+  <div class="app-example">
+    <form class="cookie-preferences-form">
+       <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Allow cookies that measure website use?
+             </legend>
+             <div class="govuk-radios govuk-radios" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="analytics" name="analytics" type="radio" value="on">
+                   <label class="govuk-label govuk-radios__label" for="analytics">
+                   Use cookies that measure my website use
+                   </label>
+                </div>
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off" checked="">
+                   <label class="govuk-label govuk-radios__label" for="analytics-2">
+                   Do not use cookies that measure my website use
+                   </label>
+                </div>
+             </div>
+          </fieldset>
+       </div>
+       <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset">
+             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Allow cookies that measure website application performance monitoring?
+             </legend>
+             <div class="govuk-radios govuk-radios" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="apm" name="apm" type="radio" value="on">
+                   <label class="govuk-label govuk-radios__label" for="apm">
+                   Use cookies that measure website application performance monitoring
+                   </label>
+                </div>
+                <div class="govuk-radios__item">
+                   <input class="govuk-radios__input" id="apm-2" name="apm" type="radio" value="off" checked="">
+                   <label class="govuk-label govuk-radios__label" for="apm-2">
+                   Do not use cookies that measure website application performance monitoring
+                   </label>
+                </div>
+             </div>
+          </fieldset>
+       </div>
+       <button class="govuk-button" data-module="govuk-button">
+       Save
+       </button>
+    </form>
+  </div>
+
+  <ul class="app-tabs" role="tablist">
+    <li class="app-tabs__item js-tabs__item" role="presentation">
+      <a href="#html" role="tab" aria-controls="html" aria-expanded="false">
+         HTML
+      </a>
+    </li>
+
+    <li class="app-tabs__item js-tabs__item app-tabs__item--current" role="presentation">
+      <a href="#nunjucks" role="tab" aria-controls="nunjucks" aria-expanded="true">
+         Nunjucks
+      </a>
+    </li>
+  </ul>
+
+
+  <div
+    class="app-tabs__container js-tabs__container"
+    id="html"
+    role="tabpanel"
+    aria-hidden="false">
+    <div class="app-example__code">
+      <pre data-module="app-copy" tabindex="0">
+        <code>
+&lt;form class="cookie-preferences-form"&gt;
+   &lt;div class="govuk-form-group"&gt;
+      &lt;fieldset class="govuk-fieldset"&gt;
+         &lt;legend class="govuk-fieldset__legend govuk-fieldset__legend--s"&gt;
+            Allow cookies that measure website use?
+         &lt;/legend&gt;
+         &lt;div class="govuk-radios govuk-radios" data-module="govuk-radios"&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="analytics" name="analytics" type="radio" value="on"&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="analytics"&gt;
+               Use cookies that measure my website use
+               &lt;/label&gt;
+            &lt;/div&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="analytics-2" name="analytics" type="radio" value="off" checked=""&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="analytics-2"&gt;
+               Do not use cookies that measure my website use
+               &lt;/label&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/fieldset&gt;
+   &lt;/div&gt;
+   &lt;div class="govuk-form-group"&gt;
+      &lt;fieldset class="govuk-fieldset"&gt;
+         &lt;legend class="govuk-fieldset__legend govuk-fieldset__legend--s"&gt;
+            Allow cookies that measure website application performance monitoring?
+         &lt;/legend&gt;
+         &lt;div class="govuk-radios govuk-radios" data-module="govuk-radios"&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="apm" name="apm" type="radio" value="on"&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="apm"&gt;
+               Use cookies that measure website application performance monitoring
+               &lt;/label&gt;
+            &lt;/div&gt;
+            &lt;div class="govuk-radios__item"&gt;
+               &lt;input class="govuk-radios__input" id="apm-2" name="apm" type="radio" value="off" checked=""&gt;
+               &lt;label class="govuk-label govuk-radios__label" for="apm-2"&gt;
+               Do not use cookies that measure website application performance monitoring
+               &lt;/label&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/fieldset&gt;
+   &lt;/div&gt;
+   &lt;button class="govuk-button" data-module="govuk-button"&gt;
+   Save
+   &lt;/button&gt;
+&lt;/form&gt;
+        </code>
+      </pre>
+    </div>
+  </div>
+
+  <div
+    class="app-tabs__container js-tabs__container app-tabs__container--hidden"
+    id="nunjucks"
+    role="tabpanel"
+    aria-hidden="true">
+    <div class="govuk-details__text">
+      <div class="highlight">
+        <pre class="highlight plaintext" tabindex="0">
+          <code>
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+&lt;form class="cookie-preferences-form"&gt;
+  {{ govukRadios({
+    classes: 'govuk-radios',
+    idPrefix: 'analytics',
+    name: 'analytics',
+    fieldset: {
+      legend: {
+        text: "Allow cookies that measure website use?",
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: [
+      {
+        value: 'on',
+        text: 'Use cookies that measure my website use'
+      },
+      {
+        value: 'off',
+        text: 'Do not use cookies that measure my website use',
+        checked: true
+      }
+    ]
+  }) }}
+
+  {{ govukRadios({
+    classes: 'govuk-radios',
+    idPrefix: 'apm',
+    name: 'apm',
+    fieldset: {
+      legend: {
+        text: "Allow cookies that measure website application performance monitoring?",
+        classes: "govuk-fieldset__legend--s"
+      }
+    },
+    items: [
+      {
+        value: 'on',
+        text: 'Use cookies that measure website application performance monitoring'
+      },
+      {
+        value: 'off',
+        text: 'Do not use cookies that measure website application performance monitoring',
+        checked: true
+      }
+    ]
+  }) }}
+
+  {{ govukButton({
+    text: 'Save'
+  }) }}
+&lt;/form&gt;
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+<p></br></p>
+<h3 id="default-configuration">Default configuration</h3>
+<p>The default config for the cookie preferences form is shown below:</p>
+<div class="highlight"><pre class="highlight javascript" tabindex="0"><code><span class="p">{</span>
+  <span class="nl">preferencesForm</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">class</span><span class="p">:</span> <span class="dl">'</span><span class="s1">cookie-preferences-form</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>You can see the class in this config used on the preferences form <code>&lt;form&gt;</code> element on the template above.</p>
+<p>Using this default config with the above template should set up a cookie preferences form that is correctly
+targeted by the Cookie Manager library, but further configuration to the HTML is required for each
+additional category, as explained in the &lsquo;<a href="#how-the-cookie-preferences-form-is-handled">how the cookie preferences form is handled</a>&rsquo;
+section at the top of this page.</p>
+<p></br>
+<strong><em>Note: To disable the cookie preferences form functionality, set the value of configuration property
+<code>disableCookiePreferencesForm</code> within config category <code>additionalOptions</code> to <code>true</code> when initializing the library.</em></strong></p>
+
+<script src="../javascripts/highlight.min.js"></script>
+
+<script>hljs.highlightAll();</script>
+
+<script src="../javascripts/cookie-manager.min.js"></script>
+
+<script>
+  const config = {
+    userPreferences: {
+      cookieExpiry: -1
+    },
+    cookieManifest: [
+      {
+        categoryName: 'essential',
+        optional: false,
+        matchBy: 'exact',
+        cookies: [
+          'cookie-preferences'
+        ]
+      }
+    ]
+  }
+  cookieManager.init(config);
+</script>
+
+            
+          </main>
+
+          <aside>
+          </aside>
+
+          <footer class="govuk-footer app-footer" role="contentinfo">
+  <div class="govuk-footer__meta">
+    <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+
+
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        class="govuk-footer__licence-logo"
+        xmlns="http://www.w3.org/2000/svg"
+        viewbox="0 0 483.2 195.7"
+        height="17"
+        width="41"
+      >
+        <path
+          fill="currentColor"
+          d="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145"
+        />
+      </svg>
+      <span class="govuk-footer__licence-description">
+        All content is available under the
+        <a
+          class="govuk-footer__link"
+          href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+          rel="license"
+        >Open Government Licence v3.0</a>, except where otherwise stated
+      </span>
+    </div>
+    <div class="govuk-footer__meta-item">
+      <a
+        class="govuk-footer__link govuk-footer__copyright-logo"
+        href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+      >© Crown copyright</a>
+    </div>
+  </div>
+</footer>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <script src="../javascripts/application.js"></script>
+  </body>
+</html>
