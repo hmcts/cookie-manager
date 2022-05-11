@@ -194,6 +194,11 @@ Manual testing has also been performed across most major browsers, including IE1
 
 **Note: The unit tests will fail if coverage is found to be below 90%.**
 
+## Authors
+[Thomas Geraghty](https://github.com/Thomas-Geraghty)
+
+[Linus Norton](https://github.com/linusnorton) - Additional support
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please make sure to update tests as appropriate.
