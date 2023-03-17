@@ -46,7 +46,7 @@
     "eslint-plugin-jest": "27.1.4",
     "jest": "^27.5.1",
     "jest-when": "^3.5.1",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.0.0",
     "rollup": "2.79.1",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-dts": "4.2.3",
