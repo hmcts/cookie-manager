@@ -1,7 +1,6 @@
 import js from '@eslint/js';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
-import jestPlugin from 'eslint-plugin-jest';
 
 export default [
     js.configs.recommended,
@@ -59,13 +58,9 @@ export default [
     },
     {
         files: ['**/*.test.ts', '**/*.spec.ts'],
-        plugins: {
-            jest: jestPlugin
-        },
         languageOptions: {
             globals: {
-                ...jestPlugin.environments.globals.globals,
-                jest: 'readonly',
+                vi: 'readonly',
                 describe: 'readonly',
                 it: 'readonly',
                 expect: 'readonly',
@@ -75,9 +70,6 @@ export default [
                 afterAll: 'readonly',
                 test: 'readonly'
             }
-        },
-        rules: {
-            ...jestPlugin.configs.recommended.rules
         }
     }
 ];

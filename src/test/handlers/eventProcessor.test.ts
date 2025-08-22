@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { EventProcessor } from '../../main/handlers/eventHandler';
 
 describe('EventProcessor', () => {
@@ -8,7 +9,7 @@ describe('EventProcessor', () => {
 
         test('Should call single event listener', () => {
             const eventName = 'testEvent';
-            const mockListenerFunction = jest.fn();
+            const mockListenerFunction = vi.fn();
 
             const listenersMap = new Map();
             listenersMap.set('someRandomToken', mockListenerFunction);
@@ -20,8 +21,8 @@ describe('EventProcessor', () => {
 
         test('Should call multiple event listeners', () => {
             const eventName = 'testEvent';
-            const mockListenerFunction = jest.fn();
-            const mockListenerFunctionTwo = jest.fn();
+            const mockListenerFunction = vi.fn();
+            const mockListenerFunctionTwo = vi.fn();
 
             const listenersMap = new Map();
             listenersMap.set('someRandomToken', mockListenerFunction);
@@ -35,8 +36,8 @@ describe('EventProcessor', () => {
 
         test('Should only call event listeners for specified event', () => {
             const eventName = 'testEvent';
-            const mockListenerFunction = jest.fn();
-            const mockListenerFunctionTwo = jest.fn();
+            const mockListenerFunction = vi.fn();
+            const mockListenerFunctionTwo = vi.fn();
 
             const listenersMap = new Map();
             listenersMap.set('someRandomToken', mockListenerFunction);
@@ -59,7 +60,7 @@ describe('EventProcessor', () => {
 
         test('Should add new event listener map and event listener to event listener map', () => {
             const eventName = 'testEvent';
-            const listenerFunction = jest.fn();
+            const listenerFunction = vi.fn();
             expect(EventProcessor._handlerMap.size).toBe(0);
 
             expect(EventProcessor.on(eventName, listenerFunction)).toStrictEqual(expect.any(Object));
@@ -73,7 +74,7 @@ describe('EventProcessor', () => {
             listenersMap.set('someRandomToken', () => {});
             EventProcessor._handlerMap.set(eventName.toLowerCase(), listenersMap);
 
-            const listenerFunction = jest.fn();
+            const listenerFunction = vi.fn();
 
             expect(EventProcessor.on(eventName, listenerFunction)).toStrictEqual(expect.any(Object));
             expect(EventProcessor._handlerMap.size).toBe(1);
@@ -82,7 +83,7 @@ describe('EventProcessor', () => {
 
         test('Should add new event and return unique event token', () => {
             const eventName = 'testEvent';
-            const listenerFunction = jest.fn();
+            const listenerFunction = vi.fn();
             const expectedToken = {
                 token: expect.any(String),
                 type: eventName.toLowerCase()
@@ -122,7 +123,7 @@ describe('EventProcessor', () => {
                 type: eventName.toLowerCase()
             };
             const listenersMap = new Map();
-            const mockListenerFunction = jest.fn();
+            const mockListenerFunction = vi.fn();
             listenersMap.set(eventId, mockListenerFunction);
 
             EventProcessor._handlerMap.set(eventName.toLowerCase(), listenersMap);

@@ -1,8 +1,10 @@
 
+import { vi } from 'vitest';
+
 export const MockedCookieJar = () => {
     const mockCookieJar = {
-        get: jest.spyOn(document, 'cookie', 'get'),
-        set: jest.spyOn(document, 'cookie', 'set')
+        get: vi.spyOn(document, 'cookie', 'get'),
+        set: vi.spyOn(document, 'cookie', 'set')
     };
 
     mockCookieJar.set.mockClear();

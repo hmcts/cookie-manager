@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import ManifestHandler from '../main/handlers/manifestHandler';
 import UserPreferences from '../main/handlers/userPreferencesHandler';
 import CookieHandler from '../main/handlers/cookieHandler';
@@ -6,16 +7,16 @@ import PreferencesFormHandler from '../main/handlers/preferencesFormHandler';
 import cookieManager from '../main/cookieManager';
 import { ConfigHandler } from '../main/handlers/configHandler';
 
-jest.mock('../main/handlers/manifestHandler');
-jest.mock('../main/handlers/cookieHandler');
-jest.mock('../main/handlers/userPreferencesHandler');
-jest.mock('../main/handlers/cookieBannerHandler');
-jest.mock('../main/handlers/preferencesFormHandler');
+vi.mock('../main/handlers/manifestHandler');
+vi.mock('../main/handlers/cookieHandler');
+vi.mock('../main/handlers/userPreferencesHandler');
+vi.mock('../main/handlers/cookieBannerHandler');
+vi.mock('../main/handlers/preferencesFormHandler');
 
 describe('cookieManager', function () {
     describe('init', function () {
         beforeEach(() => {
-            jest.clearAllMocks();
+            vi.clearAllMocks();
         });
 
         test('Should setup without cookie banner and preferences form', () => {
@@ -68,7 +69,7 @@ describe('cookieManager', function () {
         });
 
         test('Should disable if invalid/malformed config', () => {
-            const configHandlerSpy = jest.spyOn(ConfigHandler.prototype, 'mergeConfigurations')
+            const configHandlerSpy = vi.spyOn(ConfigHandler.prototype, 'mergeConfigurations')
                 .mockImplementation(() => { throw new Error('Invalid config'); });
 
             cookieManager.init({});

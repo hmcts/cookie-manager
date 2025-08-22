@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ConfigHandler } from '../../main/handlers/configHandler';
 import {
     AdditionalOptions,
@@ -231,7 +232,7 @@ describe('ConfigHandler', function () {
     describe('mergeConfigurations', function () {
         test('Return default config', () => {
             const configHandler = new ConfigHandler();
-            configHandler.validateConfig = jest.fn();
+            configHandler.validateConfig = vi.fn();
 
             expect(configHandler.mergeConfigurations({} as CookieManagerConfig)).toStrictEqual(ConfigHandler.defaultConfig);
             expect(configHandler.validateConfig).not.toHaveBeenCalled();
@@ -265,7 +266,7 @@ describe('ConfigHandler', function () {
                     ]
                 }
             ];
-            configHandler.validateConfig = jest.fn();
+            configHandler.validateConfig = vi.fn();
 
             expect(configHandler.mergeConfigurations(customConfig)).toStrictEqual({
                 ...ConfigHandler.defaultConfig,
@@ -288,7 +289,7 @@ describe('ConfigHandler', function () {
                 ]
             };
 
-            const validateConfigSpy = jest.spyOn(configHandler, 'validateConfig');
+            const validateConfigSpy = vi.spyOn(configHandler, 'validateConfig');
 
             expect(() => configHandler.mergeConfigurations(customConfig)).toThrow();
             expect(validateConfigSpy).toHaveBeenCalled();
