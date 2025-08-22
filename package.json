@@ -1,7 +1,7 @@
 {
   "name": "@hmcts/cookie-manager",
   "description": "@hmcts/cookie-manager is a JavaScript library for handling and managing a services cookies.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "./dist/cookie-manager.js",
   "types": "./dist/cookie-manager.d.ts",
@@ -50,7 +50,6 @@
     "rimraf": "3.0.2",
     "rollup": "4.47.1",
     "rollup-plugin-cleanup": "3.2.1",
-    "rollup-plugin-dts": "6.2.3",
     "typescript": "5.9.2",
     "vitest": "^2.1.8"
   }

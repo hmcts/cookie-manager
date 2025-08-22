@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0
+
+### Fixes
+- Fix an issue with TypeScript definitions not exporting the default type correctly
+
+### Changes
+- Update dependencies to their latest versions
+- Switch from jest to vitest
+
 ## 1.0.0
 **WARNING: This releases includes breaking change.
 You will need to follow the [setup guide](https://hmcts.github.io/cookie-manager/google-analytics-and-dynatrace-setup/index.html)
