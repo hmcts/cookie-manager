@@ -57,7 +57,7 @@ describe('EventProcessor', () => {
             EventProcessor._handlerMap = new Map();
         });
 
-        test('Should add new event listener map and event listener to event listener map ', () => {
+        test('Should add new event listener map and event listener to event listener map', () => {
             const eventName = 'testEvent';
             const listenerFunction = jest.fn();
             expect(EventProcessor._handlerMap.size).toBe(0);
@@ -95,15 +95,15 @@ describe('EventProcessor', () => {
 
         test('Should catch error when no token provided', () => {
             expect(() => {
-                // @ts-ignore
+                // @ts-expect-error Testing error handling with no parameters
                 EventProcessor.on();
             }).not.toThrow();
             expect(() => {
-                // @ts-ignore
+                // @ts-expect-error Testing error handling with wrong parameter type
                 EventProcessor.on({});
             }).not.toThrow();
             expect(() => {
-                // @ts-ignore
+                // @ts-expect-error Testing error handling with string instead of function
                 EventProcessor.on('event', 'string');
             }).not.toThrow();
         });
@@ -114,7 +114,7 @@ describe('EventProcessor', () => {
             EventProcessor._handlerMap = new Map();
         });
 
-        test('Should remove new event listener from event listeners map ', () => {
+        test('Should remove new event listener from event listeners map', () => {
             const eventName = 'testEvent';
             const eventId = 'randomEventId';
             const eventToken = {
@@ -133,7 +133,7 @@ describe('EventProcessor', () => {
 
         test('Should catch error when no token provided', () => {
             expect(() => {
-                // @ts-ignore
+                // @ts-expect-error Testing error handling with no token
                 EventProcessor.off();
             }).not.toThrow();
             expect(() => { EventProcessor.off('malformedData'); }).not.toThrow();

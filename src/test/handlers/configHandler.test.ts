@@ -191,7 +191,7 @@ describe('ConfigHandler', function () {
             });
         });
 
-        describe('Invalid configuration', () => {
+        test('Invalid configuration', () => {
             const configHandler = new ConfigHandler();
 
             const cookieBannerConfig: any = {
@@ -210,7 +210,7 @@ describe('ConfigHandler', function () {
             expect(() => configHandler.validateCookieBannerConfig(cookieBannerConfig)).toThrow();
         });
 
-        describe('Invalid actions configuration', () => {
+        test('Invalid actions configuration', () => {
             const configHandler = new ConfigHandler();
 
             const cookieBannerConfig: any = {
