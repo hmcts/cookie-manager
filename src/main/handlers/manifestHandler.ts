@@ -4,7 +4,7 @@ import { CookieManagerConfig } from '../interfaces/Config';
 export default class ManifestHandler {
     static DEFAULTS = {
         UNDEFINED_CATEGORY_NAME: 'un-categorized'
-    }
+    };
 
     constructor (
         private readonly config: CookieManagerConfig

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { when } from 'jest-when';
 import UserPreferences from '../../main/handlers/userPreferencesHandler';
 import CookieHandler from '../../main/handlers/cookieHandler';
@@ -26,9 +27,9 @@ describe('UserPreferences', () => {
             const preferenceCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: { 'non-essential': true } };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            userPreferences.getPreferenceCookie = jest.fn();
-            userPreferences._loadPreferencesFromCookie = jest.fn();
-            userPreferences.setPreferences = jest.fn();
+            userPreferences.getPreferenceCookie = vi.fn();
+            userPreferences._loadPreferencesFromCookie = vi.fn();
+            userPreferences.setPreferences = vi.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferenceCookie);
 
@@ -41,9 +42,9 @@ describe('UserPreferences', () => {
         test('Should load preferences from defaults when preference cookie is not present', () => {
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            userPreferences.getPreferenceCookie = jest.fn();
-            userPreferences._loadPreferenceDefaults = jest.fn();
-            userPreferences.setPreferences = jest.fn();
+            userPreferences.getPreferenceCookie = vi.fn();
+            userPreferences._loadPreferenceDefaults = vi.fn();
+            userPreferences.setPreferences = vi.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(undefined);
 
@@ -84,7 +85,7 @@ describe('UserPreferences', () => {
         const expectedPreferenceCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: preferences };
         const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-        CookieHandler.getCookie = jest.fn().mockReturnValue(expectedPreferenceCookie);
+        CookieHandler.getCookie = vi.fn().mockReturnValue(expectedPreferenceCookie);
 
         expect(userPreferences.getPreferenceCookie()).toBe(expectedPreferenceCookie);
         expect(CookieHandler.getCookie).toHaveBeenCalledWith(mockConfig.userPreferences.cookieName);
@@ -97,7 +98,7 @@ describe('UserPreferences', () => {
             const expiryDate = new Date(Date.now() + expiryMilliseconds).toUTCString();
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            userPreferences.getPreferences = jest.fn();
+            userPreferences.getPreferences = vi.fn();
 
             when(userPreferences.getPreferences).mockReturnValue(preferences);
 
@@ -112,7 +113,7 @@ describe('UserPreferences', () => {
             const expiryDate = new Date(Date.now() + expiryMilliseconds).toUTCString();
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            userPreferences.getPreferences = jest.fn();
+            userPreferences.getPreferences = vi.fn();
 
             when(userPreferences.getPreferences).mockReturnValue(preferences);
 
@@ -130,7 +131,7 @@ describe('UserPreferences', () => {
             const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: JSON.stringify(preferences) };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            userPreferences.getPreferenceCookie = jest.fn();
+            userPreferences.getPreferenceCookie = vi.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
             when(mockManifestHandler.getCategories).calledWith().mockReturnValue([{ name: categoryName, optional: true }]);
@@ -142,9 +143,9 @@ describe('UserPreferences', () => {
             const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: { 'non-essential': 'off' } };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            CookieHandler.deleteCookie = jest.fn();
-            userPreferences.getPreferenceCookie = jest.fn();
-            userPreferences._loadPreferenceDefaults = jest.fn();
+            CookieHandler.deleteCookie = vi.fn();
+            userPreferences.getPreferenceCookie = vi.fn();
+            userPreferences._loadPreferenceDefaults = vi.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
             when(userPreferences._loadPreferenceDefaults).calledWith().mockReturnValue({ 'non-essential': false });
@@ -158,9 +159,9 @@ describe('UserPreferences', () => {
             const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: JSON.stringify('malformedCookie') };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            CookieHandler.deleteCookie = jest.fn();
-            userPreferences.getPreferenceCookie = jest.fn();
-            userPreferences._loadPreferenceDefaults = jest.fn();
+            CookieHandler.deleteCookie = vi.fn();
+            userPreferences.getPreferenceCookie = vi.fn();
+            userPreferences._loadPreferenceDefaults = vi.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
             when(userPreferences._loadPreferenceDefaults).calledWith().mockReturnValue({ 'non-essential': false });
@@ -177,9 +178,9 @@ describe('UserPreferences', () => {
             const preferencesCookie: Cookie = { name: mockConfig.userPreferences.cookieName, value: JSON.stringify(preferences) };
             const userPreferences = new UserPreferences(mockConfig, mockManifestHandler);
 
-            CookieHandler.deleteCookie = jest.fn();
-            userPreferences.getPreferenceCookie = jest.fn();
-            userPreferences._loadPreferenceDefaults = jest.fn();
+            CookieHandler.deleteCookie = vi.fn();
+            userPreferences.getPreferenceCookie = vi.fn();
+            userPreferences._loadPreferenceDefaults = vi.fn();
 
             when(userPreferences.getPreferenceCookie).calledWith().mockReturnValue(preferencesCookie);
             when(userPreferences._loadPreferenceDefaults).calledWith().mockReturnValue(expectedPreferences);

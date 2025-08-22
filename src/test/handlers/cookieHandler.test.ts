@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { when } from 'jest-when';
 import CookieHandler from '../../main/handlers/cookieHandler';
 import { deleteAllCookies } from '../common/common';
@@ -63,7 +64,7 @@ describe('CookieHandler', () => {
 
     describe('getCookie', () => {
         test('Get cookie when there is a single cookie', () => {
-            const spy = jest.spyOn(CookieHandler, 'getAllCookies');
+            const spy = vi.spyOn(CookieHandler, 'getAllCookies');
             spy.mockReturnValue([cookieOne]);
 
             expect(CookieHandler.getCookie(cookieOne.name)).toBe(cookieOne);
@@ -71,7 +72,7 @@ describe('CookieHandler', () => {
         });
 
         test('Get cookie when there is a multiple cookies', () => {
-            const spy = jest.spyOn(CookieHandler, 'getAllCookies');
+            const spy = vi.spyOn(CookieHandler, 'getAllCookies');
             spy.mockReturnValue([cookieOne, cookieTwo, cookieThree]);
 
             expect(CookieHandler.getCookie(cookieTwo.name)).toBe(cookieTwo);
@@ -183,8 +184,8 @@ describe('CookieHandler', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
             mockConfig.additionalOptions.deleteUndefinedCookies = false;
-            cookieHandler._processUnCategorizedCookies = jest.fn();
-            cookieHandler._processNonConsentedCookies = jest.fn();
+            cookieHandler._processUnCategorizedCookies = vi.fn();
+            cookieHandler._processNonConsentedCookies = vi.fn();
             cookieHandler.processCookies();
 
             expect(cookieHandler._processUnCategorizedCookies).not.toHaveBeenCalled();
@@ -195,8 +196,8 @@ describe('CookieHandler', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
             mockConfig.additionalOptions.deleteUndefinedCookies = true;
-            cookieHandler._processUnCategorizedCookies = jest.fn();
-            cookieHandler._processNonConsentedCookies = jest.fn();
+            cookieHandler._processUnCategorizedCookies = vi.fn();
+            cookieHandler._processNonConsentedCookies = vi.fn();
             cookieHandler.processCookies();
 
             expect(cookieHandler._processUnCategorizedCookies).toHaveBeenCalled();
@@ -206,8 +207,8 @@ describe('CookieHandler', () => {
         test('_processNonConsentedCookies should be called', () => {
             const cookieHandler = new CookieHandler(mockConfig, mockManifestHandler, mockUserPreferences);
 
-            cookieHandler._processUnCategorizedCookies = jest.fn();
-            cookieHandler._processNonConsentedCookies = jest.fn();
+            cookieHandler._processUnCategorizedCookies = vi.fn();
+            cookieHandler._processNonConsentedCookies = vi.fn();
             cookieHandler.processCookies();
 
             expect(cookieHandler._processNonConsentedCookies).toHaveBeenCalled();
@@ -225,8 +226,8 @@ describe('CookieHandler', () => {
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.name).mockReturnValue(SecondNonEssentialCategory);
-            CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, cookieTwo, cookieFour]);
-            CookieHandler.deleteCookie = jest.fn();
+            CookieHandler.getAllCookies = vi.fn().mockReturnValue([cookieOne, cookieTwo, cookieFour]);
+            CookieHandler.deleteCookie = vi.fn();
 
             cookieHandler._processNonConsentedCookies();
             expect(CookieHandler.getAllCookies).toHaveBeenCalled();
@@ -245,8 +246,8 @@ describe('CookieHandler', () => {
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.name).mockReturnValue(SecondNonEssentialCategory);
-            CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, cookieTwo, cookieFour]);
-            CookieHandler.deleteCookie = jest.fn();
+            CookieHandler.getAllCookies = vi.fn().mockReturnValue([cookieOne, cookieTwo, cookieFour]);
+            CookieHandler.deleteCookie = vi.fn();
 
             cookieHandler._processNonConsentedCookies();
             expect(CookieHandler.getAllCookies).toHaveBeenCalled();
@@ -264,8 +265,8 @@ describe('CookieHandler', () => {
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieTwo.name).mockReturnValue(nonEssentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieThree.name).mockReturnValue(nonEssentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieFour.name).mockReturnValue(SecondNonEssentialCategory);
-            CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, cookieTwo, cookieThree, cookieFour]);
-            CookieHandler.deleteCookie = jest.fn();
+            CookieHandler.getAllCookies = vi.fn().mockReturnValue([cookieOne, cookieTwo, cookieThree, cookieFour]);
+            CookieHandler.deleteCookie = vi.fn();
 
             cookieHandler._processNonConsentedCookies();
             expect(CookieHandler.getAllCookies).toHaveBeenCalled();
@@ -284,8 +285,8 @@ describe('CookieHandler', () => {
 
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(essentialCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.name).mockReturnValue(unCategorizedCategory);
-            CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, unCategorizedCookie]);
-            CookieHandler.deleteCookie = jest.fn();
+            CookieHandler.getAllCookies = vi.fn().mockReturnValue([cookieOne, unCategorizedCookie]);
+            CookieHandler.deleteCookie = vi.fn();
 
             cookieHandler._processUnCategorizedCookies();
             expect(mockManifestHandler.getCategoryByCookieName).toHaveBeenCalledTimes(2);
@@ -304,8 +305,8 @@ describe('CookieHandler', () => {
             when(mockManifestHandler.getCategoryByCookieName).calledWith(cookieOne.name).mockReturnValue(manifestCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookie.name).mockReturnValue(unCategorizedCategory);
             when(mockManifestHandler.getCategoryByCookieName).calledWith(unCategorizedCookieTwo.name).mockReturnValue(unCategorizedCategory);
-            CookieHandler.getAllCookies = jest.fn().mockReturnValue([cookieOne, unCategorizedCookie, unCategorizedCookieTwo]);
-            CookieHandler.deleteCookie = jest.fn();
+            CookieHandler.getAllCookies = vi.fn().mockReturnValue([cookieOne, unCategorizedCookie, unCategorizedCookieTwo]);
+            CookieHandler.deleteCookie = vi.fn();
 
             cookieHandler._processUnCategorizedCookies();
             expect(mockManifestHandler.getCategoryByCookieName).toHaveBeenCalledTimes(3);

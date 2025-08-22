@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { deleteAllCookies, loadHTMLFromFile } from './common/common';
 import cookieManager from '../main/cookieManager';
 import { CookieManagerConfig } from '../main/interfaces/Config';
@@ -28,7 +29,7 @@ describe('Cookie Banner', function () {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         deleteAllCookies();
     });
 
@@ -68,13 +69,13 @@ describe('Cookie Banner', function () {
             ';expires=' + d.toUTCString() +
             ';path=/;';
 
-        const userPreferencesSaved = jest.fn();
+        const userPreferencesSaved = vi.fn();
         cookieManager.on('UserPreferencesSaved', userPreferencesSaved);
 
-        const userPreferencesLoaded = jest.fn();
+        const userPreferencesLoaded = vi.fn();
         cookieManager.on('UserPreferencesLoaded', userPreferencesLoaded);
 
-        const cookieBannerAction = jest.fn();
+        const cookieBannerAction = vi.fn();
         cookieManager.on('CookieBannerAction', cookieBannerAction);
 
         // init cookie manager
@@ -105,13 +106,13 @@ describe('Cookie Banner', function () {
             ';expires=' + d.toUTCString() +
             ';path=/;';
 
-        const userPreferencesSaved = jest.fn();
+        const userPreferencesSaved = vi.fn();
         cookieManager.on('UserPreferencesSaved', userPreferencesSaved);
 
-        const userPreferencesLoaded = jest.fn();
+        const userPreferencesLoaded = vi.fn();
         cookieManager.on('UserPreferencesLoaded', userPreferencesLoaded);
 
-        const cookieBannerAction = jest.fn();
+        const cookieBannerAction = vi.fn();
         cookieManager.on('CookieBannerAction', cookieBannerAction);
 
         // init cookie manager
@@ -142,13 +143,13 @@ describe('Cookie Banner', function () {
             ';expires=' + d.toUTCString() +
             ';path=/;';
 
-        const userPreferencesSaved = jest.fn();
+        const userPreferencesSaved = vi.fn();
         cookieManager.on('UserPreferencesSaved', userPreferencesSaved);
 
-        const userPreferencesLoaded = jest.fn();
+        const userPreferencesLoaded = vi.fn();
         cookieManager.on('UserPreferencesLoaded', userPreferencesLoaded);
 
-        const cookieBannerAction = jest.fn();
+        const cookieBannerAction = vi.fn();
         cookieManager.on('CookieBannerAction', cookieBannerAction);
 
         // init cookie manager
@@ -223,7 +224,7 @@ describe('Preferences Form', function () {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         deleteAllCookies();
     });
 
@@ -237,13 +238,13 @@ describe('Preferences Form', function () {
             ';expires=' + d.toUTCString() +
             ';path=/;';
 
-        const userPreferencesSaved = jest.fn();
+        const userPreferencesSaved = vi.fn();
         cookieManager.on('UserPreferencesSaved', userPreferencesSaved);
 
-        const userPreferencesLoaded = jest.fn();
+        const userPreferencesLoaded = vi.fn();
         cookieManager.on('UserPreferencesLoaded', userPreferencesLoaded);
 
-        const preferenceFormSubmitted = jest.fn();
+        const preferenceFormSubmitted = vi.fn();
         cookieManager.on('PreferenceFormSubmitted', preferenceFormSubmitted);
 
         // init cookie manager
@@ -273,13 +274,13 @@ describe('Preferences Form', function () {
             ';expires=' + d.toUTCString() +
             ';path=/;';
 
-        const userPreferencesSaved = jest.fn();
+        const userPreferencesSaved = vi.fn();
         cookieManager.on('UserPreferencesSaved', userPreferencesSaved);
 
-        const userPreferencesLoaded = jest.fn();
+        const userPreferencesLoaded = vi.fn();
         cookieManager.on('UserPreferencesLoaded', userPreferencesLoaded);
 
-        const preferenceFormSubmitted = jest.fn();
+        const preferenceFormSubmitted = vi.fn();
         cookieManager.on('PreferenceFormSubmitted', preferenceFormSubmitted);
 
         // init cookie manager
@@ -317,13 +318,13 @@ describe('Preferences Form', function () {
 
         expect(document.cookie).toBe(configuration.userPreferences.cookieName + '=' + JSON.stringify({ analytics: 'on', apm: 'on' }));
 
-        const userPreferencesSaved = jest.fn();
+        const userPreferencesSaved = vi.fn();
         cookieManager.on('UserPreferencesSaved', userPreferencesSaved);
 
-        const userPreferencesLoaded = jest.fn();
+        const userPreferencesLoaded = vi.fn();
         cookieManager.on('UserPreferencesLoaded', userPreferencesLoaded);
 
-        const preferenceFormSubmitted = jest.fn();
+        const preferenceFormSubmitted = vi.fn();
         cookieManager.on('PreferenceFormSubmitted', preferenceFormSubmitted);
 
         // init cookie manager

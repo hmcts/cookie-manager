@@ -59,7 +59,7 @@ export default class UserPreferences {
         try {
             console.debug('Loading preferences from cookie');
             cookiePreferences = JSON.parse(preferenceCookie.value);
-        } catch (e) {
+        } catch {
             console.error(`Unable to parse user preference cookie "${preferenceCookie.name}" as JSON.`);
             CookieHandler.deleteCookie(preferenceCookie);
             return this._loadPreferenceDefaults();

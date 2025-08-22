@@ -1,16 +1,18 @@
 {
   "name": "@hmcts/cookie-manager",
   "description": "@hmcts/cookie-manager is a JavaScript library for handling and managing a services cookies.",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "type": "module",
   "main": "./dist/cookie-manager.js",
   "types": "./dist/cookie-manager.d.ts",
   "scripts": {
     "build:package": "rollup -c rollup.package.config.js",
     "build:browser": "rollup -c rollup.browser.config.js",
-    "test": "jest --silent",
-    "test:coverage": "jest --coverage --silent",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint",
-    "prepare": "rimraf ./dist ./package && npm run build:package"
+    "prepare": "rimraf ./dist ./package && tsc -p tsconfig.json && npm run build:package"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -37,22 +39,18 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.3.1",
-    "@types/jest": "27.5.2",
-    "@typescript-eslint/eslint-plugin": "5.48.0",
-    "@typescript-eslint/parser": "5.48.0",
-    "eslint": "^7.32.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-jest": "27.1.4",
-    "jest": "^27.5.1",
-    "jest-when": "^3.5.1",
-    "rimraf": "^3.0.2",
-    "rollup": "2.79.1",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-dts": "4.2.3",
-    "rollup-plugin-terser": "^7.0.2",
-    "ts-jest": "27.1.5",
-    "tslib": "2.6.2",
-    "typescript": "4.9.3"
+    "@rollup/plugin-terser": "0.4.4",
+    "@rollup/plugin-typescript": "12.1.4",
+    "@typescript-eslint/eslint-plugin": "8.40.0",
+    "@typescript-eslint/parser": "8.40.0",
+    "@vitest/ui": "2.1.8",
+    "eslint": "9.33.0",
+    "jest-when": "3.6.0",
+    "jsdom": "26.1.0",
+    "rimraf": "3.0.2",
+    "rollup": "4.47.1",
+    "rollup-plugin-cleanup": "3.2.1",
+    "typescript": "5.9.2",
+    "vitest": "^2.1.8"
   }
 }

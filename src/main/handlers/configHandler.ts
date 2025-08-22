@@ -11,7 +11,7 @@ export const isBoolean = (property: any) => typeof property === 'boolean';
 export const isNumber = (property: any) => typeof property === 'number' && !isNaN(property);
 export const isUndefined = (property: any) => property === undefined;
 export const isArray = (property: any[]) => Array.isArray(property) && property.length;
-export const isArrayOfType = (property: any[], type: Function) => isArray(property) && property.every(value => type(value));
+export const isArrayOfType = (property: any[], type: (value: any) => boolean) => isArray(property) && property.every(value => type(value));
 
 export class ConfigHandler {
     static defaultConfig: CookieManagerConfig = {
@@ -52,7 +52,7 @@ export class ConfigHandler {
             deleteUndefinedCookies: true,
             defaultConsent: false
         }
-    }
+    };
 
     private readonly configTypes = {
         userPreferences: {
@@ -85,9 +85,9 @@ export class ConfigHandler {
             matchBy: { OR: [isUndefined, (property) => isString(property) && ['exact', 'startsWith', 'includes'].indexOf(property) !== -1] },
             cookies: (property: any) => isArrayOfType(property, isString)
         }
-    }
+    };
 
-    typeOfTester (value: any, testers: Function | { AND?: Function[], OR?: Function[] }) {
+    typeOfTester (value: any, testers: ((value: any) => boolean) | { AND?: Array<(value: any) => boolean>, OR?: Array<(value: any) => boolean> }) {
         if (typeof testers === 'function') return testers(value);
 
         if (testers.AND) {

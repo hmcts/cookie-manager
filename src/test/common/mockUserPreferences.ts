@@ -1,9 +1,11 @@
+import { vi } from 'vitest';
+
 export const MockUserPreferences = () => ({
-    processPreferences: jest.fn(),
-    getPreferences: jest.fn(),
-    setPreferences: jest.fn(),
-    getPreferenceCookie: jest.fn(),
-    savePreferencesToCookie: jest.fn(),
-    loadPreferencesFromCookie: jest.fn(),
-    loadPreferenceDefaults: jest.fn()
+    processPreferences: vi.fn(),
+    getPreferences: vi.fn(),
+    setPreferences: vi.fn(),
+    getPreferenceCookie: vi.fn(),
+    savePreferencesToCookie: vi.fn(),
+    loadPreferencesFromCookie: vi.fn(),
+    loadPreferenceDefaults: vi.fn()
 });
