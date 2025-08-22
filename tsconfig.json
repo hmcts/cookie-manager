@@ -2,9 +2,9 @@
   "include": ["src/main/**/*"],
   "exclude": ["dist"],
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "dist/",
     "declaration": true,
-    "declarationDir": "./typings",
+    "declarationDir": "dist/typings",
     "target": "es5",
     "lib": ["es5", "dom", "dom.iterable"],
     "downlevelIteration": true,
