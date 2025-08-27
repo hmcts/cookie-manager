@@ -45,7 +45,7 @@
     "@typescript-eslint/parser": "8.40.0",
     "@vitest/ui": "2.1.8",
     "eslint": "9.33.0",
-    "jest-when": "3.6.0",
+    "jest-when": "3.7.0",
     "jsdom": "26.1.0",
     "rimraf": "3.0.2",
     "rollup": "4.47.1",
