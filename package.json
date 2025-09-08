@@ -41,8 +41,8 @@
   "devDependencies": {
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.1.4",
-    "@typescript-eslint/eslint-plugin": "8.40.0",
-    "@typescript-eslint/parser": "8.40.0",
+    "@typescript-eslint/eslint-plugin": "8.43.0",
+    "@typescript-eslint/parser": "8.43.0",
     "@vitest/ui": "2.1.8",
     "eslint": "9.33.0",
     "jest-when": "3.6.0",
