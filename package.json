@@ -40,7 +40,7 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-terser": "0.4.4",
-    "@rollup/plugin-typescript": "12.1.4",
+    "@rollup/plugin-typescript": "12.3.0",
     "@typescript-eslint/eslint-plugin": "8.40.0",
     "@typescript-eslint/parser": "8.40.0",
     "@vitest/ui": "2.1.8",
