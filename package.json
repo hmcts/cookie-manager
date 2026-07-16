@@ -50,7 +50,7 @@
     "rimraf": "3.0.2",
     "rollup": "4.47.1",
     "rollup-plugin-cleanup": "3.2.1",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "vitest": "^2.1.8"
   }
 }
